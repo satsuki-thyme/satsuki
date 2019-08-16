@@ -1,12 +1,12 @@
-<html lang="ja" class="top-page">
-<title>弥生タイムのサイト</title>
+<html lang="ja" class="novel sub-page load-content">
+<title>小説関連</title>
 <meta charset="utf-8">
 <meta name="keywords" content="弥生タイム, 小説, ネット小説, ライトノベル, ラノベ">
-<meta name="description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」のサイトです。">
+<meta name="description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」の小説関連です。">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta property="og:url" content="https://yayoi-thyme.com/">
-<meta property="og:title" content="弥生タイムのサイト">
-<meta property="og:description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」のサイトです。">
+<meta property="og:url" content="https://yayoi-thyme.com/novel.html">
+<meta property="og:title" content="小説関連">
+<meta property="og:description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」の小説関連です。">
 <meta property="og:image" content="https://yayoi-thyme.com/yayoi-thyme-fg-white-bg-green-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -29,6 +29,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://yayoi-thyme.com/thyme-fg-white-bg-green-180s.png">
 <link href="https://yayoi-thyme.com/default.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.7.0/marked.min.js"></script>
 <script src="https://yayoi-thyme.com/default.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96637203-1"></script>
@@ -42,23 +43,54 @@
 <header>
   <a href="/">
     <img src="/yayoi-thyme-fg-green-bg-trn.svg" alt="Yayoi Thyme">
-    <h1>弥生タイムのサイト</h1>
+    <h1>小説関連</h1>
   </a>
 </header>
-<main>
+
+<div class="narou contents-container">
+  <div id="info">
+  </div>
+  <div id="novel_contents">
+    <div id="novel_color">
+      <div class="novel_bn">
+        <a class="prev">&lt;&lt; 前へ</a>
+        <a class="next">次へ &gt;&gt;</a>
+      </div>
+      <div id="novel_no"></div>
+      <p class="novel_subtitle"></p>
+      <div id="novel_honbun"></div>
+      <div class="novel_bn">
+        <a class="prev">&lt;&lt; 前へ</a>
+        <a class="next">次へ &gt;&gt;</a>
+      </div>
+    </div>
+  </div>
+  <div class="selected-len"></div>
+</div>
+<div class="markdown contents-container">
+  <main></main>
+</div>
+
+<footer>
   <nav>
     <ul>
+      <li><a href="/">トップページ</a></li>
+      <br class="br-1">
       <li><a href="/profile.html">プロフィール</a></li>
+      <br class="br-2">
       <li><a href="/favorite.html">好きなもの</a></li>
-      <li><a href="/novel.html">小説関連</a></li>
+      <br class="br-3">
+      <li><a class="current" href="/novel.html">小説関連</a></li>
+      <br class="br-4">
       <li><a class="deactive" href="/blog/">ブログ</a></li>
+      <br class="br-5">
       <li><a href="https://twitter.com/camellia" title="Twitter">@camellia</a></li>
+      <br class="br-6">
       <li><a href="https://mypage.syosetu.com/1064546/">小説家になろう</a></li>
+      <br class="br-7">
     </ul>
   </nav>
-</main>
-<footer>
-  <p><span>© Yayoi Thyme</span><a class="privacy-policy" href="/privacy-policy.html">プライバシーポリシー</a></p>  
+  <p>© Yayoi Thyme<a class="privacy-policy" href="/privacy-policy.htnl">プライバシーポリシー</a></p>  
 </footer>
 <div class="up-to-top">
   <button>▲</button>

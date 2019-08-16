@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://yayoi-thyme.com/sitemap.xml
