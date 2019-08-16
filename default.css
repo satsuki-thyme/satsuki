@@ -1,0 +1,623 @@
+@charset "utf-8";
+/*
+
+  Base element
+
+*/
+body,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+li,
+figure {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Meiryo", "Hiragino Kaku Gothic", "Helvetica", "Arial";
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  line-height: 1.7;
+  direction: ltr;
+  unicode-bidi: bidi-override;
+  background-color: #fff;
+  overflow-y: scroll;
+}
+a {
+  text-decoration: none;
+  color: #62a433;
+}
+ul {
+  padding-left: 1.5em;
+}
+li + li,
+p + li {
+  padding-top: 15px;
+}
+table {
+  padding: 0;
+}
+table,
+td,
+th,
+.table,
+.table-cell {
+  border-style: solid;
+}
+table,
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-width: 1px;
+}
+.table {
+  padding: 0;
+}
+td,
+th,
+.table-cell {
+  padding: 5px 10px;
+  vertical-align: top;
+  border-width: 1px 0 0 1px;
+}
+tr:first-child td,
+tr:first-child th,
+[colspan] + td,
+[colspan] + td,
+.table-row:first-child .table-cell {
+  border-top-width: 0;
+}
+td:first-child,
+th:first-child,
+[rowspan] + td,
+[rowspan] + td,
+.table-cell:first-child {
+  border-left-width: 0;
+}
+thead + tbody tr:first-child td,
+thead + tbody tr:first-child th {
+  border-top-width: 1px;
+}
+tfoot tr:first-child td,
+tfoot tr:first-child th {
+  border-top-width: 1px;
+}
+[rowspan] {
+  border-right-width: 1px;
+}
+.table {
+  display: table;
+  list-style: none;
+}
+.table-row {
+  display: table-row;
+  margin: 0;
+}
+.table-cell {
+  display: table-cell;
+  margin: 0;
+}
+section + section {
+  margin-top: 50px;
+}
+section h1 + p,
+section h2 + p,
+section h3 + p,
+section h4 + p,
+section h5 + p,
+section h6 + p,
+section h1 + p + p,
+section h2 + p + p,
+section h3 + p + p,
+section h4 + p + p,
+section h5 + p + p,
+section h6 + p + p {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+/*
+
+  Base structure
+
+*/
+header {
+  text-align: center;
+}
+.top-page header {
+  padding-top: 30px;
+}
+.sub-page header {
+  padding-top: 5px;
+}
+header a {
+  text-decoration: none;
+}
+.sub-page header h1,
+.sub-page header img {
+  display: inline-block;
+  vertical-align: middle;
+}
+header h1 {
+  color: #62a433;
+}
+.top-page header h1,
+.sub-page header h1 {
+  font-size: 15px;
+}
+.top-page header img {
+  width: 300px;
+  max-width: 95%;
+}
+.sub-page header img {
+  width: 160px;
+  max-width: 95%;
+}
+header,
+main,
+footer,
+.up-to-top {
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+main {
+  padding-top: 50px;
+}
+.profile .table,
+.profile .table-row,
+.profile .table-cell,
+.favorite .table,
+.favorite .table-row,
+.favorite .table-cell {
+  border: none;
+}
+.profile .name,
+.favorite .name {
+  padding-right: 4px;
+}
+.profile .colon,
+.favorite .colon {
+  padding-right: 0;
+  padding-left: 0;
+}
+.profile .content,
+.favorite .content {
+  padding-left: 4px;
+}
+.sub-page nav {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: center;
+}
+nav ul {
+  list-style: none;
+}
+.top-page nav ul {
+  padding-left: calc(50% - 50px);
+}
+.sub-page nav ul {
+  display: inline-block;
+  padding-left: 0;
+  line-height: 1.5;
+}
+.top-page nav li + li {
+  padding-top: 20px;
+}
+.sub-page nav li {
+  display: inline-block;
+}
+.sub-page nav a {
+  display: block;
+  height: 15px;
+  padding: 1px 5px 4px 5px;
+  font-size: 15px;
+}
+nav .current {
+  border-bottom: 1px solid #62a433;
+  pointer-events: none;
+}
+nav br {
+  display: none;
+}
+footer {
+  padding-bottom: 5px;
+  background-color: #fff;
+}
+footer p {
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+}
+.privacy-policy {
+  display: inline-block;
+  padding-left: 10px;
+}
+.up-to-top {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+}
+button {
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  padding: 2px;
+  font-size: 20px;
+  color: #62a433;
+  background-color: #fff;
+  border: 1px solid #62a433;
+  outline: none;
+}
+.deactive {
+  text-decoration: none;
+  color: #999;
+  pointer-events: none;
+}
+.sub-page nav br {
+  display: none;
+}
+.sub-page.footer-top-mode-0 .br-4 {
+  display: initial;
+}
+.sub-page.footer-top-mode-1 .br-3,
+.sub-page.footer-top-mode-1 .br-5 {
+  display: initial;
+}
+.sub-page.footer-top-mode-2 .br-2 ,
+.sub-page.footer-top-mode-2 .br-4 {
+  display: initial;
+}
+.footer-bottom-mode-1 footer p {
+  flex-direction: column-reverse;
+  align-items: center;
+}
+.footer-bottom-mode-1 footer a {
+  padding-left: 0;
+}
+.list-item-mode-0.profile .name {
+  word-break: keep-all;
+  word-wrap: normal;
+}
+.list-item-mode-1.profile .name,
+.profile .content {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+/*
+
+  Contents container
+
+*/
+.contents-container {
+  display: none;
+}
+.narou .narou.contents-container {
+  display: initial;
+}
+.markdown .markdown.contents-container {
+  display: initial;
+}
+/*
+
+  Narou
+
+*/
+.narou,
+.narou div,
+.narou pre,
+.narou p,
+.narou blockquote,
+.narou form,
+.narou fieldset,
+.narou input,
+.narou textarea,
+.narou select,
+.narou option,
+.narou dl,
+.narou dt,
+.narou dd,
+.narou ul,
+.narou ol,
+.narou li,
+.narou h1,
+.narou h2,
+.narou h3,
+.narou h4,
+.narou h5,
+.narou h6,
+.narou table,
+.narou th,
+.narou td,
+.narou embed,
+.narou object {
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+.narou {
+  font-family: 'Lucida Grande', sans-serif;
+  font-size: 14px;
+  background: #ffffff;
+  color: #444444;
+  word-break: normal !important;
+  word-wrap: break-word;
+  direction: ltr;
+  unicode-bidi: bidi-override;
+}
+.narou a {
+  text-decoration: none;
+  color: #0033cc;
+  outline: none;
+}
+.narou a:visited {
+  color: #885577;
+}
+.narou ruby {
+  line-height: 39px;
+}
+.narou .rt-none {
+  display: none;
+}
+.selected-len {
+  display: none;
+}
+.selected-len.appear {
+  display: initial;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05)
+}
+#info {
+  position: relative;
+  height: 48px;
+  text-align: center;
+  border-bottom: 1px solid #aaaaaa;
+}
+#info::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #ececec;
+}
+#info .number {
+  height: 48px;
+  line-height: 48px;
+}
+#info .name {
+  margin-right: 20px;
+}
+#info .phrase {
+  margin-right: 10px;
+  margin-left:  10px;
+}
+.narou #novel_contents {
+  margin: 0;
+  width: 100%;
+  padding: 0 0 50px 0;
+  text-align: left;
+  line-height: 180%;
+  clear: both;
+  position: relative;
+  top: 10px;
+  left: 0;
+}
+.narou #novel_color {
+  color: #444444;
+  font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
+  font-size: 16px;
+  margin: 0 auto;
+  width: 730px;
+  max-width: 100%;
+}
+.narou .novel_bn {
+  text-align: center;
+}
+.narou .novel_bn a {
+  font-size: 90%;
+  margin: 0 10px;
+}
+.narou #novel_no {
+  margin: 0 10px 10px 0;
+  text-align: right;
+  color: #999999;
+  font-size: 90%;
+}
+.narou .novel_title,
+.narou .novel_subtitle {
+  font-size: 170%;
+  line-height: 150%;
+}
+
+.narou .novel_title,
+.narou .novel_subtitle {
+  margin: 0 auto 10px;
+  text-align: center;
+  font-size: 170%;
+  font-weight: bold;
+  line-height: 150%;
+}
+.narou #novel_honbun {
+  margin: 30px auto 50px;
+  padding: 0 20px 0 20px;
+  width: 600px;
+  max-width: 100%;
+  box-sizing: border-box;
+  line-height: 28.8px;
+  font-size: 16px;
+}
+/*
+
+  Markdown
+
+*/
+.markdown main {
+  padding-left: 50px;
+}
+.markdown main h1,
+.markdown main h2,
+.markdown main h3,
+.markdown main h4,
+.markdown main h5,
+.markdown main h6 {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+.markdown main h1:not(:first-child) {
+  margin-top: 80px;
+}
+.markdown main h1 {
+  margin-left: -50px;
+}
+.markdown main h2:not(:first-child) {
+  margin-top: 60px;
+}
+.markdown main h2 {
+  margin-left: -25px;
+}
+.markdown main h3:not(:first-child) {
+  margin-top: 40px;
+}
+.markdown main h3 {
+  margin-left: 0;
+}
+.markdown main h4,
+.markdown main h5,
+.markdown main h6 {
+  padding-left: 0;
+}
+.markdown main h1 + h2,
+.markdown main h1 + h3,
+.markdown main h1 + h4,
+.markdown main h1 + h5,
+.markdown main h1 + h6,
+.markdown main h2 + h3,
+.markdown main h2 + h4,
+.markdown main h2 + h5,
+.markdown main h2 + h6,
+.markdown main h3 + h4,
+.markdown main h3 + h5,
+.markdown main h3 + h6,
+.markdown main h4 + h5,
+.markdown main h4 + h6,
+.markdown main h5 + h6 {
+  margin-top: 20px;
+}
+.markdown main p:first-child,
+.markdown main p:first-child + p {
+  margin-left: -50px;
+}
+.markdown main h1 + p,
+.markdown main h2 + p,
+.markdown main h3 + p,
+.markdown main h4 + p,
+.markdown main h5 + p,
+.markdown main h6 + p {
+  margin-top: 15px;
+}
+.markdown main ol,
+.markdown main ul {
+  padding-left: 1.5em;
+}
+.markdown main ol ol,
+.markdown main ol ul,
+.markdown main ul ol,
+.markdown main ul ul {
+  padding-left: 4em;
+}
+.markdown main ol ol:last-child,
+.markdown main ol ul:last-child,
+.markdown main ul ol:last-child,
+.markdown main ul ul:last-child {
+  padding-bottom: 1em;
+}
+.markdown main table {
+  padding: 0;
+}
+.markdown main hr {
+  border-width: 1px 0 0;
+  border-style: dashed;
+  background-color: transparent;
+}
+/*
+
+  Monokai
+
+*/
+.monokai {
+  color: rgb(248, 248, 242);
+  background-color: rgb(39, 40, 34);
+}
+.monokai h1::before,
+.monokai h2::before,
+.monokai h3::before,
+.monokai h4::before,
+.monokai h5::before,
+.monokai h6::before {
+  content: "#";
+  color: rgb(230, 219, 116);
+}
+.monokai h1,
+.monokai h2,
+.monokai h3,
+.monokai h4,
+.monokai h5,
+.monokai h6,
+.monokai hr {
+  border-color: rgb(117, 113, 94);
+}
+.monokai a {
+  color: rgb(102, 217, 239);
+}
+.monokai em {
+  color: rgb(166, 226, 46);
+}
+.monokai i {
+  color: rgb(253, 151, 31);
+}
+.monokai strong {
+  color: rgb(249, 38, 114);
+}
+/*
+
+  Print
+
+*/
+@media print {
+  body {
+    color: #000;
+    background-color: #fff;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  hr {
+    border-color: #000;
+  }
+  a {
+    color: #00c4ea;
+  }
+  em {
+    color: #9eeb00;
+  }
+  i {
+    color: #ebb900;
+  }
+  strong {
+    color: #eb0054;
+  }
+}

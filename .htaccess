@@ -1,0 +1,27 @@
+<Files ~ "^\.ht">
+    deny from all
+</Files>
+<IfModule mod_deflate.c>
+    SetOutputFilter DEFLATE
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/x-javascript application/javascript application/ecmascript
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresActive On
+    <FilesMatch "\.(html|css|js|txt|gif|jpe?g|png)$">
+        ExpiresDefault "access plus 0 hours"
+    </FilesMatch>
+</IfModule>
+<Files ~ ".*">
+    Header set Pragma no-cache
+    Header set Cache-Control no-cache
+</Files>
+
+RewriteEngine on
+
+RewriteCond %{SERVER_PORT} 443
+RewriteRule ^(.*)$ http://%{HTTP_HOST}%{REQUEST_URI}
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.*)$ $1.html
