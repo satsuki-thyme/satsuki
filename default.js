@@ -17,7 +17,7 @@ $(function () {
     setStructure()
   })
   function setStructure() {
-    const dfd = $.Deferred()
+    const dfd_set_mode = $.Deferred()
     const width_window = window.innerWidth
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
     const width_content_max = 500
@@ -55,10 +55,10 @@ $(function () {
       } else {
         replaceModalClass('html', 'footer-top-mode-', 2) // wrap 2, 2, 3
       }
-      dfd_set_url.resolve()
+      dfd_set_mode.resolve()
     }
     wrapMode()
-    dfd_set_url.done(function() {
+    dfd_set_mode.done(function() {
       const dfd_footer_position = $.Deferred()
       setTimeout(function() {
         height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
@@ -77,20 +77,20 @@ $(function () {
   function replaceModalClass(target, mode_phrase, mode_number) {
     const search_key = new RegExp(mode_phrase + '\\S+')
     const mode = mode_phrase + mode_number
-    const dfd = $.Deferred()
+    const dfd_set_mode = $.Deferred()
     f()
-    dfd_set_url.done(function() {
+    dfd_set_mode.done(function() {
       $(target).addClass(mode)
     })
     function f() {
       $(target).removeClass(function(index, class_name) {
         return (class_name.match(search_key) || []).join(' ')
       })
-      dfd_set_url.resolve()
+      dfd_set_mode.resolve()
     }
   }
   function loadContent() {
-    const dfd = new $.Deferred()
+    const dfd_set_url = $.Deferred()
     const user_name = 'yayoi-thyme'
     const site_repository = 'yayoi-thyme.github.io'
     const back_host = '//raw.githubusercontent.com/'
