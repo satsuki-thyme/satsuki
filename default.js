@@ -1,9 +1,11 @@
+console.log('1')
 $(function () {
   $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
   $(document).ready(function($) {
     if ($('html').attr('class').match(/load-content/g)) {
-      loadContent().done(function() {
+      loadContent()
+      $(document).ajaxComplete(function() {
         setStructure()
       })
     } else {
@@ -48,7 +50,7 @@ $(function () {
         if (height_window < height_content) {
           $('footer').css('padding-top', '30px')
         } else {
-          $('footer').css('padding-top', height_window - height_content - 30 + 'px')
+          $('footer').css('padding-top', height_window - height_content + 'px')
         }
       })
     })
