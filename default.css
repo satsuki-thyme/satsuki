@@ -34,6 +34,7 @@ a {
   color: #62a433;
 }
 a:hover {
+  text-decoration: underline;
   color: #6d6d6d;
 }
 ul {
