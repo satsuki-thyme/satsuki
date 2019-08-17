@@ -1,5 +1,5 @@
 $(function () {
-  const dfd_loadContent = $.Deferred()
+  const dfd_load_content = $.Deferred()
   $(document).ready(function($) {
     if ($('html').attr('class').match(/load-content/g)) {
       loadContent().done(function() {
@@ -55,25 +55,23 @@ $(function () {
       } else {
         replaceModalClass('html', 'footer-top-mode-', 2) // wrap 2, 2, 3
       }
-      dfd.resolve()
+      dfd_set_url.resolve()
     }
     wrapMode()
-    dfd.done(function() {
+    dfd_set_url.done(function() {
+      const dfd_footer_position = $.Deferred()
       setTimeout(function() {
         height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
+        dfd_footer_position.resolve()
       }, 30)
       // footer のポジショニング
-      if (height_window < height_content) {
-        $('main').css('padding-bottom', '30px');
-console.log('up')
-console.log(height_window)
-console.log(height_content)
-      } else {
-        $('main').css('padding-bottom', height_window - height_content + 'px');
-console.log('low')
-console.log(height_window)
-console.log(height_content)
-      }
+      dfd_footer_position.done(function() {
+        if (height_window < height_content) {
+          $('footer').css('padding-top', '30px');
+        } else {
+          $('footer').css('padding-top', height_window - height_content + 'px');
+        }
+      })
     })
   }
   function replaceModalClass(target, mode_phrase, mode_number) {
@@ -81,14 +79,14 @@ console.log(height_content)
     const mode = mode_phrase + mode_number
     const dfd = $.Deferred()
     f()
-    dfd.done(function() {
+    dfd_set_url.done(function() {
       $(target).addClass(mode)
     })
     function f() {
       $(target).removeClass(function(index, class_name) {
         return (class_name.match(search_key) || []).join(' ')
       })
-      dfd.resolve()
+      dfd_set_url.resolve()
     }
   }
   function loadContent() {
@@ -113,7 +111,7 @@ console.log(height_content)
       entity_loading = ''
       extention = 'md'
       url = '/novel.md'
-      dfd.resolve(url, extention)
+      dfd_set_url.resolve(url)
     } else {
       entity_loading = $(location).attr('pathname')
       search = $(location).attr('search').slice(1)
@@ -129,13 +127,13 @@ console.log(height_content)
       extention = search.slice(last_period + 1)
       if (first_slash < 0) {
         url = back_host + user_name + '/' + site_repository + '/master/' + file_name_extentionless + '.' + extention
-        dfd.resolve(url)
+        dfd_set_url.resolve(url)
       } else {
         url = back_host + user_name + '/' + opus + '/master/' + file_name_extentionless + '.' + extention
-        dfd.resolve(url)
+        dfd_set_url.resolve(url)
       }
     }
-    dfd.done(
+    dfd_set_url.done(
       $.ajax({
         url: url + '?' + now,
         cache: false,
@@ -235,7 +233,7 @@ console.log(height_content)
       }
       return work1
     }
-    dfd_loadContent.resolve()
-    return dfd_loadContent.promise()
+    dfd_load_content.resolve()
+    return dfd_load_content.promise()
   }
 })
