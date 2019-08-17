@@ -35,7 +35,7 @@ a {
 }
 a:hover {
   text-decoration: underline;
-  color: #91fe43;
+  color: #5ec63e;
 }
 ul {
   padding-left: 1.5em;
@@ -247,6 +247,7 @@ nav br {
 footer {
   padding-bottom: 5px;
   background-color: #fff;
+  visibility: hidden;
 }
 footer p {
   display: flex;

@@ -1,4 +1,4 @@
-console.log('1')
+console.log('2019-08-18-1')
 $(function () {
   $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
@@ -39,19 +39,19 @@ $(function () {
       $('.up-to-top').css('margin-left', - width_window / 2 + 'px')
     }
     wrapMode()
-    dfd_set_mode.done(function() {
+    .done(function() {
       const dfd_footer_position = $.Deferred()
       setTimeout(function() {
         height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
         dfd_footer_position.resolve()
       }, 1)
-      // footer のポジショニング
-      dfd_footer_position.done(function() {
+      .done(function() {
         if (height_window < height_content) {
           $('footer').css('padding-top', '30px')
         } else {
           $('footer').css('padding-top', height_window - height_content + 'px')
         }
+        $('footer').css('visibility', 'visible');
       })
     })
     function wrapMode() {
@@ -82,7 +82,7 @@ $(function () {
     const mode = mode_phrase + mode_number
     const dfd_set_mode = $.Deferred()
     f()
-    dfd_set_mode.done(function() {
+    .done(function() {
       $(target).addClass(mode)
     })
     function f() {
@@ -111,7 +111,7 @@ $(function () {
     var next
     const now = $.now()
     setUrl()
-    dfd_set_url.done(
+    .done(
       $.ajax({
         url: url + '?' + now,
         cache: false,
@@ -194,7 +194,6 @@ $(function () {
           dfd_set_url.resolve(url)
         }
       }
-      return dfd_set_url.promise()
     }
     function narouParser(data) {
       const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
@@ -226,21 +225,20 @@ $(function () {
                               ]
       const word_list_hide = ["_summary_", "_gist_"]
       var word_list_replace_length = 0
-      var work1 = data
-      work1 = work1.replace(/\{(.*?)\}/g, '<span class="tag-bracket">{</span><span class="tag-content">$1</span><span class="tag-bracket">}</span>')
+      var work_kr1 = data
+      work_kr1 = work_kr1.replace(/\{(.*?)\}/g, '<span class="tag-bracket">{</span><span class="tag-content">$1</span><span class="tag-bracket">}</span>')
       for (var i in word_list_replace) {
         word_list_replace_length++
       }
       for (var i = word_list_replace_length - 1; i >= 0; i--) {
         const regexp = new RegExp(word_list_replace[i][0], 'g')
-        work1 = work1.replace(regexp, word_list_replace[i][1])
+        work_kr1 = work_kr1.replace(regexp, word_list_replace[i][1])
       }
       for (var i = word_list_hide.length - 1; i >= 0; i--) {
-        work1 = work1.replace(new RegExp(word_list_hide[i], 'g'), '<span class="hide">' + word_list_hide[i] + '</span>')
+        work_kr1 = work_kr1.replace(new RegExp(word_list_hide[i], 'g'), '<span class="hide">' + word_list_hide[i] + '</span>')
       }
-      return work1
+      return work_kr1
     }
     dfd_load_content.resolve()
-    return dfd_load_content.promise()
   }
 })
