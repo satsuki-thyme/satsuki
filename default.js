@@ -63,13 +63,13 @@ $(function () {
       setTimeout(function() {
         height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
         dfd_footer_position.resolve()
-      }, 30)
+      }, 10)
       // footer のポジショニング
       dfd_footer_position.done(function() {
         if (height_window < height_content) {
-          $('footer').css('padding-top', '30px');
+          $('footer').css('padding-top', '30px')
         } else {
-          $('footer').css('padding-top', height_window - height_content + 'px');
+          $('footer').css('padding-top', height_window - height_content - 30 + 'px')
         }
       })
     })
@@ -107,30 +107,32 @@ $(function () {
     var prev
     var next
     const now = $.now()
-    if ($(location).attr("search").length == 0) {
-      entity_loading = ''
-      extention = 'md'
-      url = '/novel.md'
-      dfd_set_url.resolve(url)
-    } else {
-      entity_loading = $(location).attr('pathname')
-      search = $(location).attr('search').slice(1)
-      last_period = search.lastIndexOf('.')
-      first_slash = search.indexOf('/')
-      last_slash = search.lastIndexOf('/')
-      if (first_slash < 0) {
-        file_name_extentionless = search.slice(0, last_period)
-      } else {
-        opus = search.slice(first_slash + 1, last_slash - first_slash)
-        file_name_extentionless = search.slice(last_slash + 1, last_period)
-      }
-      extention = search.slice(last_period + 1)
-      if (first_slash < 0) {
-        url = back_host + user_name + '/' + site_repository + '/master/' + file_name_extentionless + '.' + extention
+    function setUrl() {
+      if ($(location).attr("search").length == 0) {
+        entity_loading = ''
+        extention = 'md'
+        url = '/novel.md'
         dfd_set_url.resolve(url)
       } else {
-        url = back_host + user_name + '/' + opus + '/master/' + file_name_extentionless + '.' + extention
-        dfd_set_url.resolve(url)
+        entity_loading = $(location).attr('pathname')
+        search = $(location).attr('search').slice(1)
+        last_period = search.lastIndexOf('.')
+        first_slash = search.indexOf('/')
+        last_slash = search.lastIndexOf('/')
+        if (first_slash < 0) {
+          file_name_extentionless = search.slice(0, last_period)
+        } else {
+          opus = search.slice(first_slash + 1, last_slash - first_slash)
+          file_name_extentionless = search.slice(last_slash + 1, last_period)
+        }
+        extention = search.slice(last_period + 1)
+        if (first_slash < 0) {
+          url = back_host + user_name + '/' + site_repository + '/master/' + file_name_extentionless + '.' + extention
+          dfd_set_url.resolve(url)
+        } else {
+          url = back_host + user_name + '/' + opus + '/master/' + file_name_extentionless + '.' + extention
+          dfd_set_url.resolve(url)
+        }
       }
     }
     dfd_set_url.done(
