@@ -35,28 +35,6 @@ $(function () {
       $('header, main, footer, .up-to-top').css('width', width_window + 'px')
       $('.up-to-top').css('margin-left', - width_window / 2 + 'px')
     }
-    function wrapMode() {
-      if (width_content > 300) {
-        replaceModalClass('html', 'list-item-mode-', 0) // no wrap
-      } else {
-        replaceModalClass('html', 'list-item-mode-', 1) // wrap
-      }
-      // nav のところ
-      if (width_content > 460) {
-        replaceModalClass('html', 'footer-bottom-mode-', 0) // no wrap
-      } else {
-        replaceModalClass('html', 'footer-bottom-mode-', 1) // wrap
-      }
-      // コピーライトのところ
-      if (width_content > 520) {
-        replaceModalClass('html', 'footer-top-mode-', 0) // wrap 4, 3
-      } else if (width_content <= 520 && width_content > 360) {
-        replaceModalClass('html', 'footer-top-mode-', 1) // wrap 3, 2, 2
-      } else {
-        replaceModalClass('html', 'footer-top-mode-', 2) // wrap 2, 2, 3
-      }
-      dfd_set_mode.resolve()
-    }
     wrapMode()
     dfd_set_mode.done(function() {
       const dfd_footer_position = $.Deferred()
@@ -73,6 +51,29 @@ $(function () {
         }
       })
     })
+    function wrapMode() {
+console.log(width_content)
+      if (width_content > 300) {
+        replaceModalClass('html', 'list-item-mode-', 0) // no wrap
+      } else {
+        replaceModalClass('html', 'list-item-mode-', 1) // wrap
+      }
+      // コピーライトのところ
+      if (width_content > 460) {
+        replaceModalClass('html', 'footer-bottom-mode-', 0) // no wrap
+      } else {
+        replaceModalClass('html', 'footer-bottom-mode-', 1) // wrap
+      }
+      // nav のところ
+      if (width_content > 400) {
+        replaceModalClass('html', 'footer-top-mode-', 0) // wrap 4, 3
+      } else if (width_content <= 400 && width_content > 320) {
+        replaceModalClass('html', 'footer-top-mode-', 1) // wrap 3, 2, 2
+      } else {
+        replaceModalClass('html', 'footer-top-mode-', 2) // wrap 2, 2, 3
+      }
+      dfd_set_mode.resolve()
+    }
   }
   function replaceModalClass(target, mode_phrase, mode_number) {
     const search_key = new RegExp(mode_phrase + '\\S+')
@@ -134,6 +135,7 @@ $(function () {
           dfd_set_url.resolve(url)
         }
       }
+      return dfd_set_url.promise(url)
     }
     dfd_set_url.done(
       $.ajax({
