@@ -139,7 +139,10 @@ header {
 .sub-page header {
   padding-top: 5px;
 }
-header a {
+header a h1,
+header a img,
+header a:hover h1,
+header a:hover img {
   text-decoration: none;
 }
 .sub-page header h1,

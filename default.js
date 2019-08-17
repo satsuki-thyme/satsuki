@@ -1,4 +1,5 @@
 $(function () {
+  $('html').css('text-align', 'initial');
   const dfd_load_content = $.Deferred()
   $(document).ready(function($) {
     if ($('html').attr('class').match(/load-content/g)) {
@@ -41,7 +42,7 @@ $(function () {
       setTimeout(function() {
         height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
         dfd_footer_position.resolve()
-      }, 10)
+      }, 1)
       // footer のポジショニング
       dfd_footer_position.done(function() {
         if (height_window < height_content) {
@@ -52,7 +53,6 @@ $(function () {
       })
     })
     function wrapMode() {
-console.log(width_content)
       if (width_content > 300) {
         replaceModalClass('html', 'list-item-mode-', 0) // no wrap
       } else {
