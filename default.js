@@ -1,4 +1,5 @@
 $(function () {
+  $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
   $(document).ready(function($) {
     if ($('html').attr('class').match(/load-content/g)) {
@@ -107,35 +108,7 @@ $(function () {
     var prev
     var next
     const now = $.now()
-    function setUrl() {
-      if ($(location).attr("search").length == 0) {
-        entity_loading = ''
-        extention = 'md'
-        url = '/novel.md'
-        dfd_set_url.resolve(url)
-      } else {
-        entity_loading = $(location).attr('pathname')
-        search = $(location).attr('search').slice(1)
-        last_period = search.lastIndexOf('.')
-        first_slash = search.indexOf('/')
-        last_slash = search.lastIndexOf('/')
-        if (first_slash < 0) {
-          file_name_extentionless = search.slice(0, last_period)
-        } else {
-          opus = search.slice(first_slash + 1, last_slash - first_slash)
-          file_name_extentionless = search.slice(last_slash + 1, last_period)
-        }
-        extention = search.slice(last_period + 1)
-        if (first_slash < 0) {
-          url = back_host + user_name + '/' + site_repository + '/master/' + file_name_extentionless + '.' + extention
-          dfd_set_url.resolve(url)
-        } else {
-          url = back_host + user_name + '/' + opus + '/master/' + file_name_extentionless + '.' + extention
-          dfd_set_url.resolve(url)
-        }
-      }
-      return dfd_set_url.promise()
-    }
+    setUrl()
     dfd_set_url.done(
       $.ajax({
         url: url + '?' + now,
@@ -192,6 +165,35 @@ $(function () {
         }
       })
     )
+    function setUrl() {
+      if ($(location).attr("search").length == 0) {
+        entity_loading = ''
+        extention = 'md'
+        url = '/novel.md'
+        dfd_set_url.resolve(url)
+      } else {
+        entity_loading = $(location).attr('pathname')
+        search = $(location).attr('search').slice(1)
+        last_period = search.lastIndexOf('.')
+        first_slash = search.indexOf('/')
+        last_slash = search.lastIndexOf('/')
+        if (first_slash < 0) {
+          file_name_extentionless = search.slice(0, last_period)
+        } else {
+          opus = search.slice(first_slash + 1, last_slash - first_slash)
+          file_name_extentionless = search.slice(last_slash + 1, last_period)
+        }
+        extention = search.slice(last_period + 1)
+        if (first_slash < 0) {
+          url = back_host + user_name + '/' + site_repository + '/master/' + file_name_extentionless + '.' + extention
+          dfd_set_url.resolve(url)
+        } else {
+          url = back_host + user_name + '/' + opus + '/master/' + file_name_extentionless + '.' + extention
+          dfd_set_url.resolve(url)
+        }
+      }
+      return dfd_set_url.promise()
+    }
     function narouParser(data) {
       const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
       return word

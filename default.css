@@ -178,6 +178,8 @@ header,
 main,
 footer,
 .up-to-top {
+  width: 500px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
