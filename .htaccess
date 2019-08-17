@@ -1,7 +1,12 @@
 <IfModule mod_deflate.c>
-    SetOutputFilter DEFLATE
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE application/x-javascript application/javascript application/ecmascript
+    <IfModule mod_filter.c>
+        FilterDeclare COMPRESS
+        FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^text/#i"
+        FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^application/(atom\+xml|javascript|json|rss\+xml|xml|xhtml\+xml)#i"
+        FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^image/(svg\+xml|vnd\.microsoft\.icon)#i"
+        FilterChain COMPRESS
+        FilterProtocol COMPRESS DEFLATE change=yes;byteranges=no
+    </IfModule>
 </IfModule>
 <IfModule mod_rewrite.c>
 RewriteEngine on

@@ -1,5 +1,4 @@
 $(function () {
-  $('html').css('text-align', 'initial');
   const dfd_load_content = $.Deferred()
   $(document).ready(function($) {
     if ($('html').attr('class').match(/load-content/g)) {
@@ -135,7 +134,7 @@ $(function () {
           dfd_set_url.resolve(url)
         }
       }
-      return dfd_set_url.promise(url)
+      return dfd_set_url.promise()
     }
     dfd_set_url.done(
       $.ajax({
