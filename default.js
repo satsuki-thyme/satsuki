@@ -1,4 +1,4 @@
-console.log('default.js ver. 2019-08-18-1')
+console.log('default.js ver.2019-08-19-1')
 $(function () {
   $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
@@ -169,7 +169,7 @@ $(function () {
           $('p.novel_subtitle').append(subtitle)
         }
         $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
-        prevNextLink()
+        prevNextLink(story_len)
       // HTML
       } else if (extention == 'html') {
         $('html').addClass('html')
@@ -184,7 +184,7 @@ $(function () {
       } else {
         $('main').append(word)
       }
-      function prevNextLink() {
+      function prevNextLink(story_len) {
         const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
         const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
         if (!isNaN(story_len)) {
