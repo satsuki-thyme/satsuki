@@ -1,3 +1,4 @@
+console.log('default.js ver. 2019-08-18-1')
 $(function () {
   $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
