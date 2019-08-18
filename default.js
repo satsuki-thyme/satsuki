@@ -1,8 +1,7 @@
-console.log('2019-08-18-1')
 $(function () {
   $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
-  $(document).ready(function($) {
+  $(document).ready(function() {
     if ($('html').attr('class').match(/load-content/g)) {
       loadContent()
       $(document).ajaxComplete(function() {
@@ -38,14 +37,14 @@ $(function () {
       $('header, main, footer, .up-to-top').css('width', width_window + 'px')
       $('.up-to-top').css('margin-left', - width_window / 2 + 'px')
     }
-    wrapMode()
-    .done(function() {
+    wrapMode().then(function() {
       const dfd_footer_position = $.Deferred()
       setTimeout(function() {
         height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
         dfd_footer_position.resolve()
+        return dfd_footer_position.promise()
       }, 1)
-      .done(function() {
+      dfd_footer_position.then(function() {
         if (height_window < height_content) {
           $('footer').css('padding-top', '30px')
         } else {
@@ -75,22 +74,24 @@ $(function () {
         replaceModalClass('html', 'footer-top-mode-', 2) // wrap 2, 2, 3
       }
       dfd_set_mode.resolve()
+      return dfd_set_mode.promise()
     }
   }
   function replaceModalClass(target, mode_phrase, mode_number) {
     const search_key = new RegExp(mode_phrase + '\\S+')
     const mode = mode_phrase + mode_number
-    const dfd_set_mode = $.Deferred()
-    f()
-    .done(function() {
+    const dfd_remove_class = $.Deferred()
+    f().then(function() {
       $(target).addClass(mode)
     })
     function f() {
       $(target).removeClass(function(index, class_name) {
         return (class_name.match(search_key) || []).join(' ')
       })
-      dfd_set_mode.resolve()
+      dfd_remove_class.resolve()
+      return dfd_remove_class.promise()
     }
+    return dfd_remove_class.promise()
   }
   function loadContent() {
     const dfd_set_url = $.Deferred()
@@ -111,60 +112,15 @@ $(function () {
     var next
     const now = $.now()
     setUrl()
-    .done(
+    .then(
       $.ajax({
         url: url + '?' + now,
         cache: false,
       })
-      .done(function(data) {
-        // Text
-        if (extention == 'txt') {
-          const word = narouParser(data)
-          const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
-          const insert_text = ''
-          const element_array = []
-          const story_len = Number(search.slice(last_slash + 1, last_period))
-          $('html').addClass('narou')
-          $('div#novel_no').append(story_len + '/???')
-          $('div#novel_honbun').append(word)
-          if (data.indexOf('#') > -1) {
-            var subtitle = data.match(/#.*/)[0].replace(/#/, '')
-            $('p.novel_subtitle').append(subtitle)
-          }
-          $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
-          prevNextLink()
-        // HTML
-        } else if (extention == 'html') {
-          $('html').addClass('html')
-          $('main').append(word)
-          $('title').empty().append(decodeURI(text))
-          $('.title').append(decodeURI(text))
-        // Markdown
-        } else if (extention == 'md') {
-          $('html').addClass('markdown')
-          $('main').append(narouParser(marked(keywordReplace(data))))
-        // Another
-        } else {
-          $('main').append(word)
-        }
-        function prevNextLink() {
-          const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
-          const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
-          if (!isNaN(story_len)) {
-            prev = entity_loading + '?/' + opus + '/' + prev_entity
-            next = entity_loading + '?/' + opus + '/' + next_entity
-          }
-          $.get(back_host + user_name + '/' + opus + '/master/' + prev_entity).done(function() {
-            $('a.prev').attr('href', prev)
-          }).fail(function() {
-            $('a.prev').css('display', 'none')
-          })
-          $.get(back_host + user_name + '/' + opus + '/master/' + next_entity).done(function() {
-            $('a.next').attr('href', next)
-          }).fail(function() {
-            $('a.next').css('display', 'none')
-          })
-        }
+      .then(function(data) {
+        writeContent(data)
+        dfd_load_content.resolve()
+        return dfd_load_content.promise()
       })
     )
     function setUrl() {
@@ -194,6 +150,57 @@ $(function () {
           dfd_set_url.resolve(url)
         }
       }
+      return dfd_set_url.promise()
+    }
+    function writeContent(data) {
+      // Text
+      if (extention == 'txt') {
+        const word = narouParser(data)
+        const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
+        const insert_text = ''
+        const element_array = []
+        const story_len = Number(search.slice(last_slash + 1, last_period))
+        $('html').addClass('narou')
+        $('div#novel_no').append(story_len + '/???')
+        $('div#novel_honbun').append(word)
+        if (data.indexOf('#') > -1) {
+          var subtitle = data.match(/#.*/)[0].replace(/#/, '')
+          $('p.novel_subtitle').append(subtitle)
+        }
+        $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
+        prevNextLink()
+      // HTML
+      } else if (extention == 'html') {
+        $('html').addClass('html')
+        $('main').append(word)
+        $('title').empty().append(decodeURI(text))
+        $('.title').append(decodeURI(text))
+      // Markdown
+      } else if (extention == 'md') {
+        $('html').addClass('markdown')
+        $('main').append(narouParser(marked(keywordReplace(data))))
+      // Another
+      } else {
+        $('main').append(word)
+      }
+      function prevNextLink() {
+        const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
+        const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
+        if (!isNaN(story_len)) {
+          prev = entity_loading + '?/' + opus + '/' + prev_entity
+          next = entity_loading + '?/' + opus + '/' + next_entity
+        }
+        $.get(back_host + user_name + '/' + opus + '/master/' + prev_entity).then(function() {
+          $('a.prev').attr('href', prev)
+        }).fail(function() {
+          $('a.prev').css('display', 'none')
+        })
+        $.get(back_host + user_name + '/' + opus + '/master/' + next_entity).then(function() {
+          $('a.next').attr('href', next)
+        }).fail(function() {
+          $('a.next').css('display', 'none')
+        })
+      }
     }
     function narouParser(data) {
       const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
@@ -221,12 +228,13 @@ $(function () {
                                 ["# setup", "# セットアップ"],
                                 ["# passive", "# 状況に振り回されるパート"],
                                 ["# active", "# 状況解決に動き出すパート"],
-                                ["# resolution", "# 解決パート"]
+                                ["# resolution", "# 解決パート"],
+                                ["{", '<span class="tag-bracket">{</span><span class="tag-content">'],
+                                ["}", '</span><span class="tag-bracket">}</span>']
                               ]
       const word_list_hide = ["_summary_", "_gist_"]
       var word_list_replace_length = 0
       var work_kr1 = data
-      work_kr1 = work_kr1.replace(/\{(.*?)\}/g, '<span class="tag-bracket">{</span><span class="tag-content">$1</span><span class="tag-bracket">}</span>')
       for (var i in word_list_replace) {
         word_list_replace_length++
       }
@@ -239,6 +247,5 @@ $(function () {
       }
       return work_kr1
     }
-    dfd_load_content.resolve()
   }
 })
