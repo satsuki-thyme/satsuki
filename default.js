@@ -1,6 +1,5 @@
-console.log('default.js ver.2019-08-19-1')
+console.log('default.js ver.2019-08-19-2')
 $(function () {
-  $('html').removeAttr('style')
   const dfd_load_content = $.Deferred()
   $(document).ready(function() {
     if ($('html').attr('class').match(/load-content/g)) {
