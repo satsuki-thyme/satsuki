@@ -301,6 +301,10 @@ button {
 .footer-bottom-mode-1 footer a {
   padding-left: 0;
 }
+.name {
+  word-break: keep-all;
+  word-wrap: normal;
+}
 .list-item-mode-0.profile .name {
   word-break: keep-all;
   word-wrap: normal;
