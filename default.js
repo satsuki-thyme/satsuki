@@ -1,4 +1,4 @@
-console.log('default.js ver.2019-08-19-2')
+console.log('default.js ver.2019-08-28-1')
 $(function () {
   const dfd_load_content = $.Deferred()
   $(document).ready(function() {
@@ -10,88 +10,35 @@ $(function () {
     } else {
       setStructure()
     }
+    $(window).scroll(function() {
+      const scroll_amount = $(window).scrollTop()
+      if (scroll_amount > 0) {
+        $('.return').fadeIn()
+      } else if (scroll_amount <= 0) {
+        $('.return').fadeOut()
+      }
+    })
   })
-  $('.up-to-top button').on('click',function (e) {
+  $('.return button').on('click',function (e) {
     $('html, body').animate({scrollTop: 0}, 'fast')
-    e.preventDefault()
   })
   $(window).on('resize', function() {
     setStructure()
   })
   function setStructure() {
-    const dfd_set_mode = $.Deferred()
     const width_window = window.innerWidth
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
     const width_content_max = 500
-    const height_window = window.innerHeight
-    const height_footer = $('footer').outerHeight(true)
-    var height_content
-    // 全体の幅設定
-    if (width_window > 625) {
-      $('header, main, footer, .up-to-top').css('width', width_content_max + 'px')
-      $('.up-to-top').css('margin-left', - width_content_max / 2 + 'px')
-    } else if (width_window <= 625 && width_window > 320) {
-      $('header, main, footer, .up-to-top').css('width', width_content + 'px')
-      $('.up-to-top').css('margin-left', - width_content / 2 + 'px')
+    if (width_content > 430) {
+      $('header, main, footer, .return').css('width', width_content_max + 'px')
+      $('.return').css('margin-left', - width_content_max / 2 + 'px')
+    } else if (width_content <= 430 && width_content > 350) {
+      $('header, main, footer, .return').css('width', width_content + 'px')
+      $('.return').css('margin-left', - width_content / 2 + 'px')
     } else {
-      $('header, main, footer, .up-to-top').css('width', width_window + 'px')
-      $('.up-to-top').css('margin-left', - width_window / 2 + 'px')
+      $('header, main, footer, .return').css('width', width_window - 10 + 'px')
+      $('.return').css('margin-left', - width_window / 2 + 'px')
     }
-    wrapMode().then(function() {
-      const dfd_footer_position = $.Deferred()
-      setTimeout(function() {
-        height_content = $('header').outerHeight(true) + $('main').outerHeight(true) + height_footer
-        dfd_footer_position.resolve()
-        return dfd_footer_position.promise()
-      }, 1)
-      dfd_footer_position.then(function() {
-        if (height_window < height_content) {
-          $('footer').css('padding-top', '30px')
-        } else {
-          $('footer').css('padding-top', height_window - height_content + 'px')
-        }
-        $('footer').css('visibility', 'visible');
-      })
-    })
-    function wrapMode() {
-      if (width_content > 300) {
-        replaceModalClass('html', 'list-item-mode-', 0) // no wrap
-      } else {
-        replaceModalClass('html', 'list-item-mode-', 1) // wrap
-      }
-      // コピーライトのところ
-      if (width_content > 460) {
-        replaceModalClass('html', 'footer-bottom-mode-', 0) // no wrap
-      } else {
-        replaceModalClass('html', 'footer-bottom-mode-', 1) // wrap
-      }
-      // nav のところ
-      if (width_content > 400) {
-        replaceModalClass('html', 'footer-top-mode-', 0) // wrap 4, 3
-      } else if (width_content <= 400 && width_content > 320) {
-        replaceModalClass('html', 'footer-top-mode-', 1) // wrap 3, 2, 2
-      } else {
-        replaceModalClass('html', 'footer-top-mode-', 2) // wrap 2, 2, 3
-      }
-      dfd_set_mode.resolve()
-      return dfd_set_mode.promise()
-    }
-  }
-  function replaceModalClass(target, mode_phrase, mode_number) {
-    const search_key = new RegExp(mode_phrase + '\\S+')
-    const mode = mode_phrase + mode_number
-    const dfd_remove_class = $.Deferred()
-    f().then(function() {
-      $(target).addClass(mode)
-    })
-    function f() {
-      $(target).removeClass(function(index, class_name) {
-        return (class_name.match(search_key) || []).join(' ')
-      })
-      dfd_remove_class.resolve()
-      return dfd_remove_class.promise()
-    }
-    return dfd_remove_class.promise()
   }
   function loadContent() {
     const dfd_set_url = $.Deferred()
@@ -119,7 +66,6 @@ $(function () {
       })
       .then(function(data) {
         writeContent(data)
-        dfd_load_content.resolve()
         return dfd_load_content.promise()
       })
     )
@@ -183,6 +129,7 @@ $(function () {
       } else {
         $('main').append(word)
       }
+      dfd_load_content.resolve()
       function prevNextLink(story_len) {
         const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
         const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
