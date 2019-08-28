@@ -2,3 +2,6 @@
 	path = blog
 	url = https://github.com/yayoi-thyme/blog
 
+[submodule "distribution"]
+	path = distribution
+	url = https://github.com/yayoi-thyme/distribution.git
