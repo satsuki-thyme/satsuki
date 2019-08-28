@@ -1,4 +1,4 @@
-console.log('default.js ver.2019-08-28-1')
+console.log('default.js ver.2019-08-29-1')
 $(function () {
   const dfd_load_content = $.Deferred()
   $(document).ready(function() {
@@ -26,13 +26,13 @@ $(function () {
     setStructure()
   })
   function setStructure() {
-    const width_window = window.innerWidth
+    const width_window = $('body').innerWidth()
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
     const width_content_max = 500
-    if (width_content > 430) {
+    if (width_window > 430) {
       $('header, main, footer, .return').css('width', width_content_max + 'px')
       $('.return').css('margin-left', - width_content_max / 2 + 'px')
-    } else if (width_content <= 430 && width_content > 350) {
+    } else if (width_window <= 430 && width_window > 350) {
       $('header, main, footer, .return').css('width', width_content + 'px')
       $('.return').css('margin-left', - width_content / 2 + 'px')
     } else {
