@@ -4,23 +4,8 @@
   Base element
 
 */
-body,
-div,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-ul,
-li,
-figure {
-  margin: 0;
-  padding: 0;
-}
 body {
-  font-family: "Meiryo", "Hiragino Kaku Gothic", "Helvetica", "Arial";
+  font-family: Meiryo, "Hiragino Kaku Gothic", Helvetica, Arial;
   font-size: 16px;
   letter-spacing: 0.05em;
   line-height: 1.7;
@@ -37,129 +22,570 @@ a:hover {
   text-decoration: underline;
   color: #5ec63e;
 }
-ul {
-  padding-left: 1.5em;
-}
-li + li,
-p + li {
-  padding-top: 15px;
-}
-table {
+div,
+dir,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+th,
+td,
+pre,
+code,
+figure,
+form,
+fieldset,
+legend,
+input,
+textarea,
+button {
+  margin: 0;
   padding: 0;
 }
-table,
-td,
-th,
-.table,
-.table-cell {
+main main,
+main section,
+main header,
+main footer,
+main aside {
+  display: flow-root;
+}
+main section,
+main footer,
+main section + aside,
+main footer + aside {
+  margin-top: 40px;
+  padding-left: 18px;
+}
+main footer,
+main aside {
+  margin-right: 20px;
+  margin-left: 20px;
+  padding: 10px 20px;
+}
+main footer,
+main aside {
+  margin-top: 50px;
+}
+main p,
+main ol,
+main ul,
+main dl,
+main div,
+main pre,
+main blockquote,
+main table,
+main figure,
+main details,
+main hr {
+  margin-top: 10px;
+}
+main img {
+  max-width: 95%;
+  margin-top: 0.3em;
+}
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
+  line-height: 1.5;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+main h3 {
+  margin-left: 1rem;
+}
+main h4 {
+  margin-left: 2rem;
+}
+main h5 {
+  margin-left: 3rem;
+}
+main h6 {
+  margin-left: 4rem;
+}
+main p,
+main ol,
+main ul,
+main blockquote,
+main dl,
+main table {
+  line-height: 1.7;
+}
+main ol,
+main ul {
+  margin-left: 1.5em;
+}
+main li > ol,
+main li > ul {
+  margin-top: 0.8em;
+}
+main ol {
+  list-style-type: decimal;
+}
+main ol ol {
+  list-style-type: lower-roman;
+}
+main ol ol ol {
+  list-style-type: lower-alpha;
+}
+main ol ol ol ol {
+  list-style-type: lower-greek;
+}
+main ol ol ol ol ol {
+  list-style-type: hiragana-iroha;
+}
+main ol ol ol ol ol ol {
+  list-style-type: hiragana;
+}
+main li + li {
+  margin-top: 0.5em;
+}
+main dt {
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-bottom: 1px solid;
+}
+main dd {
+  margin-left: 1.5em;
+}
+main dt + dd {
+  margin-top: 3px;
+}
+main dd + dt {
+  margin-top: 25px;
+}
+main dd ul,
+main dd ol {
+  margin-left: 1em;
+}
+main blockquote {
+  width: 80%;
+  margin-right: auto;
+  margin-left:  auto;
+  padding: 10px 60px;
+}
+main blockquote::before {
+  content: '"';
+  font-size: 64px;
+}
+main figure {
+  text-align: center;
+}
+main figcaption {
+  margin-top: 5px;
+  letter-spacing: 0.05em;
+}
+main pre,
+main code,
+main .path,
+main kbd,
+main pre,
+main samp {
+  font-family: Consolas, Courier, Monaco, monospace;
+}
+main pre {
+  display: block;
+  padding: 0;
+  word-break: keep-all;
+  word-wrap: normal;
+  white-space: pre;
+  background-color: transparent;
+  overflow-x: auto;
+}
+main code,
+main .path {
+  display: inline;
+  padding: 2px 7px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+main pre code {
+  display: inline-block;
+  padding: 1em 2em 1em 1em;
+  min-width: 100%;
+  max-width: none;
+  line-height: 1.4;
+  word-break: keep-all;
+  word-wrap: normal;
+  white-space: pre;
+  overflow-x: visible;
+  scroll-behavior: inherit;
+}
+main pre code strong,
+main pre code strong *,
+main code strong,
+main code strong * {
+  font-weight: normal;
+}
+main table {
+  padding: 0;
+}
+main table,
+main td,
+main th,
+main .table,
+main .table-cell {
   border-style: solid;
 }
-table,
-.table {
+main table,
+main .table {
   border-collapse: separate;
   border-spacing: 0;
   border-width: 1px;
 }
-.table {
+main .table {
   padding: 0;
 }
-td,
-th,
-.table-cell {
+main td,
+main th,
+main .table-cell {
   padding: 5px 10px;
   vertical-align: top;
   border-width: 1px 0 0 1px;
 }
-tr:first-child td,
-tr:first-child th,
-[colspan] + td,
-[colspan] + td,
-.table-row:first-child .table-cell {
+main tr:first-child td,
+main tr:first-child th,
+main [colspan] + td,
+main [colspan] + td,
+main .table-row:first-child .table-cell {
   border-top-width: 0;
 }
-td:first-child,
-th:first-child,
-[rowspan] + td,
-[rowspan] + td,
-.table-cell:first-child {
+main td:first-child,
+main th:first-child,
+main [rowspan] + td,
+main [rowspan] + td,
+main .table-cell:first-child {
   border-left-width: 0;
 }
-thead + tbody tr:first-child td,
-thead + tbody tr:first-child th {
+main thead + tbody tr:first-child td,
+main thead + tbody tr:first-child th {
   border-top-width: 1px;
 }
-tfoot tr:first-child td,
-tfoot tr:first-child th {
+main tfoot tr:first-child td,
+main tfoot tr:first-child th {
   border-top-width: 1px;
 }
-[rowspan] {
+main [rowspan] {
   border-right-width: 1px;
 }
-.table {
+main .table {
   display: table;
   list-style: none;
 }
-.table-row {
+main .table-row {
   display: table-row;
   margin: 0;
 }
-.table-cell {
+main .table-cell {
   display: table-cell;
   margin: 0;
 }
-section + section {
-  margin-top: 50px;
+main strong {
+  font-weight: bold;
 }
-section h1 + p,
-section h2 + p,
-section h3 + p,
-section h4 + p,
-section h5 + p,
-section h6 + p,
-section h1 + p + p,
-section h2 + p + p,
-section h3 + p + p,
-section h4 + p + p,
-section h5 + p + p,
-section h6 + p + p {
-  padding-left: 30px;
-  padding-right: 30px;
+main em {
+  border-bottom: 1px dashed #666;
+}
+main q {
+  position: relative;
+  padding: 2px 2px;
+}
+main q::before,
+main q::after {
+  position: relative;
+  top: 0.2em;
+  font-size: 32px;
+  line-height: 0;
+}
+main q::before {
+  content: '"';
+}
+main q::after {
+  content: '"';
+}
+main blockquote p:first-child {
+  margin-top: 0;
+}
+main ins {
+  text-decoration: underline;
+}
+main ins::before {
+  content: "[ins]";
+  margin-right: 0.1em;
+}
+main mark {
+  padding: 0 3px;
+}
+main hr {
+  border-width: 1px 0 0;
+  border-style: dashed;
+  background-color: transparent;
+}
+main aside + footer,
+main aside + aside,
+main aside + h1,
+main aside + h2,
+main aside + h3,
+main aside + h4,
+main aside + h5,
+main aside + h6,
+main aside + p,
+main aside + ol,
+main aside + ul,
+main aside + dl,
+main aside + div,
+main aside + pre,
+main aside + blockquote,
+main aside + table,
+main aside + figure,
+main aside + details,
+main aside + hr {
+  margin-top: 40px;
+}
+main h1 + section,
+main h2 + section,
+main h3 + section,
+main h4 + section,
+main h5 + section,
+main h6 + section {
+  margin-top: 20px;
+}
+main section > p:first-child,
+main section > ol:first-child,
+main section > ul:first-child,
+main section > dl:first-child,
+main section > div:first-child,
+main section > pre:first-child,
+main section > blockquote:first-child,
+main section > table:first-child,
+main section > figure:first-child,
+main section > details:first-child,
+main section > hr:first-child,
+main div > p:first-child,
+main div > ol:first-child,
+main div > ul:first-child,
+main div > dl:first-child,
+main div > div:first-child,
+main div > pre:first-child,
+main div > blockquote:first-child,
+main div > table:first-child,
+main div > figure:first-child,
+main div > details:first-child,
+main div > hr:first-child {
+  margin-top: 0;
+}
+main section > :last-child:not(section) {
+  margin-bottom: 13px;
+}
+main p + footer,
+main ol + footer,
+main ul + footer,
+main dl + footer,
+main div + footer,
+main pre + footer,
+main blockquote + footer,
+main table + footer,
+main figure + footer,
+main details + footer,
+main hr + footer,
+main p + aside,
+main ol + aside,
+main ul + aside,
+main dl + aside,
+main div + aside,
+main pre + aside,
+main blockquote + aside,
+main table + aside,
+main figure + aside,
+main details + aside {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+main footer > p:first-child,
+main footer > ol:first-child,
+main footer > ul:first-child,
+main footer > dl:first-child,
+main footer > div:first-child,
+main footer > pre:first-child,
+main footer > blockquote:first-child,
+main footer > table:first-child,
+main footer > figure:first-child,
+main footer > details:first-child,
+main footer > hr:first-child,
+main aside > p:first-child,
+main aside > ol:first-child,
+main aside > ul:first-child,
+main aside > dl:first-child,
+main aside > div:first-child,
+main aside > pre:first-child,
+main aside > blockquote:first-child,
+main aside > table:first-child,
+main aside > figure:first-child,
+main aside > details:first-child,
+main aside > hr:first-child {
+  margin-top: 0.7em;
+}
+main section + p,
+main section + ol,
+main section + ul,
+main section + dl,
+main section + div,
+main section + pre,
+main section + blockquote,
+main section + table,
+main section + figure,
+main section + details,
+main section + hr,
+main footer + p,
+main footer + ol,
+main footer + ul,
+main footer + dl,
+main footer + div,
+main footer + pre,
+main footer + blockquote,
+main footer + table,
+main footer + figure,
+main footer + details,
+main footer + hr,
+main aside + p,
+main aside + ol,
+main aside + ul,
+main aside + dl,
+main aside + div,
+main aside + pre,
+main aside + blockquote,
+main aside + table,
+main aside + figure,
+main aside + details,
+main aside + hr {
+  margin-top: 3em;
+}
+main h1 ~ p,
+main h1 ~ ol,
+main h1 ~ ul,
+main h1 ~ dl,
+main h1 ~ div,
+main h1 ~ pre,
+main h1 ~ blockquote,
+main h1 ~ table,
+main h1 ~ figure,
+main h1 ~ details,
+main h1 ~ hr,
+main h2 ~ p,
+main h2 ~ ol,
+main h2 ~ ul,
+main h2 ~ dl,
+main h2 ~ div,
+main h2 ~ pre,
+main h2 ~ blockquote,
+main h2 ~ table,
+main h2 ~ figure,
+main h2 ~ details,
+main h2 ~ hr {
+  padding-left: 1rem;
+}
+main h3 ~ p,
+main h3 ~ ol,
+main h3 ~ ul,
+main h3 ~ dl,
+main h3 ~ div,
+main h3 ~ pre,
+main h3 ~ blockquote,
+main h3 ~ table,
+main h3 ~ figure,
+main h3 ~ details,
+main h3 ~ hr {
+  padding-left: 2rem;
+}
+main h4 ~ p,
+main h4 ~ ol,
+main h4 ~ ul,
+main h4 ~ dl,
+main h4 ~ div,
+main h4 ~ pre,
+main h4 ~ blockquote,
+main h4 ~ table,
+main h4 ~ figure,
+main h4 ~ details,
+main h4 ~ hr {
+  padding-left: 3rem;
+}
+main h5 ~ p,
+main h5 ~ ol,
+main h5 ~ ul,
+main h5 ~ dl,
+main h5 ~ div,
+main h5 ~ pre,
+main h5 ~ blockquote,
+main h5 ~ table,
+main h5 ~ figure,
+main h5 ~ details,
+main h5 ~ hr {
+  padding-left: 4rem;
+}
+main h6 ~ p,
+main h6 ~ ol,
+main h6 ~ ul,
+main h6 ~ dl,
+main h6 ~ div,
+main h6 ~ pre,
+main h6 ~ blockquote,
+main h6 ~ table,
+main h6 ~ figure,
+main h6 ~ details,
+main h6 ~ hr {
+  padding-left: 5rem;
 }
 /*
 
   Base structure
 
 */
-header {
+body > header {
   text-align: center;
 }
-.top-page header {
+.top-page body > header {
   padding-top: 30px;
 }
-.sub-page header {
+.sub-page body > header {
   padding-top: 5px;
 }
-header,
-header a,
-header a h1,
-header a img,
-header:hover,
-header:hover a,
-header:hover a h1,
-header:hover a img,
-header a:hover,
-header a:hover h1,
-header a:hover img,
-header a h1:hover,
-header a img:hover {
+body > header,
+body > header a,
+body > header a h1,
+body > header a img,
+body > header:hover,
+body > header:hover a,
+body > header:hover a h1,
+body > header:hover a img,
+body > header a:hover,
+body > header a:hover h1,
+body > header a:hover img,
+body > header a h1:hover,
+body > header a img:hover {
   text-decoration: none;
 }
 .sub-page header h1,
 .sub-page header img {
   display: inline-block;
+  margin: 0;
   vertical-align: middle;
+  border: none;
 }
-header h1 {
+body > header h1 {
   font-weight: normal;
   color: #62a433;
 }
@@ -175,9 +601,9 @@ header h1 {
   width: 160px;
   max-width: 95%;
 }
-header,
+body > header,
 main,
-footer,
+body > footer,
 .up-to-top {
   width: 0;
   max-width: 100%;
@@ -194,20 +620,26 @@ main {
 .profile .table-cell,
 .favorite .table,
 .favorite .table-row,
-.favorite .table-cell {
+.favorite .table-cell,
+.distribution .table,
+.distribution .table-row,
+.distribution .table-cell {
   border: none;
 }
 .profile .name,
-.favorite .name {
+.favorite .name,
+.distribution .name {
   padding-right: 4px;
 }
 .profile .colon,
-.favorite .colon {
+.favorite .colon,
+.distribution .colon {
   padding-right: 0;
   padding-left: 0;
 }
 .profile .content,
-.favorite .content {
+.favorite .content,
+.distribution .content {
   padding-left: 4px;
 }
 .sub-page nav {
@@ -242,11 +674,13 @@ nav .current {
   border-bottom: 1px solid #62a433;
   pointer-events: none;
 }
-footer {
+main + footer {
+  padding-top: 50px;
   padding-bottom: 5px;
+  text-align: center;
   background-color: #fff;
 }
-footer p {
+main + footer p {
   display: flex;
   justify-content: center;
   font-size: 15px;
@@ -281,18 +715,16 @@ button {
 .sub-page nav br {
   display: none;
 }
-footer {
-  padding-top: 50px;
-  text-align: center;
-}
 .sub-page footer .privacy-policy {
   margin-top: 20px;
 }
-.name {
+.profile .name,
+.favorite .name {
   word-break: keep-all;
   word-wrap: normal;
 }
-.content {
+.profile .content,
+.favorite .content {
   word-break: break-all;
   word-wrap: break-word;
 }
@@ -462,99 +894,6 @@ footer {
   box-sizing: border-box;
   line-height: 28.8px;
   font-size: 16px;
-}
-/*
-
-  Markdown
-
-*/
-.markdown main {
-  padding-left: 50px;
-}
-.markdown main h1,
-.markdown main h2,
-.markdown main h3,
-.markdown main h4,
-.markdown main h5,
-.markdown main h6 {
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-}
-.markdown main h1:not(:first-child) {
-  margin-top: 80px;
-}
-.markdown main h1 {
-  margin-left: -50px;
-}
-.markdown main h2:not(:first-child) {
-  margin-top: 60px;
-}
-.markdown main h2 {
-  margin-left: -25px;
-}
-.markdown main h3:not(:first-child) {
-  margin-top: 40px;
-}
-.markdown main h3 {
-  margin-left: 0;
-}
-.markdown main h4,
-.markdown main h5,
-.markdown main h6 {
-  padding-left: 0;
-}
-.markdown main h1 + h2,
-.markdown main h1 + h3,
-.markdown main h1 + h4,
-.markdown main h1 + h5,
-.markdown main h1 + h6,
-.markdown main h2 + h3,
-.markdown main h2 + h4,
-.markdown main h2 + h5,
-.markdown main h2 + h6,
-.markdown main h3 + h4,
-.markdown main h3 + h5,
-.markdown main h3 + h6,
-.markdown main h4 + h5,
-.markdown main h4 + h6,
-.markdown main h5 + h6 {
-  margin-top: 20px;
-}
-.markdown main p:first-child,
-.markdown main p:first-child + p {
-  margin-left: -50px;
-}
-.markdown main h1 + p,
-.markdown main h2 + p,
-.markdown main h3 + p,
-.markdown main h4 + p,
-.markdown main h5 + p,
-.markdown main h6 + p {
-  margin-top: 15px;
-}
-.markdown main ol,
-.markdown main ul {
-  padding-left: 1.5em;
-}
-.markdown main ol ol,
-.markdown main ol ul,
-.markdown main ul ol,
-.markdown main ul ul {
-  padding-left: 4em;
-}
-.markdown main ol ol:last-child,
-.markdown main ol ul:last-child,
-.markdown main ul ol:last-child,
-.markdown main ul ul:last-child {
-  padding-bottom: 1em;
-}
-.markdown main table {
-  padding: 0;
-}
-.markdown main hr {
-  border-width: 1px 0 0;
-  border-style: dashed;
-  background-color: transparent;
 }
 /*
 

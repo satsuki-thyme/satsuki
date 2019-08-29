@@ -30,13 +30,13 @@ $(function () {
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
     const width_content_max = 500
     if (width_window > 430) {
-      $('header, main, footer, .return').css('width', width_content_max + 'px')
+      $('body > header, main, body > footer, .return').css('width', width_content_max + 'px')
       $('.return').css('margin-left', - width_content_max / 2 + 'px')
     } else if (width_window <= 430 && width_window > 350) {
-      $('header, main, footer, .return').css('width', width_content + 'px')
+      $('body > header, main, body > footer, .return').css('width', width_content + 'px')
       $('.return').css('margin-left', - width_content / 2 + 'px')
     } else {
-      $('header, main, footer, .return').css('width', width_window - 10 + 'px')
+      $('body > header, main, body > footer, .return').css('width', width_window - 10 + 'px')
       $('.return').css('margin-left', - width_window / 2 + 'px')
     }
   }
@@ -101,7 +101,7 @@ $(function () {
     function writeContent(data) {
       // Text
       if (extention == 'txt') {
-        const word = narouParser(data)
+        const word = rubyParser(data)
         const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
         const insert_text = ''
         const element_array = []
@@ -124,7 +124,7 @@ $(function () {
       // Markdown
       } else if (extention == 'md') {
         $('html').addClass('markdown')
-        $('main').append(narouParser(marked(keywordReplace(data))))
+        $('main').append(rubyParser(marked(keywordReplace(data))))
       // Another
       } else {
         $('main').append(word)
@@ -149,7 +149,8 @@ $(function () {
         })
       }
     }
-    function narouParser(data) {
+    function rubyParser(data) {
+      /*                ↓ ここから ------------------------------ ↓ ここまで、ルビとは無関係 */
       const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
       return word
     }
