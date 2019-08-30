@@ -52,150 +52,155 @@ button {
   margin: 0;
   padding: 0;
 }
-main main,
-main section,
-main header,
-main footer,
-main aside {
+.sub-page main main,
+.sub-page main section,
+.sub-page main header,
+.sub-page main footer,
+.sub-page main aside {
   display: flow-root;
 }
-main section,
-main footer,
-main section + aside,
-main footer + aside {
-  margin-top: 40px;
-  padding-left: 18px;
+.sub-page main section,
+.sub-page main footer,
+.sub-page main section + aside,
+.sub-page main footer + aside,
+.markdown main h1,
+.markdown main h2,
+.markdown main h3,
+.markdown main h4,
+.markdown main h5,
+.markdown main h6 {
+  padding-top: 40px;
 }
-main footer,
-main aside {
+.sub-page main footer,
+.sub-page main aside {
   margin-right: 20px;
   margin-left: 20px;
   padding: 10px 20px;
 }
-main footer,
-main aside {
+.sub-page main footer,
+.sub-page main aside {
   margin-top: 50px;
 }
-main p,
-main ol,
-main ul,
-main dl,
-main div,
-main pre,
-main blockquote,
-main table,
-main figure,
-main details,
-main hr {
+.sub-page main p,
+.sub-page main ol,
+.sub-page main ul,
+.sub-page main dl,
+.sub-page main div,
+.sub-page main pre,
+.sub-page main blockquote,
+.sub-page main table,
+.sub-page main figure,
+.sub-page main details,
+.sub-page main hr {
   margin-top: 10px;
 }
-main img {
+.sub-page main img {
   max-width: 95%;
-  margin-top: 0.3em;
+  margin-top: 0.3rem;
 }
-main h1,
-main h2,
-main h3,
-main h4,
-main h5,
-main h6 {
+.sub-page main h1,
+.sub-page main h2,
+.sub-page main h3,
+.sub-page main h4,
+.sub-page main h5,
+.sub-page main h6 {
   line-height: 1.5;
   border-bottom-width: 1px;
   border-bottom-style: solid;
 }
-main h3 {
+.sub-page main h3 {
   margin-left: 1rem;
 }
-main h4 {
+.sub-page main h4 {
   margin-left: 2rem;
 }
-main h5 {
+.sub-page main h5 {
   margin-left: 3rem;
 }
-main h6 {
+.sub-page main h6 {
   margin-left: 4rem;
 }
-main p,
-main ol,
-main ul,
-main blockquote,
-main dl,
-main table {
+.sub-page main p,
+.sub-page main ol,
+.sub-page main ul,
+.sub-page main blockquote,
+.sub-page main dl,
+.sub-page main table {
   line-height: 1.7;
 }
-main ol,
-main ul {
-  margin-left: 1.5em;
+.sub-page main ol,
+.sub-page main ul {
+  margin-left: 1.5rem;
 }
-main li > ol,
-main li > ul {
-  margin-top: 0.8em;
+.sub-page main li > ol,
+.sub-page main li > ul {
+  margin-top: 0.8rem;
 }
-main ol {
+.sub-page main ol {
   list-style-type: decimal;
 }
-main ol ol {
+.sub-page main ol ol {
   list-style-type: lower-roman;
 }
-main ol ol ol {
+.sub-page main ol ol ol {
   list-style-type: lower-alpha;
 }
-main ol ol ol ol {
+.sub-page main ol ol ol ol {
   list-style-type: lower-greek;
 }
-main ol ol ol ol ol {
+.sub-page main ol ol ol ol ol {
   list-style-type: hiragana-iroha;
 }
-main ol ol ol ol ol ol {
+.sub-page main ol ol ol ol ol ol {
   list-style-type: hiragana;
 }
-main li + li {
-  margin-top: 0.5em;
+.sub-page main li + li {
+  margin-top: 0.5rem;
 }
-main dt {
+.sub-page main dt {
   font-weight: bold;
   letter-spacing: 1px;
   border-bottom: 1px solid;
 }
-main dd {
-  margin-left: 1.5em;
+.sub-page main dd {
+  margin-left: 1.5rem;
 }
-main dt + dd {
+.sub-page main dt + dd {
   margin-top: 3px;
 }
-main dd + dt {
+.sub-page main dd + dt {
   margin-top: 25px;
 }
-main dd ul,
-main dd ol {
-  margin-left: 1em;
+.sub-page main dd ul,
+.sub-page main dd ol {
+  margin-left: 1rem;
 }
-main blockquote {
+.sub-page main blockquote {
   width: 80%;
   margin-right: auto;
   margin-left:  auto;
   padding: 10px 60px;
 }
-main blockquote::before {
+.sub-page main blockquote::before {
   content: '"';
   font-size: 64px;
 }
-main figure {
+.sub-page main figure {
   text-align: center;
 }
-main figcaption {
+.sub-page main figcaption {
   margin-top: 5px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.05rem;
 }
-main pre,
-main code,
-main .path,
-main kbd,
-main pre,
-main samp {
+.sub-page main pre,
+.sub-page main code,
+.sub-page main .path,
+.sub-page main kbd,
+.sub-page main pre,
+.sub-page main samp {
   font-family: Consolas, Courier, Monaco, monospace;
 }
-main pre {
+.sub-page main pre {
   display: block;
   padding: 0;
   word-break: keep-all;
@@ -204,17 +209,17 @@ main pre {
   background-color: transparent;
   overflow-x: auto;
 }
-main code,
-main .path {
+.sub-page main code,
+.sub-page main .path {
   display: inline;
   padding: 2px 7px;
   word-break: break-all;
   word-wrap: break-word;
   white-space: pre-wrap;
 }
-main pre code {
+.sub-page main pre code {
   display: inline-block;
-  padding: 1em 2em 1em 1em;
+  padding: 1em 2em 1em 1rem;
   min-width: 100%;
   max-width: none;
   line-height: 1.4;
@@ -224,329 +229,368 @@ main pre code {
   overflow-x: visible;
   scroll-behavior: inherit;
 }
-main pre code strong,
-main pre code strong *,
-main code strong,
-main code strong * {
+.sub-page main pre code strong,
+.sub-page main pre code strong *,
+.sub-page main code strong,
+.sub-page main code strong * {
   font-weight: normal;
 }
-main table {
+.sub-page main table {
   padding: 0;
 }
-main table,
-main td,
-main th,
-main .table,
-main .table-cell {
+.sub-page main table,
+.sub-page main td,
+.sub-page main th,
+.sub-page main .table,
+.sub-page main .table-cell {
   border-style: solid;
 }
-main table,
-main .table {
+.sub-page main table,
+.sub-page main .table {
   border-collapse: separate;
   border-spacing: 0;
   border-width: 1px;
 }
-main .table {
+.sub-page main .table {
   padding: 0;
 }
-main td,
-main th,
-main .table-cell {
+.sub-page main td,
+.sub-page main th,
+.sub-page main .table-cell {
   padding: 5px 10px;
   vertical-align: top;
   border-width: 1px 0 0 1px;
 }
-main tr:first-child td,
-main tr:first-child th,
-main [colspan] + td,
-main [colspan] + td,
-main .table-row:first-child .table-cell {
+.sub-page main tr:first-child td,
+.sub-page main tr:first-child th,
+.sub-page main [colspan] + td,
+.sub-page main [colspan] + td,
+.sub-page main .table-row:first-child .table-cell {
   border-top-width: 0;
 }
-main td:first-child,
-main th:first-child,
-main [rowspan] + td,
-main [rowspan] + td,
-main .table-cell:first-child {
+.sub-page main td:first-child,
+.sub-page main th:first-child,
+.sub-page main [rowspan] + td,
+.sub-page main [rowspan] + td,
+.sub-page main .table-cell:first-child {
   border-left-width: 0;
 }
-main thead + tbody tr:first-child td,
-main thead + tbody tr:first-child th {
+.sub-page main thead + tbody tr:first-child td,
+.sub-page main thead + tbody tr:first-child th {
   border-top-width: 1px;
 }
-main tfoot tr:first-child td,
-main tfoot tr:first-child th {
+.sub-page main tfoot tr:first-child td,
+.sub-page main tfoot tr:first-child th {
   border-top-width: 1px;
 }
-main [rowspan] {
+.sub-page main [rowspan] {
   border-right-width: 1px;
 }
-main .table {
+.sub-page main .table {
   display: table;
   list-style: none;
 }
-main .table-row {
+.sub-page main .table-row {
   display: table-row;
   margin: 0;
 }
-main .table-cell {
+.sub-page main .table-cell {
   display: table-cell;
   margin: 0;
 }
-main strong {
+.sub-page main strong {
   font-weight: bold;
 }
-main em {
+.sub-page main em {
   border-bottom: 1px dashed #666;
 }
-main q {
+.sub-page main q {
   position: relative;
   padding: 2px 2px;
 }
-main q::before,
-main q::after {
+.sub-page main q::before,
+.sub-page main q::after {
   position: relative;
-  top: 0.2em;
+  top: 0.2rem;
   font-size: 32px;
   line-height: 0;
 }
-main q::before {
+.sub-page main q::before {
   content: '"';
 }
-main q::after {
+.sub-page main q::after {
   content: '"';
 }
-main blockquote p:first-child {
+.sub-page main blockquote p:first-child {
   margin-top: 0;
 }
-main ins {
+.sub-page main ins {
   text-decoration: underline;
 }
-main ins::before {
+.sub-page main ins::before {
   content: "[ins]";
-  margin-right: 0.1em;
+  margin-right: 0.1rem;
 }
-main mark {
+.sub-page main mark {
   padding: 0 3px;
 }
-main hr {
+.sub-page main hr {
   border-width: 1px 0 0;
   border-style: dashed;
   background-color: transparent;
 }
-main aside + footer,
-main aside + aside,
-main aside + h1,
-main aside + h2,
-main aside + h3,
-main aside + h4,
-main aside + h5,
-main aside + h6,
-main aside + p,
-main aside + ol,
-main aside + ul,
-main aside + dl,
-main aside + div,
-main aside + pre,
-main aside + blockquote,
-main aside + table,
-main aside + figure,
-main aside + details,
-main aside + hr {
+.sub-page main aside + footer,
+.sub-page main aside + aside,
+.sub-page main aside + h1,
+.sub-page main aside + h2,
+.sub-page main aside + h3,
+.sub-page main aside + h4,
+.sub-page main aside + h5,
+.sub-page main aside + h6,
+.sub-page main aside + p,
+.sub-page main aside + ol,
+.sub-page main aside + ul,
+.sub-page main aside + dl,
+.sub-page main aside + div,
+.sub-page main aside + pre,
+.sub-page main aside + blockquote,
+.sub-page main aside + table,
+.sub-page main aside + figure,
+.sub-page main aside + details,
+.sub-page main aside + hr {
   margin-top: 40px;
 }
-main h1 + section,
-main h2 + section,
-main h3 + section,
-main h4 + section,
-main h5 + section,
-main h6 + section {
+.sub-page main h1 + section,
+.sub-page main h2 + section,
+.sub-page main h3 + section,
+.sub-page main h4 + section,
+.sub-page main h5 + section,
+.sub-page main h6 + section,
+.markdown main h1 ~ h2,
+.markdown main h1 ~ h3,
+.markdown main h1 ~ h4,
+.markdown main h1 ~ h5,
+.markdown main h1 ~ h6,
+.markdown main h2 ~ h3,
+.markdown main h2 ~ h4,
+.markdown main h2 ~ h5,
+.markdown main h2 ~ h6,
+.markdown main h3 ~ h4,
+.markdown main h3 ~ h5,
+.markdown main h3 ~ h6,
+.markdown main h4 ~ h5,
+.markdown main h4 ~ h6,
+.markdown main h5 ~ h6 {
   margin-top: 20px;
 }
-main section > p:first-child,
-main section > ol:first-child,
-main section > ul:first-child,
-main section > dl:first-child,
-main section > div:first-child,
-main section > pre:first-child,
-main section > blockquote:first-child,
-main section > table:first-child,
-main section > figure:first-child,
-main section > details:first-child,
-main section > hr:first-child,
-main div > p:first-child,
-main div > ol:first-child,
-main div > ul:first-child,
-main div > dl:first-child,
-main div > div:first-child,
-main div > pre:first-child,
-main div > blockquote:first-child,
-main div > table:first-child,
-main div > figure:first-child,
-main div > details:first-child,
-main div > hr:first-child {
+.sub-page main > p:first-child,
+.sub-page main > ol:first-child,
+.sub-page main > ul:first-child,
+.sub-page main > dl:first-child,
+.sub-page main > div:first-child,
+.sub-page main > pre:first-child,
+.sub-page main > blockquote:first-child,
+.sub-page main > table:first-child,
+.sub-page main > figure:first-child,
+.sub-page main > details:first-child,
+.sub-page main > hr:first-child,
+.sub-page main section > p:first-child,
+.sub-page main section > ol:first-child,
+.sub-page main section > ul:first-child,
+.sub-page main section > dl:first-child,
+.sub-page main section > div:first-child,
+.sub-page main section > pre:first-child,
+.sub-page main section > blockquote:first-child,
+.sub-page main section > table:first-child,
+.sub-page main section > figure:first-child,
+.sub-page main section > details:first-child,
+.sub-page main section > hr:first-child,
+.sub-page main div > p:first-child,
+.sub-page main div > ol:first-child,
+.sub-page main div > ul:first-child,
+.sub-page main div > dl:first-child,
+.sub-page main div > div:first-child,
+.sub-page main div > pre:first-child,
+.sub-page main div > blockquote:first-child,
+.sub-page main div > table:first-child,
+.sub-page main div > figure:first-child,
+.sub-page main div > details:first-child,
+.sub-page main div > hr:first-child {
   margin-top: 0;
 }
-main section > :last-child:not(section) {
+.sub-page main section > :last-child:not(section) {
   margin-bottom: 13px;
 }
-main p + footer,
-main ol + footer,
-main ul + footer,
-main dl + footer,
-main div + footer,
-main pre + footer,
-main blockquote + footer,
-main table + footer,
-main figure + footer,
-main details + footer,
-main hr + footer,
-main p + aside,
-main ol + aside,
-main ul + aside,
-main dl + aside,
-main div + aside,
-main pre + aside,
-main blockquote + aside,
-main table + aside,
-main figure + aside,
-main details + aside {
+.sub-page main p + footer,
+.sub-page main ol + footer,
+.sub-page main ul + footer,
+.sub-page main dl + footer,
+.sub-page main div + footer,
+.sub-page main pre + footer,
+.sub-page main blockquote + footer,
+.sub-page main table + footer,
+.sub-page main figure + footer,
+.sub-page main details + footer,
+.sub-page main hr + footer,
+.sub-page main p + aside,
+.sub-page main ol + aside,
+.sub-page main ul + aside,
+.sub-page main dl + aside,
+.sub-page main div + aside,
+.sub-page main pre + aside,
+.sub-page main blockquote + aside,
+.sub-page main table + aside,
+.sub-page main figure + aside,
+.sub-page main details + aside {
   margin-top: 0;
   margin-bottom: 0;
 }
-main footer > p:first-child,
-main footer > ol:first-child,
-main footer > ul:first-child,
-main footer > dl:first-child,
-main footer > div:first-child,
-main footer > pre:first-child,
-main footer > blockquote:first-child,
-main footer > table:first-child,
-main footer > figure:first-child,
-main footer > details:first-child,
-main footer > hr:first-child,
-main aside > p:first-child,
-main aside > ol:first-child,
-main aside > ul:first-child,
-main aside > dl:first-child,
-main aside > div:first-child,
-main aside > pre:first-child,
-main aside > blockquote:first-child,
-main aside > table:first-child,
-main aside > figure:first-child,
-main aside > details:first-child,
-main aside > hr:first-child {
-  margin-top: 0.7em;
+.sub-page main footer > p:first-child,
+.sub-page main footer > ol:first-child,
+.sub-page main footer > ul:first-child,
+.sub-page main footer > dl:first-child,
+.sub-page main footer > div:first-child,
+.sub-page main footer > pre:first-child,
+.sub-page main footer > blockquote:first-child,
+.sub-page main footer > table:first-child,
+.sub-page main footer > figure:first-child,
+.sub-page main footer > details:first-child,
+.sub-page main footer > hr:first-child,
+.sub-page main aside > p:first-child,
+.sub-page main aside > ol:first-child,
+.sub-page main aside > ul:first-child,
+.sub-page main aside > dl:first-child,
+.sub-page main aside > div:first-child,
+.sub-page main aside > pre:first-child,
+.sub-page main aside > blockquote:first-child,
+.sub-page main aside > table:first-child,
+.sub-page main aside > figure:first-child,
+.sub-page main aside > details:first-child,
+.sub-page main aside > hr:first-child {
+  margin-top: 0.7rem;
 }
-main section + p,
-main section + ol,
-main section + ul,
-main section + dl,
-main section + div,
-main section + pre,
-main section + blockquote,
-main section + table,
-main section + figure,
-main section + details,
-main section + hr,
-main footer + p,
-main footer + ol,
-main footer + ul,
-main footer + dl,
-main footer + div,
-main footer + pre,
-main footer + blockquote,
-main footer + table,
-main footer + figure,
-main footer + details,
-main footer + hr,
-main aside + p,
-main aside + ol,
-main aside + ul,
-main aside + dl,
-main aside + div,
-main aside + pre,
-main aside + blockquote,
-main aside + table,
-main aside + figure,
-main aside + details,
-main aside + hr {
-  margin-top: 3em;
+.sub-page main section + p,
+.sub-page main section + ol,
+.sub-page main section + ul,
+.sub-page main section + dl,
+.sub-page main section + div,
+.sub-page main section + pre,
+.sub-page main section + blockquote,
+.sub-page main section + table,
+.sub-page main section + figure,
+.sub-page main section + details,
+.sub-page main section + hr,
+.sub-page main footer + p,
+.sub-page main footer + ol,
+.sub-page main footer + ul,
+.sub-page main footer + dl,
+.sub-page main footer + div,
+.sub-page main footer + pre,
+.sub-page main footer + blockquote,
+.sub-page main footer + table,
+.sub-page main footer + figure,
+.sub-page main footer + details,
+.sub-page main footer + hr,
+.sub-page main aside + p,
+.sub-page main aside + ol,
+.sub-page main aside + ul,
+.sub-page main aside + dl,
+.sub-page main aside + div,
+.sub-page main aside + pre,
+.sub-page main aside + blockquote,
+.sub-page main aside + table,
+.sub-page main aside + figure,
+.sub-page main aside + details,
+.sub-page main aside + hr {
+  margin-top: 3rem;
 }
-main h1 ~ p,
-main h1 ~ ol,
-main h1 ~ ul,
-main h1 ~ dl,
-main h1 ~ div,
-main h1 ~ pre,
-main h1 ~ blockquote,
-main h1 ~ table,
-main h1 ~ figure,
-main h1 ~ details,
-main h1 ~ hr,
-main h2 ~ p,
-main h2 ~ ol,
-main h2 ~ ul,
-main h2 ~ dl,
-main h2 ~ div,
-main h2 ~ pre,
-main h2 ~ blockquote,
-main h2 ~ table,
-main h2 ~ figure,
-main h2 ~ details,
-main h2 ~ hr {
+.sub-page p + h1,
+.sub-page ol + h1,
+.sub-page ul + h1,
+.sub-page dl + h1,
+.sub-page div + h1,
+.sub-page pre + h1,
+.sub-page blockquote + h1,
+.sub-page table + h1,
+.sub-page figure + h1,
+.sub-page details + h1,
+.sub-page hr + h1,
+
+}
+.sub-page main h1 ~ p,
+.sub-page main h1 ~ ol,
+.sub-page main h1 ~ ul,
+.sub-page main h1 ~ dl,
+.sub-page main h1 ~ div,
+.sub-page main h1 ~ pre,
+.sub-page main h1 ~ blockquote,
+.sub-page main h1 ~ table,
+.sub-page main h1 ~ figure,
+.sub-page main h1 ~ details,
+.sub-page main h1 ~ hr,
+.sub-page main h2 ~ p,
+.sub-page main h2 ~ ol,
+.sub-page main h2 ~ ul,
+.sub-page main h2 ~ dl,
+.sub-page main h2 ~ div,
+.sub-page main h2 ~ pre,
+.sub-page main h2 ~ blockquote,
+.sub-page main h2 ~ table,
+.sub-page main h2 ~ figure,
+.sub-page main h2 ~ details,
+.sub-page main h2 ~ hr {
   padding-left: 1rem;
 }
-main h3 ~ p,
-main h3 ~ ol,
-main h3 ~ ul,
-main h3 ~ dl,
-main h3 ~ div,
-main h3 ~ pre,
-main h3 ~ blockquote,
-main h3 ~ table,
-main h3 ~ figure,
-main h3 ~ details,
-main h3 ~ hr {
+.sub-page main h3 ~ p,
+.sub-page main h3 ~ ol,
+.sub-page main h3 ~ ul,
+.sub-page main h3 ~ dl,
+.sub-page main h3 ~ div,
+.sub-page main h3 ~ pre,
+.sub-page main h3 ~ blockquote,
+.sub-page main h3 ~ table,
+.sub-page main h3 ~ figure,
+.sub-page main h3 ~ details,
+.sub-page main h3 ~ hr {
   padding-left: 2rem;
 }
-main h4 ~ p,
-main h4 ~ ol,
-main h4 ~ ul,
-main h4 ~ dl,
-main h4 ~ div,
-main h4 ~ pre,
-main h4 ~ blockquote,
-main h4 ~ table,
-main h4 ~ figure,
-main h4 ~ details,
-main h4 ~ hr {
+.sub-page main h4 ~ p,
+.sub-page main h4 ~ ol,
+.sub-page main h4 ~ ul,
+.sub-page main h4 ~ dl,
+.sub-page main h4 ~ div,
+.sub-page main h4 ~ pre,
+.sub-page main h4 ~ blockquote,
+.sub-page main h4 ~ table,
+.sub-page main h4 ~ figure,
+.sub-page main h4 ~ details,
+.sub-page main h4 ~ hr {
   padding-left: 3rem;
 }
-main h5 ~ p,
-main h5 ~ ol,
-main h5 ~ ul,
-main h5 ~ dl,
-main h5 ~ div,
-main h5 ~ pre,
-main h5 ~ blockquote,
-main h5 ~ table,
-main h5 ~ figure,
-main h5 ~ details,
-main h5 ~ hr {
+.sub-page main h5 ~ p,
+.sub-page main h5 ~ ol,
+.sub-page main h5 ~ ul,
+.sub-page main h5 ~ dl,
+.sub-page main h5 ~ div,
+.sub-page main h5 ~ pre,
+.sub-page main h5 ~ blockquote,
+.sub-page main h5 ~ table,
+.sub-page main h5 ~ figure,
+.sub-page main h5 ~ details,
+.sub-page main h5 ~ hr {
   padding-left: 4rem;
 }
-main h6 ~ p,
-main h6 ~ ol,
-main h6 ~ ul,
-main h6 ~ dl,
-main h6 ~ div,
-main h6 ~ pre,
-main h6 ~ blockquote,
-main h6 ~ table,
-main h6 ~ figure,
-main h6 ~ details,
-main h6 ~ hr {
+.sub-page main h6 ~ p,
+.sub-page main h6 ~ ol,
+.sub-page main h6 ~ ul,
+.sub-page main h6 ~ dl,
+.sub-page main h6 ~ div,
+.sub-page main h6 ~ pre,
+.sub-page main h6 ~ blockquote,
+.sub-page main h6 ~ table,
+.sub-page main h6 ~ figure,
+.sub-page main h6 ~ details,
+.sub-page main h6 ~ hr {
   padding-left: 5rem;
 }
 /*
@@ -554,56 +598,56 @@ main h6 ~ hr {
   Base structure
 
 */
-body > header {
+.page-header {
   text-align: center;
 }
-.top-page body > header {
+.top-page .page-header {
   padding-top: 30px;
 }
-.sub-page body > header {
+.sub-page .page-header {
   padding-top: 5px;
 }
-body > header,
-body > header a,
-body > header a h1,
-body > header a img,
-body > header:hover,
-body > header:hover a,
-body > header:hover a h1,
-body > header:hover a img,
-body > header a:hover,
-body > header a:hover h1,
-body > header a:hover img,
-body > header a h1:hover,
-body > header a img:hover {
+.page-header,
+.page-header a,
+.page-header a h1,
+.page-header a img,
+.page-header:hover,
+.page-header:hover a,
+.page-header:hover a h1,
+.page-header:hover a img,
+.page-header a:hover,
+.page-header a:hover h1,
+.page-header a:hover img,
+.page-header a h1:hover,
+.page-header a img:hover {
   text-decoration: none;
 }
-.sub-page header h1,
-.sub-page header img {
+.sub-page .page-header h1,
+.sub-page .page-header img {
   display: inline-block;
   margin: 0;
   vertical-align: middle;
   border: none;
 }
-body > header h1 {
+.page-header h1 {
   font-weight: normal;
   color: #62a433;
 }
-.top-page header h1,
-.sub-page header h1 {
+.top-page .page-header h1,
+.sub-page .page-header h1 {
   font-size: 15px;
 }
-.top-page header img {
+.top-page .page-header img {
   width: 300px;
   max-width: 95%;
 }
-.sub-page header img {
+.sub-page .page-header img {
   width: 160px;
   max-width: 95%;
 }
-body > header,
+.page-header,
 main,
-body > footer,
+.page-footer,
 .up-to-top {
   width: 0;
   max-width: 100%;
@@ -615,31 +659,31 @@ body > footer,
 main {
   padding-top: 50px;
 }
-.profile .table,
-.profile .table-row,
-.profile .table-cell,
-.favorite .table,
-.favorite .table-row,
-.favorite .table-cell,
-.distribution .table,
-.distribution .table-row,
-.distribution .table-cell {
+.profile main .table,
+.profile main .table-row,
+.profile main .table-cell,
+.favorite main .table,
+.favorite main .table-row,
+.favorite main .table-cell,
+.distribution main .table,
+.distribution main .table-row,
+.distribution main .table-cell {
   border: none;
 }
-.profile .name,
-.favorite .name,
-.distribution .name {
+.profile main .name,
+.favorite main .name,
+.distribution main .name {
   padding-right: 4px;
 }
-.profile .colon,
-.favorite .colon,
-.distribution .colon {
+.profile main .colon,
+.favorite main .colon,
+.distribution main .colon {
   padding-right: 0;
   padding-left: 0;
 }
-.profile .content,
-.favorite .content,
-.distribution .content {
+.profile main .content,
+.favorite main .content,
+.distribution main .content {
   padding-left: 4px;
 }
 .sub-page nav {
@@ -650,43 +694,44 @@ main {
 nav ul {
   list-style: none;
 }
-.top-page nav ul {
+.top-page main nav ul {
   padding-left: calc(50% - 50px);
 }
-.sub-page nav ul {
+.sub-page .page-footer nav ul {
   display: inline-block;
   padding-left: 0;
   line-height: 1.5;
 }
-.top-page nav li + li {
+.top-page main nav li + li {
   padding-top: 20px;
 }
-.sub-page nav li {
+.sub-page .page-footer nav li {
   display: inline-block;
 }
-.sub-page nav a {
+.sub-page .page-footer nav a {
   display: block;
   height: 15px;
   padding: 1px 5px 4px 5px;
   font-size: 15px;
 }
-nav .current {
+.page-footer nav .current {
   border-bottom: 1px solid #62a433;
   pointer-events: none;
 }
-main + footer {
+.page-footer {
   padding-top: 50px;
   padding-bottom: 5px;
   text-align: center;
   background-color: #fff;
 }
-main + footer p {
+.page-footer p {
   display: flex;
   justify-content: center;
   font-size: 15px;
 }
 .privacy-policy {
   display: inline-block;
+  margin-top: 20px;
   padding-left: 10px;
 }
 .return {
@@ -695,7 +740,7 @@ main + footer p {
   left: 50%;
   bottom: 0;
 }
-button {
+.return button {
   display: inline-block;
   position: absolute;
   right: 0;
@@ -711,12 +756,6 @@ button {
   text-decoration: none;
   color: #999;
   pointer-events: none;
-}
-.sub-page nav br {
-  display: none;
-}
-.sub-page footer .privacy-policy {
-  margin-top: 20px;
 }
 .profile .name,
 .favorite .name {

@@ -30,13 +30,13 @@ $(function () {
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
     const width_content_max = 500
     if (width_window > 430) {
-      $('body > header, main, body > footer, .return').css('width', width_content_max + 'px')
+      $('.page-header, main, .page-footer, .return').css('width', width_content_max + 'px')
       $('.return').css('margin-left', - width_content_max / 2 + 'px')
     } else if (width_window <= 430 && width_window > 350) {
-      $('body > header, main, body > footer, .return').css('width', width_content + 'px')
+      $('.page-header, main, .page-footer, .return').css('width', width_content + 'px')
       $('.return').css('margin-left', - width_content / 2 + 'px')
     } else {
-      $('body > header, main, body > footer, .return').css('width', width_window - 10 + 'px')
+      $('.page-header, main, .page-footer, .return').css('width', width_window - 10 + 'px')
       $('.return').css('margin-left', - width_window / 2 + 'px')
     }
   }
