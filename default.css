@@ -775,10 +775,10 @@ nav ul {
 .contents-container {
   display: none;
 }
-.narou main .narou main.contents-container {
+.narou.contents-container {
   display: initial;
 }
-.markdown .markdown.contents-container {
+.markdown.contents-container {
   display: initial;
 }
 /*

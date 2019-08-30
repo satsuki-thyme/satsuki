@@ -118,16 +118,16 @@ $(function () {
       // HTML
       } else if (extention == 'html') {
         $('html').addClass('html')
-        $('main').append(word)
+        $('.html.contents-container').append(word)
         $('title').empty().append(decodeURI(text))
         $('.title').append(decodeURI(text))
       // Markdown
       } else if (extention == 'md') {
         $('html').addClass('markdown')
-        $('main').append(rubyParser(marked(keywordReplace(data))))
+        $('.markdown.contents-container').append(rubyParser(marked(keywordReplace(data))))
       // Another
       } else {
-        $('main').append(word)
+        $('.another.contents-container').append(word)
       }
       dfd_load_content.resolve()
       function prevNextLink(story_len) {

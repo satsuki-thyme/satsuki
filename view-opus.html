@@ -1,12 +1,12 @@
-<html lang="ja" class="profile sub-page">
-<title>プロフィール</title>
+<html lang="ja" class="novel sub-page load-content">
+<title>作品閲覧ページ</title>
 <meta charset="utf-8">
-<meta name="keywords" content="弥生タイム, プロフィール">
-<meta name="description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」のプロフィールです。">
+<meta name="keywords" content="弥生タイム, 小説, ネット小説, ライトノベル, ラノベ">
+<meta name="description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」の作品閲覧ページです。">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta property="og:url" content="https://yayoi-thyme.com/profile.html">
-<meta property="og:title" content="プロフィール">
-<meta property="og:description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」のプロフィールです。">
+<meta property="og:url" content="https://yayoi-thyme.com/view-opus.html">
+<meta property="og:title" content="作品閲覧ページ">
+<meta property="og:description" content="ネット小説を主に執筆している小説執筆活動家「弥生タイム」の作品閲覧ページです。">
 <meta property="og:image" content="https://yayoi-thyme.com/yayoi-thyme-fg-white-bg-green-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -29,6 +29,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://yayoi-thyme.com/thyme-fg-white-bg-green-180s.png">
 <link href="/default.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.7.0/marked.min.js"></script>
 <script src="/default.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-96637203-1"></script>
@@ -42,42 +43,41 @@
 <header class="page-header">
   <a href="/">
     <img src="/yayoi-thyme-fg-green-bg-trn.svg" alt="Yayoi Thyme">
-    <h1>プロフィール</h1>
+    <h1>作品閲覧ページ</h1>
   </a>
 </header>
-<main>
 
-<section>
-  <h2>識別情報</h2>
-  <ul class="table">
-    <li class="table-row"><span class="name table-cell">ハンドル</span><span class="colon table-cell">:</span><span class="content table-cell">弥生タイム</span></li>
-    <div style="clear: both;"></div>
-  </ul>
-</section>
-<section>
-  <h2>パーソナリティ</h2>
-  <ul class="table">
-    <li class="table-row"><span class="name table-cell">誕生日</span><span class="colon table-cell">:</span><span class="content table-cell">ある冬の寒い日、「ダメダ、こりゃ」とか言いながら生まれてきました。</span></li>
-    <li class="table-row"><span class="name table-cell">住所</span><span class="colon table-cell">:</span><span class="content table-cell">そのうち聖地になるかもしれませんよ！</span></li>
-    <li class="table-row"><span class="name table-cell">性別</span><span class="colon table-cell">:</span><span class="content table-cell">かわいいちんちんがあります。</span></li>
-    <li class="table-row"><span class="name table-cell">血液型</span><span class="colon table-cell">:</span><span class="content table-cell">劣性です。</span></li>
-  </ul>
-</section>
-<section>
-  <h2>連絡先</h2>
-  <ul class="table">
-    <li class="table-row"><span class="name table-cell">Email</span><span class="colon table-cell">:</span><span class="content table-cell">yayoi.thyme@gmail.com</span></li>
-  </ul>
-</section>
-
+<main class="narou contents-container">
+  <div id="info">
+  </div>
+  <div id="novel_contents">
+    <div id="novel_color">
+      <div class="novel_bn">
+        <a class="prev">&lt;&lt; 前へ</a>
+        <a class="next">次へ &gt;&gt;</a>
+      </div>
+      <div id="novel_no"></div>
+      <p class="novel_subtitle"></p>
+      <div id="novel_honbun"></div>
+      <div class="novel_bn">
+        <a class="prev">&lt;&lt; 前へ</a>
+        <a class="next">次へ &gt;&gt;</a>
+      </div>
+    </div>
+  </div>
+  <div class="selected-len"></div>
 </main>
+
+<main class="markdown html another contents-container">
+</main>
+
 <footer class="page-footer">
   <nav>
     <ul>
       <li><a href="/">トップページ</a></li>
-      <li><a class="current" href="/profile.html">プロフィール</a></li>
+      <li><a href="/profile.html">プロフィール</a></li>
       <li><a href="/favorite.html">好きなもの</a></li>
-      <li><a href="/novel.html">小説関連</a></li>
+      <li><a class="current" href="/view-opus.html">作品閲覧ページ</a></li>
       <li><a href="/blog/">ブログ</a></li>
       <li><a href="/distribution.html">配布データ</a></li>
       <li><a href="https://twitter.com/camellia" title="Twitter">@camellia</a></li>
