@@ -775,7 +775,7 @@ nav ul {
 .contents-container {
   display: none;
 }
-.narou .narou.contents-container {
+.narou main .narou main.contents-container {
   display: initial;
 }
 .markdown .markdown.contents-container {
@@ -786,39 +786,39 @@ nav ul {
   Narou
 
 */
-.narou,
-.narou div,
-.narou pre,
-.narou p,
-.narou blockquote,
-.narou form,
-.narou fieldset,
-.narou input,
-.narou textarea,
-.narou select,
-.narou option,
-.narou dl,
-.narou dt,
-.narou dd,
-.narou ul,
-.narou ol,
-.narou li,
-.narou h1,
-.narou h2,
-.narou h3,
-.narou h4,
-.narou h5,
-.narou h6,
-.narou table,
-.narou th,
-.narou td,
-.narou embed,
-.narou object {
+.narou main,
+.narou main div,
+.narou main pre,
+.narou main p,
+.narou main blockquote,
+.narou main form,
+.narou main fieldset,
+.narou main input,
+.narou main textarea,
+.narou main select,
+.narou main option,
+.narou main dl,
+.narou main dt,
+.narou main dd,
+.narou main ul,
+.narou main ol,
+.narou main li,
+.narou main h1,
+.narou main h2,
+.narou main h3,
+.narou main h4,
+.narou main h5,
+.narou main h6,
+.narou main table,
+.narou main th,
+.narou main td,
+.narou main embed,
+.narou main object {
   margin: 0;
   padding: 0;
   vertical-align: baseline;
 }
-.narou {
+.narou main {
   font-family: 'Lucida Grande', sans-serif;
   font-size: 14px;
   background: #ffffff;
@@ -828,18 +828,18 @@ nav ul {
   direction: ltr;
   unicode-bidi: bidi-override;
 }
-.narou a {
+.narou main a {
   text-decoration: none;
   color: #0033cc;
   outline: none;
 }
-.narou a:visited {
+.narou main a:visited {
   color: #885577;
 }
-.narou ruby {
+.narou main ruby {
   line-height: 39px;
 }
-.narou .rt-none {
+.narou main .rt-none {
   display: none;
 }
 .selected-len {
@@ -879,7 +879,7 @@ nav ul {
   margin-right: 10px;
   margin-left:  10px;
 }
-.narou #novel_contents {
+.narou main #novel_contents {
   margin: 0;
   width: 100%;
   padding: 0 0 50px 0;
@@ -890,7 +890,7 @@ nav ul {
   top: 10px;
   left: 0;
 }
-.narou #novel_color {
+.narou main #novel_color {
   color: #444444;
   font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
   font-size: 16px;
@@ -898,34 +898,34 @@ nav ul {
   width: 730px;
   max-width: 100%;
 }
-.narou .novel_bn {
+.narou main .novel_bn {
   text-align: center;
 }
-.narou .novel_bn a {
+.narou main .novel_bn a {
   font-size: 90%;
   margin: 0 10px;
 }
-.narou #novel_no {
+.narou main #novel_no {
   margin: 0 10px 10px 0;
   text-align: right;
   color: #999999;
   font-size: 90%;
 }
-.narou .novel_title,
-.narou .novel_subtitle {
+.narou main .novel_title,
+.narou main .novel_subtitle {
   font-size: 170%;
   line-height: 150%;
 }
 
-.narou .novel_title,
-.narou .novel_subtitle {
+.narou main .novel_title,
+.narou main .novel_subtitle {
   margin: 0 auto 10px;
   text-align: center;
   font-size: 170%;
   font-weight: bold;
   line-height: 150%;
 }
-.narou #novel_honbun {
+.narou main #novel_honbun {
   margin: 30px auto 50px;
   padding: 0 20px 0 20px;
   width: 600px;
