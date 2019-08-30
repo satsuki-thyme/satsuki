@@ -22,6 +22,7 @@ a:hover {
   text-decoration: underline;
   color: #5ec63e;
 }
+body,
 div,
 dir,
 dl,
@@ -775,11 +776,17 @@ nav ul {
 .contents-container {
   display: none;
 }
-.narou.contents-container {
-  display: initial;
+.narou .narou.contents-container {
+  display: block;
 }
-.markdown.contents-container {
-  display: initial;
+.markdown .markdown.contents-container {
+  display: block;
+}
+.html .html.contents-container {
+  display: block;
+}
+.another .another.contents-container {
+  display: block;
 }
 /*
 
