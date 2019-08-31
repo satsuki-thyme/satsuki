@@ -1,7 +1,12 @@
 console.log('default.js ver.2019-08-29-1')
 $(function () {
-  const dfd_load_content = $.Deferred()
+/*
+
+  Execute
+
+*/
   $(document).ready(function() {
+    const dfd_load_content = $.Deferred()
     if ($('html').attr('class').match(/load-content/g)) {
       loadContent()
       $(document).ajaxComplete(function() {
@@ -10,21 +15,30 @@ $(function () {
     } else {
       setStructure()
     }
-    $(window).scroll(function() {
-      const scroll_amount = $(window).scrollTop()
-      if (scroll_amount > 0) {
-        $('.return').fadeIn()
-      } else if (scroll_amount <= 0) {
-        $('.return').fadeOut()
-      }
-    })
   })
+
+  $(window).scroll(function() {
+    const scroll_amount = $(window).scrollTop()
+    if (scroll_amount > 0) {
+      $('.return').fadeIn()
+    } else if (scroll_amount <= 0) {
+      $('.return').fadeOut()
+    }
+  })
+
   $('.return button').on('click',function (e) {
     $('html, body').animate({scrollTop: 0}, 'fast')
   })
+
   $(window).on('resize', function() {
     setStructure()
   })
+
+/*
+
+  Function
+
+*/
   function setStructure() {
     const width_window = $('body').innerWidth()
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
@@ -150,7 +164,7 @@ $(function () {
       }
     }
     function rubyParser(data) {
-      /*                ↓ ここから ------------------------------ ↓ ここまで、ルビとは無関係 */
+                     /* | -------------ルビとは無関係-------------| */
       const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
       return word
     }
@@ -177,8 +191,8 @@ $(function () {
                                 ["# passive", "# 状況に振り回されるパート"],
                                 ["# active", "# 状況解決に動き出すパート"],
                                 ["# resolution", "# 解決パート"],
-                                ["{", '<span class="tag-bracket">{</span><span class="tag-content">'],
-                                ["}", '</span><span class="tag-bracket">}</span>']
+                                ["\\{", '<span class="tag-bracket">{</span><span class="tag-content">'],
+                                ["\\}", '</span><span class="tag-bracket">}</span>']
                               ]
       const word_list_hide = ["_summary_", "_gist_"]
       var word_list_replace_length = 0
@@ -195,5 +209,8 @@ $(function () {
       }
       return work_kr1
     }
+  }
+  function setLink() {
+    // body...
   }
 })
