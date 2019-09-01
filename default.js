@@ -191,8 +191,8 @@ $(function () {
                                 ["# passive", "# 状況に振り回されるパート"],
                                 ["# active", "# 状況解決に動き出すパート"],
                                 ["# resolution", "# 解決パート"],
-                                ["\\{", '<span class="tag-bracket">{</span><span class="tag-content">'],
-                                ["\\}", '</span><span class="tag-bracket">}</span>']
+                                ["\\{", '<span style="color: #d00;">{</span><span>'],
+                                ["\\}", '</span><span style="color: #d00;">}</span>']
                               ]
       const word_list_hide = ["_summary_", "_gist_"]
       var word_list_replace_length = 0
