@@ -1,8 +1,3 @@
-[submodule "blog"]
-	path = blog
-	url = https://github.com/yayoi-thyme/blog
-	ignore = dirty
-
 [submodule "distribution"]
 	path = distribution
 	url = https://github.com/yayoi-thyme/distribution
