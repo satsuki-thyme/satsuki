@@ -7,7 +7,9 @@
   color: #fff; /* Base */
   color: #999; /* */
   color: #333; /* */
-  color: #5ec63e; /* Light */
+  color: #5ec63e; /* Light - link foreground (with white background) */
+  color: #66b72d; /* Light - link background (with white foreground) */
+  color: #95bc79; /* Alternative - Sub background (with white foreground) */
   color: #62a433; /* Base */
   color: #4c7f27; /* Dark */
 }
