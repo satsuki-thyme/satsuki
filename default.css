@@ -732,8 +732,7 @@ main h6 ~ hr {
 main,
 .page-footer,
 .up-to-top {
-  width: 0;
-  max-width: 100%;
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
@@ -818,13 +817,13 @@ nav ul {
   margin-top: 20px;
   padding-left: 10px;
 }
-.return {
+.up {
   display: none;
   position: fixed;
   left: 50%;
   bottom: 0;
 }
-.return button {
+.up button {
   display: inline-block;
   position: absolute;
   right: 0;
