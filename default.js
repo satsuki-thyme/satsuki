@@ -1,4 +1,3 @@
-console.log('default.js ver.2019-08-29-1')
 $(function () {
 /*
 
@@ -20,13 +19,13 @@ $(function () {
   $(window).scroll(function() {
     const scroll_amount = $(window).scrollTop()
     if (scroll_amount > 0) {
-      $('.return').fadeIn()
+      $('.up').fadeIn()
     } else if (scroll_amount <= 0) {
-      $('.return').fadeOut()
+      $('.up').fadeOut()
     }
   })
 
-  $('.return button').on('click',function (e) {
+  $('.up button').on('click',function (e) {
     $('html, body').animate({scrollTop: 0}, 'fast')
   })
 
@@ -43,15 +42,15 @@ $(function () {
     const width_window = $('body').innerWidth()
     const width_content = (121 - 0.0656 * width_window) * width_window / 100
     const width_content_max = 500
-    if (width_window > 430) {
-      $('.page-header, main, .page-footer, .return').css('width', width_content_max + 'px')
-      $('.return').css('margin-left', - width_content_max / 2 + 'px')
-    } else if (width_window <= 430 && width_window > 350) {
-      $('.page-header, main, .page-footer, .return').css('width', width_content + 'px')
-      $('.return').css('margin-left', - width_content / 2 + 'px')
+    if (width_window >= 500) {
+      $('.page-header, main, .page-footer, .up').css('width', width_content_max + 'px')
+      $('.up').css('margin-left', - width_content_max / 2 + 'px')
+    } else if (width_window < 500 && width_window > 340) {
+      $('.page-header, main, .page-footer, .up').css('width', width_content + 'px')
+      $('.up').css('margin-left', - width_content / 2 + 'px')
     } else {
-      $('.page-header, main, .page-footer, .return').css('width', width_window - 10 + 'px')
-      $('.return').css('margin-left', - width_window / 2 + 'px')
+      $('.page-header, main, .page-footer, .up').css('width', width_window - 10 + 'px')
+      $('.up').css('margin-left', - width_window / 2 + 'px')
     }
   }
   function loadContent() {
@@ -85,12 +84,10 @@ $(function () {
     )
     function setUrl() {
       if ($(location).attr("search").length == 0) {
-        entity_loading = ''
         extention = 'md'
         url = '/novel.md'
         dfd_set_url.resolve(url)
       } else {
-        entity_loading = $(location).attr('pathname')
         search = $(location).attr('search').slice(1)
         last_period = search.lastIndexOf('.')
         first_slash = search.indexOf('/')
@@ -148,8 +145,8 @@ $(function () {
         const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
         const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
         if (!isNaN(story_len)) {
-          prev = entity_loading + '?/' + opus + '/' + prev_entity
-          next = entity_loading + '?/' + opus + '/' + next_entity
+          prev = '?/' + opus + '/' + prev_entity
+          next = '?/' + opus + '/' + next_entity
         }
         $.get(back_host + user_name + '/' + opus + '/master/' + prev_entity).then(function() {
           $('a.prev').attr('href', prev)
@@ -164,7 +161,7 @@ $(function () {
       }
     }
     function rubyParser(data) {
-                     /* | -------------ルビとは無関係-------------| */
+                     /* | ------------ルビとは無関係------------| */
       const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
       return word
     }
@@ -211,6 +208,16 @@ $(function () {
     }
   }
   function setLink() {
-    // body...
+    const search = $(location).attr('search').slice(1)
+    const last_period = search.lastIndexOf('.')
+    const first_slash = search.indexOf('/')
+    const last_slash = search.lastIndexOf('/')
+    if (first_slash < 0) {
+      const file_name_extentionless = search.slice(0, last_period)
+    } else {
+      const opus = search.slice(first_slash + 1, last_slash - first_slash)
+      const file_name_extentionless = search.slice(last_slash + 1, last_period)
+    }
+    extention = search.slice(last_period + 1)
   }
 })
