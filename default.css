@@ -785,6 +785,10 @@ nav ul {
   padding-left: 0;
   line-height: 1.5;
 }
+.sub-page .page-footer nav li {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
 .top-page main nav li + li {
   padding-top: 20px;
 }

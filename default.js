@@ -5,14 +5,13 @@ $(function () {
 
 */
   $(document).ready(function() {
-    const dfd_load_content = $.Deferred()
     if ($('html').attr('class').match(/load-content/g)) {
       loadContent()
-      $(document).ajaxComplete(function() {
-        setStructure()
-      })
+      setStructure()
+      setReturnLink()
     } else {
       setStructure()
+      setReturnLink()
     }
   })
 
@@ -55,6 +54,7 @@ $(function () {
   }
   function loadContent() {
     const dfd_set_url = $.Deferred()
+    const dfd_load_content = $.Deferred()
     const user_name = 'yayoi-thyme'
     const site_repository = 'yayoi-thyme.github.io'
     const back_host = '//raw.githubusercontent.com/'
@@ -83,7 +83,7 @@ $(function () {
       })
     )
     function setUrl() {
-      if ($(location).attr("search").length == 0) {
+      if ($(location).attr("search").length === 0) {
         extention = 'md'
         url = '/novel.md'
         dfd_set_url.resolve(url)
@@ -111,7 +111,7 @@ $(function () {
     }
     function writeContent(data) {
       // Text
-      if (extention == 'txt') {
+      if (extention === 'txt') {
         const word = rubyParser(data)
         const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
         const insert_text = ''
@@ -127,13 +127,13 @@ $(function () {
         $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
         prevNextLink(story_len)
       // HTML
-      } else if (extention == 'html') {
+      } else if (extention === 'html') {
         $('html').addClass('html')
         $('.html.contents-container').append(word)
         $('title').empty().append(decodeURI(text))
         $('.title').append(decodeURI(text))
       // Markdown
-      } else if (extention == 'md') {
+      } else if (extention === 'md') {
         $('html').addClass('markdown')
         $('.markdown.contents-container').append(rubyParser(marked(keywordReplace(data))))
       // Another
@@ -207,17 +207,23 @@ $(function () {
       return work_kr1
     }
   }
-  function setLink() {
+  function setReturnLink() {
+    const url_home = '/novel.html'
+    const url_base = '/view-opus.html'
     const search = $(location).attr('search').slice(1)
-    const last_period = search.lastIndexOf('.')
-    const first_slash = search.indexOf('/')
-    const last_slash = search.lastIndexOf('/')
-    if (first_slash < 0) {
-      const file_name_extentionless = search.slice(0, last_period)
+    const last_period_search = search.lastIndexOf('.')
+    const first_slash_search = search.indexOf('/')
+    const last_slash_search = search.lastIndexOf('/')
+    const search_path_filenameless = search.slice(1, last_slash_search)
+    const search_path_filename_extentionless = search.slice(last_slash_search + 1, last_period_search)
+    const search_path_extention = search.slice(last_period_search + 1, last_period_search - last_slash_search)
+    if (search == '' || search_path_filenameless == '' || search_path_filename_extentionless === 'index') {
+      prependAnchor(url_home, '小説関連に戻る')
     } else {
-      const opus = search.slice(first_slash + 1, last_slash - first_slash)
-      const file_name_extentionless = search.slice(last_slash + 1, last_period)
+      prependAnchor('?/' + search_path_filenameless + '/index.md', search_path_filenameless + 'に戻る')
     }
-    extention = search.slice(last_period + 1)
+  }
+  function prependAnchor(target, label) {
+    $('.page-footer').prepend('<a class="return-link" href="' + target + '">' + label + '</a>')
   }
 })
