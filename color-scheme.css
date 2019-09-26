@@ -4,12 +4,12 @@
 
 */
 .color-scheme {
-  color: #fff; /* Base */
-  color: #999; /* */
-  color: #333; /* */
-  color: #5ec63e; /* Light - link foreground (with white background) */
-  color: #66b72d; /* Light - link background (with white foreground) */
-  color: #95bc79; /* Alternative - Sub background (with white foreground) */
-  color: #62a433; /* Base */
-  color: #4c7f27; /* Dark */
+  color: #fff; /* Base color : Background */
+  color: #999; /* Base color : Foreground - Sub, Shadow */
+  color: #333; /* Base color : Foreground */
+  color: #5ec63e; /* Theme color : Bright - link foreground (with white background) */
+  color: #66b72d; /* Theme color : Bright - link background (with white foreground) */
+  color: #95bc79; /* Theme color : Bright alternative */
+  color: #62a433; /* Theme color : Base */
+  color: #4c7f27; /* Theme color : Dark */
 }
