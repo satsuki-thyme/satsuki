@@ -1,4 +1,10 @@
 $(function () {
+  const back_host = '//raw.githubusercontent.com/'
+  const user_name = 'yayoi-thyme'
+  const site_repository = 'yayoi-thyme.github.io'
+  const branch = '/master/'
+  const url_home = '/novel.html'
+  const url_base = '/view-opus.html'
 /*
 
   Execute
@@ -55,9 +61,6 @@ $(function () {
   function loadContent() {
     const dfd_set_url = $.Deferred()
     const dfd_load_content = $.Deferred()
-    const user_name = 'yayoi-thyme'
-    const site_repository = 'yayoi-thyme.github.io'
-    const back_host = '//raw.githubusercontent.com/'
     var entity_loading
     var search
     var last_period
@@ -99,11 +102,11 @@ $(function () {
           file_name_extentionless = search.slice(last_slash + 1, last_period)
         }
         extention = search.slice(last_period + 1)
-        if (first_slash < 0) {
-          url = back_host + user_name + '/' + site_repository + '/master/' + file_name_extentionless + '.' + extention
+        if (first_slash < 0) { // この JS を読み込んでいる HTML があるリポジトリー ex. https://[***].github.io
+          url = back_host + user_name + '/' + site_repository + branch + file_name_extentionless + '.' + extention
           dfd_set_url.resolve(url)
         } else {
-          url = back_host + user_name + '/' + opus + '/master/' + file_name_extentionless + '.' + extention
+          url = back_host + user_name + '/' + opus + branch + file_name_extentionless + '.' + extention
           dfd_set_url.resolve(url)
         }
       }
@@ -148,12 +151,12 @@ $(function () {
           prev = '?/' + opus + '/' + prev_entity
           next = '?/' + opus + '/' + next_entity
         }
-        $.get(back_host + user_name + '/' + opus + '/master/' + prev_entity).then(function() {
+        $.get(back_host + user_name + '/' + opus + branch + prev_entity).then(function() {
           $('a.prev').attr('href', prev)
         }).fail(function() {
           $('a.prev').css('display', 'none')
         })
-        $.get(back_host + user_name + '/' + opus + '/master/' + next_entity).then(function() {
+        $.get(back_host + user_name + '/' + opus + branch + next_entity).then(function() {
           $('a.next').attr('href', next)
         }).fail(function() {
           $('a.next').css('display', 'none')
@@ -208,8 +211,6 @@ $(function () {
     }
   }
   function setReturnLink() {
-    const url_home = '/novel.html'
-    const url_base = '/view-opus.html'
     const search = $(location).attr('search').slice(1)
     const last_period_search = search.lastIndexOf('.')
     const first_slash_search = search.indexOf('/')
