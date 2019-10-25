@@ -1,10 +1,19 @@
 $(function () {
-  const back_host = '//raw.githubusercontent.com/'
-  const user_name = 'yayoi-thyme'
-  const site_repository = 'yayoi-thyme.github.io'
-  const branch = '/master/'
-  const url_home = '/novel.html'
-  const url_base = '/view-opus.html'
+  var back_host = '//raw.githubusercontent.com'
+  var user_name = 'yayoi-thyme'
+  var site_repository = 'yayoi-thyme.github.io'
+  var branch = 'master'
+  var url_home = '/novel.html'
+  var url_base = '/view-opus.html'
+  if (user_name != '') {
+    user_name = '/' + user_name
+  }
+  if (site_repository != '') {
+    site_repository = '/' + site_repository
+  }
+  if (branch != '') {
+    branch = '/' + branch
+  }
 /*
 
   Execute
@@ -98,15 +107,15 @@ $(function () {
         if (first_slash < 0) {
           file_name_extentionless = search.slice(0, last_period)
         } else {
-          opus = search.slice(first_slash + 1, last_slash - first_slash)
+          opus = '/' + search.slice(first_slash + 1, last_slash - first_slash)
           file_name_extentionless = search.slice(last_slash + 1, last_period)
         }
         extention = search.slice(last_period + 1)
         if (first_slash < 0) { // この JS を読み込んでいる HTML があるリポジトリー ex. https://[***].github.io
-          url = back_host + user_name + '/' + site_repository + branch + file_name_extentionless + '.' + extention
+          url = back_host + user_name + site_repository + branch + '/' + file_name_extentionless + '.' + extention
           dfd_set_url.resolve(url)
         } else {
-          url = back_host + user_name + '/' + opus + branch + file_name_extentionless + '.' + extention
+          url = back_host + user_name + opus + branch + '/' + file_name_extentionless + '.' + extention
           dfd_set_url.resolve(url)
         }
       }
