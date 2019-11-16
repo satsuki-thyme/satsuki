@@ -1,33 +1,48 @@
 $(function () {
-  var back_host = '//raw.githubusercontent.com'
-  var user_name = 'yayoi-thyme'
-  var site_repository = 'yayoi-thyme.github.io'
-  var branch = 'master'
-  var url_home = '/novel.html'
-  var url_base = '/view-opus.html'
-  if (user_name != '') {
-    user_name = '/' + user_name
-  }
-  if (site_repository != '') {
-    site_repository = '/' + site_repository
-  }
-  if (branch != '') {
-    branch = '/' + branch
-  }
-/*
-
-  Execute
-
-*/
-  $(document).ready(function() {
-    if ($('html').attr('class').match(/load-content/g)) {
-      loadContent()
-      setStructure()
-      setReturnLink()
-    } else {
-      setStructure()
-      setReturnLink()
+  const host = $(location).attr('host')
+  var setting_array = []
+  var back_host = ''
+  var user_name = ''
+  var site_repository = ''
+  var branch = ''
+  var default_document = ''
+  var url_home = ''
+  var url_base = ''
+  $.getJSON('/default.json', function(data) {
+    setting_array = data
+    back_host = setting_array['loadContent'][host]['back_host']
+    user_name = setting_array['loadContent'][host]['user_name']
+    site_repository = setting_array['loadContent'][host]['site_repository']
+    branch = setting_array['loadContent'][host]['branch']
+    default_document = setting_array['loadContent'][host]['default_document']
+    url_home = setting_array['loadContent'][host]['url_home']
+    url_base = setting_array['loadContent'][host]['url_base']
+    if (back_host != '') {
+      back_host = '//' + back_host
     }
+    if (user_name != '') {
+      user_name = '/' + user_name
+    }
+    if (site_repository != '') {
+      site_repository = '/' + site_repository
+    }
+    if (branch != '') {
+      branch = '/' + branch
+    }
+    if (default_document != '') {
+      default_document = '/' + default_document
+    }
+  }).done(function() {
+    $(document).ready(function() {
+      if ($('html').attr('class').match(/load-content/g)) {
+        loadContent()
+        setStructure()
+        setReturnLink()
+      } else {
+        setStructure()
+        setReturnLink()
+      }
+    })
   })
 
   $(window).scroll(function() {
@@ -97,7 +112,7 @@ $(function () {
     function setUrl() {
       if ($(location).attr("search").length === 0) {
         extention = 'md'
-        url = '/novel.md'
+        url = back_host + default_document
         dfd_set_url.resolve(url)
       } else {
         search = $(location).attr('search').slice(1)
