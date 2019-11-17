@@ -147,8 +147,8 @@ $(function () {
         $('html').addClass('narou')
         $('div#novel_no').append(story_len + '/???')
         $('div#novel_honbun').append(word)
-        if (data.indexOf('#') > -1) {
-          var subtitle = data.match(/#.*/)[0].replace(/#/, '')
+        if (data.indexOf('# ') > -1) {
+          var subtitle = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
           $('p.novel_subtitle').append(subtitle)
         }
         $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
@@ -220,18 +220,18 @@ $(function () {
                               ]
       const word_list_hide = ["_summary_", "_gist_"]
       var word_list_replace_length = 0
-      var work_kr1 = data
+      var work1 = data
       for (var i in word_list_replace) {
         word_list_replace_length++
       }
       for (var i = word_list_replace_length - 1; i >= 0; i--) {
-        const regexp = new RegExp(word_list_replace[i][0], 'g')
-        work_kr1 = work_kr1.replace(regexp, word_list_replace[i][1])
+        const regexp1 = new RegExp(word_list_replace[i][0], 'g')
+        work1 = work1.replace(regexp1, word_list_replace[i][1])
       }
       for (var i = word_list_hide.length - 1; i >= 0; i--) {
-        work_kr1 = work_kr1.replace(new RegExp(word_list_hide[i], 'g'), '<span class="hide">' + word_list_hide[i] + '</span>')
+        work1 = work1.replace(new RegExp(word_list_hide[i], 'g'), '<span class="hide">' + word_list_hide[i] + '</span>')
       }
-      return work_kr1
+      return work1
     }
   }
   function setReturnLink() {
