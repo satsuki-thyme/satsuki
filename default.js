@@ -111,12 +111,13 @@ $(function () {
       })
     )
     function setUrl() {
-      if ($(location).attr("search").length === 0) {
+      const pre_search = $(location).attr('search')
+      if (pre_search.length === 0) {
         extention = 'md'
         url = back_host + default_document
         dfd_set_url.resolve(url)
       } else {
-        search = $(location).attr('search').slice(1)
+        search = pre_search.slice(1)
         last_period = search.lastIndexOf('.')
         first_slash = search.indexOf('/')
         last_slash = search.lastIndexOf('/')
