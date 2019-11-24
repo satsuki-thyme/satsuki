@@ -8,6 +8,7 @@ $(function () {
   var default_document = ''
   var url_home = ''
   var url_base = ''
+  
   $.getJSON('/default.json', function(data) {
     setting_array = data
     back_host = setting_array['loadContent'][host]['back_host']
