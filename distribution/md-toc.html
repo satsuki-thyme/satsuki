@@ -12,7 +12,7 @@ $(function() {
   })
 })
 function initialize() {
-  var parameter_object = {'url': 'README.md', 'indent': '\t', 'mark': '*', 'level': '6'}
+  var parameter_object = {'url': 'README.md', 'indent': String.raw`\t`, 'mark': '*', 'level': '6'}
   const search_array = $(location).attr('search').slice(1).split('&')
   for (var i in search_array) {
     const work_array = search_array[i].split('=')
