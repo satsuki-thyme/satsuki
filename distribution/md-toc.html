@@ -11,33 +11,33 @@ $(function() {
     $(this).select()
   })
 })
-  function initialize() {
-    var parameter_object = {'url': 'README.md', 'indent': '\t', 'mark': '*', 'level': '6'}
-    const search_array = $(location).attr('search').slice(1).split('&')
-    for (var i in search_array) {
-      const work_array = search_array[i].split('=')
-      parameter_object[work_array[0]] = work_array[1]
-    }
-    $('#url').val(parameter_object['url'])
-    $('#indent').val(parameter_object['indent'])
-    $('#mark').val(parameter_object['mark'])
-    $('#level').val(parameter_object['level'])
-    generatorTocFromMarkdown(parameter_object)
-    .then(function(data) {
-      $('#toc').text(data)
-    })
+function initialize() {
+  var parameter_object = {'url': 'README.md', 'indent': '\t', 'mark': '*', 'level': '6'}
+  const search_array = $(location).attr('search').slice(1).split('&')
+  for (var i in search_array) {
+    const work_array = search_array[i].split('=')
+    parameter_object[work_array[0]] = decodeURIComponent(work_array[1])
   }
-  function update() {
-    var parameter_object = {'url': 'README.md', 'indent': '\t', 'mark': '*', 'level': '6'}
-    parameter_object['url'] = $('#url').val()
-    parameter_object['indent'] = $('#indent').val()
-    parameter_object['mark'] = $('#mark').val()
-    parameter_object['level'] = $('#level').val()
-    generatorTocFromMarkdown(parameter_object)
-    .then(function(data) {
-      $('#toc').text(data)
-    })
-  }
+  $('#url').val(parameter_object['url'])
+  $('#indent').val(parameter_object['indent'])
+  $('#mark').val(parameter_object['mark'])
+  $('#level').val(parameter_object['level'])
+  generatorTocFromMarkdown(parameter_object)
+  .then(function(data) {
+    $('#toc').text(data)
+  })
+}
+function update() {
+  var parameter_object = {'url': 'README.md', 'indent': '\t', 'mark': '*', 'level': '6'}
+  parameter_object['url'] = $('#url').val()
+  parameter_object['indent'] = $('#indent').val()
+  parameter_object['mark'] = $('#mark').val()
+  parameter_object['level'] = $('#level').val()
+  generatorTocFromMarkdown(parameter_object)
+  .then(function(data) {
+    $('#toc').text(data)
+  })
+}
 function generatorTocFromMarkdown(parameter_object) {
   var dfr0 = $.Deferred()
   var toc_string = ''
