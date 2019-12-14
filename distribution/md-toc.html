@@ -268,42 +268,56 @@ body,
   padding: 12px 12px;
   box-sizing: border-box;
 }
+.page-header {
+  text-align: center;
+}
 .title {
   font-size: 26px;
   letter-spacing: 0.07;
   line-height: 1;
-  text-align: center;
+}
+.description {
+  font-size: 14px;
+}
+.polite {
+  letter-spacing: 0.07em;
+  word-break: break-all;
+  word-wrap: break-word;
 }
 </style>
 <div class="container">
-  <h1 class="title">Markdown から TOC を生成するやつ</h1>
-  <div class="input">
-    <div class="input-item">
-      <label class="label">URL</label>
-      <input class="text-box" type="" name="" id="url">
-      <p class="example">ex. https://raw.githubusercontent.com/.../***.md</p>
+  <header class="page-header">
+    <p class="description">アドレスバーに <span class="polite">https://.../md-toc.html?url=README.md&indent=\t&mark=*&level=6</span> などとできます。</p>
+    <h1 class="title">Markdown から TOC を生成するやつ</h1>
+  </header>
+  <main class="contents">
+    <div class="input">
+      <div class="input-item">
+        <label class="label">URL</label>
+        <input class="text-box" type="" name="" id="url">
+        <p class="example">ex. https://raw.githubusercontent.com/.../***.md</p>
+      </div>
+      <div class="input-item">
+        <label class="label">インデント文字</label>
+        <input class="text-box" type="" name="" id="indent">
+        <p class="example">ex. \t, \s</p>
+      </div>
+      <div class="input-item">
+        <label class="label">リストのマーク</label>
+        <input class="text-box" type="" name="" id="mark">
+        <p class="example">ex. *, +, - その他</p>
+      </div>
+      <div class="input-item">
+        <label class="label">階層</label>
+        <input class="text-box" type="number" name="" id="level">
+        <p class="example">ex. 1 ～ 6</p>
+      </div>
+      <div class="input-item">
+          <button id="update_button" class="button">更新</button>
+      </div>
     </div>
-    <div class="input-item">
-      <label class="label">インデント文字</label>
-      <input class="text-box" type="" name="" id="indent">
-      <p class="example">ex. \t, \s</p>
+    <div class="output">
+      <textarea id="toc" class="textarea"></textarea>
     </div>
-    <div class="input-item">
-      <label class="label">リストのマーク</label>
-      <input class="text-box" type="" name="" id="mark">
-      <p class="example">ex. *, +, - その他</p>
-    </div>
-    <div class="input-item">
-      <label class="label">階層</label>
-      <input class="text-box" type="number" name="" id="level">
-      <p class="example">ex. 1 ～ 6</p>
-    </div>
-    <div class="input-item">
-        <button id="update_button" class="button">更新</button>
-    </div>
-  </div>
-  <div class="output">
-    <textarea id="toc" class="textarea"></textarea>
-  </div>
+  </main>
 </div>
-
