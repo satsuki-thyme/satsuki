@@ -19,7 +19,7 @@ function initialize() {
     parameter_object[work_array[0]] = decodeURIComponent(work_array[1])
   }
   $('#url').val(parameter_object['url'])
-  $('#indent').val(parameter_object['indent'])
+  $('#indent').val('parameter_object['indent']')
   $('#mark').val(parameter_object['mark'])
   $('#level').val(parameter_object['level'])
   generatorTocFromMarkdown(parameter_object)
