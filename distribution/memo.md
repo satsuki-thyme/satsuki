@@ -1,0 +1,1 @@
+/mnt/storage/novel/common/memo.md
