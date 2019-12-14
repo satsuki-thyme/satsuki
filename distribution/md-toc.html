@@ -19,7 +19,7 @@ function initialize() {
     parameter_object[work_array[0]] = decodeURIComponent(work_array[1])
   }
   $('#url').val(parameter_object['url'])
-  $('#indent').val('\\' + parameter_object['indent'])
+  $('#indent').val(parameter_object['indent'])
   $('#mark').val(parameter_object['mark'])
   $('#level').val(parameter_object['level'])
   generatorTocFromMarkdown(parameter_object)
@@ -146,7 +146,7 @@ function generatorTocFromMarkdown(parameter_object) {
     var toc_string = ''
     var list_array = []
     const regexp0 = new RegExp('#{' + (level + 1) +',}.*\n', 'gm')
-    const list_array_pre = data.replace(/^[^#\n].*?$/gm, '').replace(/(\n(?=\n)|\n$)/g, '').replace(regexp0, '').split('\n')
+    const list_array_pre = data.replace(/(\r\n|\r(!=\n))/g, '\n').replace(/^[^#\n].*?$/gm, '').replace(/(\n(?=\n)|\n$)/g, '').replace(regexp0, '').split('\n')
     const character_to_replace_length = character_to_replace.length
     const list_array_length = list_array_pre.length
     // heading: 見出し以外の行を削除し、残った見出し行を list_array に格納する
