@@ -1,6 +1,6 @@
 [submodule "distribution"]
 	path = distribution
-	url = https://github.com/yayoi-thyme/distribution
+	url = https://github.com/yayoi-thyme/distribution.git
 	ignore = dirty
 [submodule "blog"]
 	path = blog
