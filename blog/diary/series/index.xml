@@ -5,6 +5,7 @@
 		<description>Recent content in Series on 弥生タイムの日記</description>
 		<generator>Hugo 0.61.0 -- gohugo.io</generator>
 		<language>ja-JP</language>
+		<copyright>Yayoi Thyme</copyright>
 		<atom:link href="https://yayoi-thyme.com/blog/diary/series/index.xml" rel="self" type="application/rss+xml" />
 	</channel>
 </rss>

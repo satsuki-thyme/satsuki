@@ -1,0 +1,10 @@
+@charset "utf-8";
+* {
+  font-family: Meiryo, "Hiragino Kaku Gothic", Helvetica, Arial;
+}
+::selection {
+    background-color: #e4eedb;
+}
+.pure-menu a, .pure-menu a:hover, .pure-menu a:hover:visited, .pure-menu a:visited {
+  color: #000;
+}
