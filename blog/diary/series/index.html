@@ -5,19 +5,18 @@
   <title>Series | 弥生タイムの日記</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="弥生タイムの日記です。" />
-  <meta name="author" content="弥生タイム" />
+  <meta name="description" content="Example site for Slick Hugo theme" />
+  <meta name="author" content="" />
   <meta name="generator" content="Hugo 0.61.0" />
-  <link href="https://yayoi-thyme.com/blog/diary/index.xml" rel="alternate" type="application/rss+xml" title="弥生タイムの日記 Feed" />
-  <link href="https://yayoi-thyme.com/blog/diary/series/index.xml" rel="alternate" type="application/rss+xml" title="弥生タイムの日記 Series Feed" />
+  <link href="/blog/diary/index.xml" rel="alternate" type="application/rss+xml" title="弥生タイムの日記 Feed" />
+  <link href="/blog/diary/series/index.xml" rel="alternate" type="application/rss+xml" title="弥生タイムの日記 Series Feed" />
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://yayoi-thyme.com/blog/diary/style-compat.3b4c1c0e1409a3519991e0e9c30ec8480a88f23885a0beb2a2ca30ece5c7d42c.css" />
+  <link rel="stylesheet" href="/blog/diary/style-compat.3b4c1c0e1409a3519991e0e9c30ec8480a88f23885a0beb2a2ca30ece5c7d42c.css" />
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://yayoi-thyme.com/blog/diary/style.6bf00dd6076f8be858bee3ba1ac6937e5e78a15eb5a11f6822a6e9199d270703.css" />
+  <link rel="stylesheet" href="/blog/diary/style.6bf00dd6076f8be858bee3ba1ac6937e5e78a15eb5a11f6822a6e9199d270703.css" />
   <!--<![endif]-->
-  <link rel="stylesheet" href="https://yayoi-thyme.com/blog/diary/custom.css" />
-  <script defer src="https://yayoi-thyme.com/blog/diary/script.9df38729991a6ec08d83b60514e841529cebd5ccc800cf8e1f98fb63e73aaa73.js"></script>
+  <script defer src="/blog/diary/script.9df38729991a6ec08d83b60514e841529cebd5ccc800cf8e1f98fb63e73aaa73.js"></script>
 </head>
 <body>
 <div class="pure-g">
@@ -27,25 +26,28 @@
 <div class="navigation">
   <div class="navigation-header clearfix">
     <div class="pure-menu pure-menu-horizontal">
-      <a class="pure-menu-heading pure-menu-link" href="https://yayoi-thyme.com/blog/diary/">
+      <a class="pure-menu-heading pure-menu-link" href="/blog/diary/">
         弥生タイムの日記
       </a>
+      <ul class="pure-menu-list navigation-header-subtitle pull-end">
+        <li class="pure-menu-item pure-menu-disabled">Just another site</li>
+      </ul>
     </div>
   </div>
   <div class="navigation-content">
     <div class="pure-menu pure-menu-horizontal">
       <ul class="pure-menu-list">
-        <li class="pure-menu-item" title="全ての記事を表示する">
-          <a  class="pure-menu-link" href="https://yayoi-thyme.com/blog/diary/posts/">記事</a>
+        <li class="pure-menu-item" title="All posts">
+          <a  class="pure-menu-link" href="/blog/diary/posts/">Posts</a>
         </li>
-        <li class="pure-menu-item" title="全てのカテゴリーを表示する">
-          <a  class="pure-menu-link" href="https://yayoi-thyme.com/blog/diary/categories/">カテゴリー</a>
+        <li class="pure-menu-item" title="All categories">
+          <a  class="pure-menu-link" href="/blog/diary/categories/">Categories</a>
         </li>
-        <li class="pure-menu-item pure-menu-selected" title="全てのシリーズを表示する">
-          <a  class="pure-menu-link" href="https://yayoi-thyme.com/blog/diary/series/">シリーズ</a>
+        <li class="pure-menu-item pure-menu-selected" title="All series">
+          <a  class="pure-menu-link" href="/blog/diary/series/">Series</a>
         </li>
-        <li class="pure-menu-item" title="全てのタグを表示する">
-          <a  class="pure-menu-link" href="https://yayoi-thyme.com/blog/diary/tags/">タグ</a>
+        <li class="pure-menu-item" title="All tags">
+          <a  class="pure-menu-link" href="/blog/diary/tags/">Tags</a>
         </li>
       </ul>
     </div>
@@ -61,11 +63,17 @@
   <div class="footer">
   <div class="pure-menu pure-menu-horizontal">
     <ul class="pure-menu-list">
-      <li class="pure-menu-item" title="Yayoi Thyme">
-        <a class="pure-menu-link" href="https://yayoi-thyme.com/">Yayoi Thyme</a>
+      <li class="pure-menu-item" title="Theme repository">
+        <a class="pure-menu-link" href="https://github.com/spookey/slick">GitHub</a>
+      </li>
+      <li class="pure-menu-item" title="Theme page on gohugo.io">
+        <a class="pure-menu-link" href="https://themes.gohugo.io/slick">Slick</a>
+      </li>
+      <li class="pure-menu-item" title="Some website, using this theme">
+        <a class="pure-menu-link" href="https://www.toor.su">Toor</a>
       </li>
       <li class="pure-menu-item" title="RSS Feed">
-        <a href="https://yayoi-thyme.com/blog/diary/index.xml" class="pure-menu-link">RSS</a>
+        <a href="/blog/diary/index.xml" class="pure-menu-link">RSS</a>
       </li>
       <li class="pure-menu-item fix-cursor-pointer" title="Go to top">
         <a class="pure-menu-link" id="btn-gototop">
@@ -77,7 +85,7 @@
   <div class="pure-menu pure-menu-horizontal">
     <ul class="pure-menu-list">
       <li class="pure-menu-item pure-menu-disabled">
-        &copy; 2019 &mdash; Yayoi Thyme
+        &copy;Some Author — All rights reserved.
       </li>
     </ul>
   </div>

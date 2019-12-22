@@ -3,15 +3,15 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://yayoi-thyme.com/blog/diary/categories/</loc>
+    <loc>/blog/diary/categories/</loc>
   </url>
   
   <url>
-    <loc>https://yayoi-thyme.com/blog/diary/tags/</loc>
+    <loc>/blog/diary/tags/</loc>
   </url>
   
   <url>
-    <loc>https://yayoi-thyme.com/blog/diary/</loc>
+    <loc>/blog/diary/</loc>
   </url>
   
 </urlset>

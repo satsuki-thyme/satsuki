@@ -4,6 +4,10 @@
   Base element
 
 */
+html,
+body {
+  height: 100%;
+}
 body {
   font-family: Meiryo, "Hiragino Kaku Gothic", Helvetica, Arial;
   font-size: 16px;
@@ -731,12 +735,12 @@ main h6 ~ hr {
 .page-header,
 main,
 .page-footer,
-.up-to-top {
+.up {
+  width: 95%;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
-  overflow: hidden;
 }
 main {
   padding-top: 50px;
@@ -823,9 +827,10 @@ nav ul {
 }
 .up {
   display: none;
-  position: fixed;
-  left: 50%;
+  position: relative;
   bottom: 0;
+  margin-right: auto;
+  margin-left: auto;
 }
 .up button {
   display: inline-block;
