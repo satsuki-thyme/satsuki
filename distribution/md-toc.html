@@ -1,0 +1,323 @@
+<title>Markdown から TOC を生成するやつ</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(function() {
+  initialize()
+  $('#update_button').on('click', function(event) {
+    event.preventDefault()
+    update()
+  })
+  $('#toc').focus(function() {
+    $(this).select()
+  })
+})
+function initialize() {
+  var parameter_object = {'url': 'README.md', 'indent': String.raw`\t`, 'mark': '*', 'level': '6'}
+  const search_array = $(location).attr('search').slice(1).split('&')
+  for (var i in search_array) {
+    const work_array = search_array[i].split('=')
+    parameter_object[work_array[0]] = decodeURIComponent(work_array[1])
+  }
+  $('#url').val(parameter_object['url'])
+  $('#indent').val(parameter_object['indent'])
+  $('#mark').val(parameter_object['mark'])
+  $('#level').val(parameter_object['level'])
+  generatorTocFromMarkdown(parameter_object)
+  .then(function(data) {
+    $('#toc').text(data)
+  })
+}
+function update() {
+  var parameter_object = {'url': 'README.md', 'indent': '\t', 'mark': '*', 'level': '6'}
+  parameter_object['url'] = $('#url').val()
+  parameter_object['indent'] = $('#indent').val()
+  parameter_object['mark'] = $('#mark').val()
+  parameter_object['level'] = $('#level').val()
+  generatorTocFromMarkdown(parameter_object)
+  .then(function(data) {
+    $('#toc').text(data)
+  })
+}
+function generatorTocFromMarkdown(parameter_object) {
+  var dfr0 = $.Deferred()
+  var toc_string = ''
+  const url = parameter_object['url']
+  const indent = parameter_object['indent'].replace(/\\t/, '\t').replace(/\\s/, '  ')
+  const mark = parameter_object['mark']
+  const level = Number(parameter_object['level'])
+  const character_to_replace = [
+    [" ", "-"],
+    ["\\!", ""],
+    ['"', ""],
+    ["#", ""],
+    ["\\$", ""],
+    ["%", ""],
+    ["&", ""],
+    ["'", ""],
+    ["\\(", ""],
+    ["\\)", ""],
+    ["-", ""],
+    ["=", ""],
+    ["\\^", ""],
+    ["~", ""],
+    ["\\|", ""],
+    ["\\\\", ""],
+    ["@", ""],
+    ["`", ""],
+    ["\\[", ""],
+    ["\\{", ""],
+    [";", ""],
+    ["\\+", ""],
+    [":", ""],
+    ["\\*", ""],
+    ["\\]", ""],
+    ["\\}", ""],
+    [",", ""],
+    ["<", ""],
+    ["\\.", ""],
+    [">", ""],
+    ["\\/", ""],
+    ["\\?", ""],
+    ["_", ""],
+    ["、", ""],
+    ["。", ""],
+    ["　", ""],
+    ["！", ""],
+    ['”', ""],
+    ["＃", ""],
+    ["＄", ""],
+    ["％", ""],
+    ["＆", ""],
+    ["’", ""],
+    ["（", ""],
+    ["）", ""],
+    ["－", ""],
+    ["＝", ""],
+    ["＾", ""],
+    ["～", ""],
+    ["｜", ""],
+    ["￥", ""],
+    ["＠", ""],
+    ["｀", ""],
+    ["［", ""],
+    ["｛", ""],
+    ["；", ""],
+    ["＋", ""],
+    ["：", ""],
+    ["＊", ""],
+    ["］", ""],
+    ["｝", ""],
+    ["，", ""],
+    ["＜", ""],
+    ["．", ""],
+    ["＞", ""],
+    ["／", ""],
+    ["？", ""],
+    ["＿", ""],
+    ["「", ""],
+    ["」", ""],
+    ["｢", ""],
+    ["｣", ""],
+    ["『", ""],
+    ["』", ""],
+    ["【", ""],
+    ["】", ""],
+    ["［", ""],
+    ["］", ""],
+    ["｛", ""],
+    ["｝", ""],
+    ["《", ""],
+    ["》", ""],
+    ["〔", ""],
+    ["〕", ""],
+    ["・", ""],
+    ["―", ""]
+  ]
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'text',
+    cache: false
+  })
+  .then(function(data) {
+    // toc: 最終的に書き出す値
+    // list_array: toc 生成の中間要素
+    // list_array_pre: 見出し以外の行を削除して配列化する
+    var toc_string = ''
+    var list_array = []
+    const regexp0 = new RegExp('#{' + (level + 1) +',}.*\n', 'gm')
+    const list_array_pre = data.replace(/(\r\n|\r(!=\n))/g, '\n').replace(/^[^#\n].*?$/gm, '').replace(/(\n(?=\n)|\n$)/g, '').replace(regexp0, '').split('\n')
+    const character_to_replace_length = character_to_replace.length
+    const list_array_length = list_array_pre.length
+    // heading: 見出し以外の行を削除し、残った見出し行を list_array に格納する
+    // indent: # の数からインデント文字（ \t とか \s\s とか）のセットを生成して list_array に格納する
+    for (var i = list_array_length - 1; i >= 0; i--) {
+      list_array[i] = {}
+      list_array[i]['heading'] = list_array_pre[i].replace(/^#*?\s(.*)/, '$1')
+      list_array[i]['indent'] = list_array_pre[i].replace(/(.*)/, indent.repeat(list_array_pre[i].replace(/^(#*?)\s.*$/, '$1').length - 1))
+      // link: 見出し文字列からリンク文字列を作成し、 link 中にある文字で GitHub において置換されるもの character_to_replace の処理をする
+      var link = list_array[i]['heading']
+      for (var j = character_to_replace_length - 1; j >= 0; j--) {
+        const regexp1 = new RegExp(character_to_replace[j][0], 'g')
+        link = link.replace(regexp1, character_to_replace[j][1])
+      }
+      list_array[i]['link'] = link
+    }
+    // link_post: リンク文字列の重複するものに連番を振る
+    for (var i = list_array_length - 1; i >= 0; i--) {
+      var k = ''
+      for (var j = 0; j <= list_array_length - 1; j++) {
+        if (list_array[i]['link'] === list_array[j]['link']) {
+          if (i === j) {
+            if (k === '') {
+              list_array[i]['link_post'] = list_array[i]['link'] + k
+            } else {
+              list_array[i]['link_post'] = list_array[i]['link'] + '-' + k
+            }
+          } else {
+            k++
+          }
+        }
+      }
+    }
+    for (var i = 0; i <= list_array_length - 1; i++) {
+      toc_string = toc_string + list_array[i]['indent'] + mark + ' [' + list_array[i]['heading'] + '](#' + list_array[i]['link_post'] + ')\n'
+    }
+    dfr0.resolve(toc_string)
+    return toc_string
+  })
+  return dfr0.promise(toc_string)
+}
+</script>
+<style>
+/*
+  common
+*/
+body {
+  margin: 0;
+  padding: 0;
+}
+html,
+body,
+.container {
+  height: 100%;
+}
+.container {
+  width: 800px;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+}
+.input,
+.output {
+  display: table;
+}
+/*
+  input
+*/
+.input-item {
+  display: table-row;
+}
+.input-item:last-child::before {
+  content: "";
+  display: table-cell;
+}
+.text-box,
+.label,
+.button,
+.textarea {
+  font-size: 14px;
+  letter-spacing: 0.07em;
+  line-height: 1.5;
+}
+.text-box,
+.label,
+.example {
+  display: table-cell;
+  padding: 10px;
+}
+.text-box {
+  width: 200px;
+  max-width: 100%;
+  padding: 2px 6px;
+}
+.label {
+  text-align: right;
+}
+.example {
+  font-size: 80%;
+}
+.button {
+  width: 100%;
+  margin: 10px 0;
+}
+/*
+  output
+*/
+.output {
+  width: 100%;
+  height: calc(100% - 330px);
+  margin-top: 30px;
+}
+.textarea {
+  width: 100%;
+  height: 100%;
+  padding: 12px 12px;
+  box-sizing: border-box;
+}
+.page-header {
+  text-align: center;
+}
+.title {
+  font-size: 26px;
+  letter-spacing: 0.07;
+  line-height: 1;
+}
+.description {
+  font-size: 14px;
+}
+.polite {
+  letter-spacing: 0.07em;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+</style>
+<div class="container">
+  <header class="page-header">
+    <p class="description">アドレスバーに <span class="polite">https://.../md-toc.html?url=README.md&indent=\t&mark=*&level=6</span> などとできます。</p>
+    <h1 class="title">Markdown から TOC を生成するやつ</h1>
+  </header>
+  <main class="contents">
+    <div class="input">
+      <div class="input-item">
+        <label class="label">URL</label>
+        <input class="text-box" type="" name="" id="url">
+        <p class="example">ex. https://raw.githubusercontent.com/.../***.md</p>
+      </div>
+      <div class="input-item">
+        <label class="label">インデント文字</label>
+        <input class="text-box" type="" name="" id="indent">
+        <p class="example">ex. \t, \s</p>
+      </div>
+      <div class="input-item">
+        <label class="label">リストのマーク</label>
+        <input class="text-box" type="" name="" id="mark">
+        <p class="example">ex. *, +, - その他</p>
+      </div>
+      <div class="input-item">
+        <label class="label">階層</label>
+        <input class="text-box" type="number" name="" id="level">
+        <p class="example">ex. 1 ～ 6</p>
+      </div>
+      <div class="input-item">
+          <button id="update_button" class="button">更新</button>
+      </div>
+    </div>
+    <div class="output">
+      <textarea id="toc" class="textarea"></textarea>
+    </div>
+  </main>
+</div>
