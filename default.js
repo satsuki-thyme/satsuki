@@ -1,6 +1,5 @@
 $(function () {
   const search = $(location).attr('search').slice(1)
-  console.log(search)
   const host = $(location).attr('host')
   const setting_array =
 {
@@ -78,8 +77,12 @@ $(function () {
 })
 function loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base) {
   var dfr_load_contents = $.Deferred()
-  var url
-  var extention
+  var last_period = 0
+  var first_slash = 0
+  var last_slash = 0
+  var opus = ''
+  var url = ''
+  var extention = ''
   const now = $.now()
   setUrl(search)
   .then(
@@ -96,10 +99,10 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
   )
   function setUrl(search) {
     var dfr_set_url = $.Deferred()
-    const last_period = search.lastIndexOf('.')
-    const first_slash = search.indexOf('/')
-    const last_slash = search.lastIndexOf('/')
-    const opus = '/' + search.slice(first_slash + 1, last_slash - first_slash)
+    last_period = search.lastIndexOf('.')
+    first_slash = search.indexOf('/')
+    last_slash = search.lastIndexOf('/')
+    opus = '/' + search.slice(first_slash + 1, last_slash - first_slash)
     const file_name = '/' + search.slice(last_slash + 1)
     if (search.length === 0) {
       extention = 'md'
@@ -147,9 +150,11 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     function prevNextLink(story_len) {
       const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
       const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
+      var prev = ''
+      var next = ''
       if (!isNaN(story_len)) {
-        const prev = '?' + opus + '/' + prev_entity
-        const next = '?' + opus + '/' + next_entity
+        prev = '?' + opus + '/' + prev_entity
+        next = '?' + opus + '/' + next_entity
       }
       $.get(back_host + user_name + opus + branch + '/' + prev_entity).then(function() {
         $('a.prev').attr('href', prev)
