@@ -3,15 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/blog/diary/posts/2019-12-22/</loc>
+    <lastmod>2019-12-22T21:29:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/diary/posts/</loc>
+    <lastmod>2019-12-22T21:29:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/diary/</loc>
+    <lastmod>2019-12-22T21:29:46+09:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/diary/categories/</loc>
   </url>
   
   <url>
     <loc>/blog/diary/tags/</loc>
-  </url>
-  
-  <url>
-    <loc>/blog/diary/</loc>
   </url>
   
 </urlset>
