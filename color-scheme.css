@@ -1,0 +1,16 @@
+/*
+
+  Color Scheme
+
+*/
+.color-scheme {
+  color: #fff; /* Base color : Background */
+  color: #999; /* Base color : Foreground - Sub, Shadow */
+  color: #333; /* Base color : Foreground */
+  color: #5ec63e; /* Decoration color : Bright - link foreground (with white background) */
+  color: #66b72d; /* Decoration color : Bright - link background (with white foreground) */
+  color: #95bc79; /* Decoration color : Bright alternative */
+  color: #e4eedb; /* Decoration color : Bright pale - Background (with black foreground) */
+  color: #62a433; /* Decoration color : Base */
+  color: #4c7f27; /* Decoration color : Dark */
+}
