@@ -14,10 +14,10 @@ $(function () {
       "url_base": "/view-opus.html"
     },
     "yayoi-thyme.c": {
-      "back_host": "raw.githubusercontent.com",
-      "user_name": "yayoi-thyme",
-      "site_repository": "yayoi-thyme.github.io",
-      "branch": "master",
+      "back_host": "novel.c",
+      "user_name": "",
+      "site_repository": "",
+      "branch": "",
       "default_document": "novel.md",
       "url_home": "/novel.html",
       "url_base": "/view-opus.html"
