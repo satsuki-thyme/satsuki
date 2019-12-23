@@ -59,8 +59,6 @@ $(function () {
       if ($('html').attr('class').match(/load-content/g)) {
         loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base)
         setReturnLink(search, url_home)
-      } else {
-        setReturnLink(search, url_home)
       }
   })
   $(window).scroll(function() {
@@ -222,7 +220,7 @@ function setReturnLink(search, url_home) {
   const search_path_filenameless = search.slice(1, last_slash_search)
   const search_path_filename_extentionless = search.slice(last_slash_search + 1, last_period_search)
   const search_path_extention = search.slice(last_period_search + 1, last_period_search - last_slash_search)
-  if (search == '' || search_path_filenameless == '' || search_path_filename_extentionless === 'index') {
+  if (search_path_filename_extentionless === 'index') {
     prependAnchor(url_home, '小説関連に戻る')
   } else {
     prependAnchor('?/' + search_path_filenameless + '/index.md', search_path_filenameless + 'に戻る')
