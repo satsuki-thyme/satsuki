@@ -18,3 +18,16 @@ a:hover {
   text-decoration: underline;
   color: #5ec63e;
 }
+.p-title__link,
+.c-article__title a {
+  color: #62a433;
+}
+.c-article__summary {
+  font-size: 1.6rem;
+}
+.c-avatar .p-author__avatar {
+  padding: 10px;
+}
+
+
+
