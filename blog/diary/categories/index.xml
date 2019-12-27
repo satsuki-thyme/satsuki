@@ -5,7 +5,7 @@
     <link>/blog/diary/categories/</link>
     <description>Recent content in Categories on 弥生タイムの日記</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>ja-JP</language>
+    <language>ja_JP</language>
     <copyright>&amp;copy; Yayoi Thyme</copyright>
     
 	<atom:link href="/blog/diary/categories/index.xml" rel="self" type="application/rss+xml" />

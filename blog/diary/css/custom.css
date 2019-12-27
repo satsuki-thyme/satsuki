@@ -25,9 +25,6 @@ a:hover {
 .c-article__summary {
   font-size: 1.6rem;
 }
-.c-avatar .p-author__avatar {
+.c-avatar {
   padding: 10px;
 }
-
-
-
