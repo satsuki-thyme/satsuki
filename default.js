@@ -114,9 +114,9 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     return dfr_set_url.promise()
   }
   function writeContents(data) {
+    const word = keywordReplace(rubyParser(marked(data)))
     // Text
     if (extention === 'txt') {
-      const word = rubyParser(data)
       const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
       const insert_text = ''
       const element_array = []
@@ -139,7 +139,7 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     // Markdown
     } else if (extention === 'md') {
       $('html').addClass('markdown')
-      $('.markdown.contents-container').append(rubyParser(marked(keywordReplace(data))))
+      $('.markdown.contents-container').append(word)
     // Another
     } else {
       $('.another.contents-container').append(word)
@@ -168,34 +168,16 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
   }
   function rubyParser(data) {
                    /* | ------------ルビとは無関係------------| */
-    const word = data.replace(/([\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/(\r\n|\n|\r|$)/gm, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
+    const word = data.replace(/(^[\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/(\r\n|\n|\r|$)/gm, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
     return word
   }
   function keywordReplace(data) {
     const word_list_replace = [
-                              ["# setting - part 1", "# 設定 - 第 1 編"],
-                              ["# object", "# 目的"],
-                              ["# character", "# 登場人物"],
-                              ["# advanced setting", "# 詳細設定"],
-                              ["# simple setting", "# 端的設定"],
-                              ["# synopsis", "# あらすじ"],
-                              ["# memo", "# メモ"],
-                              ["# scene", "# シーン"],
-                              ["# person", "# 人物"],
-                              ["# episode set (\\d+)", "# 第 $1 セット（投稿２話分）"],
-                              ["# overview", "# 概要"],
-                              ["# meta data", "# メタデータ"],
-                              ["# element", "# 話の要素"],
-                              ["\\* love", "* 恋愛"],
-                              ["\\* battle", "* バトル"],
-                              ["# foreshadowing", "# 伏線"],
-                              ["# story", "# ストーリー"],
-                              ["# setup", "# セットアップ"],
-                              ["# passive", "# 状況に振り回されるパート"],
-                              ["# active", "# 状況解決に動き出すパート"],
-                              ["# resolution", "# 解決パート"],
-                              ["\\{", '<span style="color: #d00;">{</span><span>'],
-                              ["\\}", '</span><span style="color: #d00;">}</span>']
+                              ["\\{", '<span style="font-size: 50%; color: #999;">{</span><span>'],
+                              ["\\}", '</span><span style="font-size: 50%; color: #999;">}</span>'],
+                              ["(?<=\{)g(?=\})", '<span style="font-size: 50%; color: #00d;">いいところ</span>'],
+                              ["(?<=\{)b(?=\})", '<span style="font-size: 50%; color: #d00;">わるいところ</span>'],
+                              ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
                             ]
     const word_list_hide = ["_summary_", "_gist_"]
     var word_list_replace_length = 0
