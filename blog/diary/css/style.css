@@ -29,3 +29,14 @@ a:hover {
 .c-avatar {
   padding: 10px;
 }
+.p-article__thumbnail {
+  float: left;
+  width: 128px;
+  margin-right: 20px;
+}
+.p-article__body {
+  margin-top: 20px;
+}
+.p-article__body p:first-child {
+  margin-top: 0;
+}
