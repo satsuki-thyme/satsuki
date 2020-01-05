@@ -74,7 +74,7 @@ $(function () {
   })
 })
 function loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base) {
-  var dfr_load_contents = $.Deferred()
+  var dfd_load_contents = $.Deferred()
   var last_period = 0
   var first_slash = 0
   var last_slash = 0
@@ -96,7 +96,7 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     })
   )
   function setUrl(search) {
-    var dfr_set_url = $.Deferred()
+    var dfd_set_url = $.Deferred()
     last_period = search.lastIndexOf('.')
     first_slash = search.indexOf('/')
     last_slash = search.lastIndexOf('/')
@@ -105,13 +105,13 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     if (search.length === 0) {
       extention = 'md'
       url = back_host + user_name + site_repository + branch + default_document
-      dfr_set_url.resolve(url)
+      dfd_set_url.resolve(url)
     } else {
       extention = search.slice(last_period + 1)
       url = back_host + user_name + opus + branch + file_name
-      dfr_set_url.resolve(url)
+      dfd_set_url.resolve(url)
     }
-    return dfr_set_url.promise()
+    return dfd_set_url.promise()
   }
   function writeContents(data) {
     const word = keywordReplace(rubyParser(marked(data)))
@@ -144,7 +144,7 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     } else {
       $('.another.contents-container').append(word)
     }
-    dfr_load_contents.resolve()
+    dfd_load_contents.resolve()
     function prevNextLink(story_len) {
       const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
       const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
