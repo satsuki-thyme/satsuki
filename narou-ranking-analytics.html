@@ -1,0 +1,758 @@
+<title>なろうランキング解析</title>
+<meta charset="utf-8">
+<style>
+body {
+  font-size: 14px;
+}
+#container {
+  width: 100%;
+  max-width: 1000px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 20px;
+  padding-left: 20px;
+  box-sizing: border-box;
+}
+section {
+  margin-top: 35px;
+  padding-left: 30px;
+}
+section.indicate {
+  border-left: 3px solid #18b7cd;
+}
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: -20px;
+}
+table {
+  border-collapse: collapse;
+}
+table + table {
+  margin-top: 50px;
+}
+td {
+  vertical-align: top;
+  border: 1px solid #666;
+}
+.progress-frame {
+  width: 200px;
+  height: 25px;
+  padding: 0;
+  border: 1px solid #666;
+}
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: #1e3;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+var progress = 0
+var urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
+var gzipRanking = ''
+var outRanking = ''
+var dateSource = ''
+var dateRange = 0
+var dateUnit = ''
+var dateArray = []
+var rankingObject = {}
+var ncodeArray = []
+var sizeGroup = 10
+var urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
+var ofParameterListArray = []
+var assemblyNovelArray = []
+var numberNcodePool = 0
+var ncodeArrayLength = 0
+var outputGetParameterObject = {
+  "gzip": "",
+  "out": "",
+  "lim": "",
+  "st": ""
+}
+var ofParameterObject = {
+  "title": ["t", "", "小説名"],
+  "ncode": ["n", "", "Nコード"],
+  "userid": ["u", "", "作者のユーザID"],
+  "writer": ["w", "", "作者名"],
+  "story": ["s", "", "小説のあらすじ"],
+  "biggenre": ["bg", "", "大ジャンル"],
+  "genre": ["g", "", "ジャンル"],
+  "general_firstup": ["gf", "", "初回掲載日"],
+  "general_lastup": ["gl", "", "最終掲載日"],
+  "novel_type": ["nt", "", "連載, 短編"],
+  "end": ["e", "", "完結済, 連載中"],
+  "general_all_no": ["ga", "", "全掲載部分数"],
+  "length": ["l", "", "小説文字数"],
+  "time": ["ti", "", "読了時間(分単位)"],
+  "isstop": ["i", "", "長期連載停止中"],
+  "isr15": ["ir", "", "R15"],
+  "isbl": ["ibl", "", "ボーイズラブ"],
+  "isgl": ["igl", "", "ガールズラブ"],
+  "iszankoku": ["izk", "", "残酷な描写あり"],
+  "istensei": ["its", "", "異世界転生"],
+  "istenni": ["iti", "", "異世界転移"],
+  "pc_or_k": ["p", "", "PC, ケータイ"],
+  "global_point": ["gp", "", "総合評価ポイント"],
+  "daily_point": ["dp", "", "日間ポイント"],
+  "weekly_point": ["wp", "", "週間ポイント"],
+  "monthly_point": ["mp", "", "月間ポイント"],
+  "quarter_point": ["qp", "", "四半期ポイント"],
+  "yearly_point": ["yp", "", "年間ポイント"],
+  "fav_novel_cnt": ["f", "", "ブックマーク数"],
+  "impression_cnt": ["imp", "", "感想数"],
+  "review_cnt": ["r", "", "レビュー数"],
+  "all_point": ["a", "", "評価点"],
+  "all_hyoka_cnt": ["ah", "", "評価者数"],
+  "sasie_cnt": ["sa", "", "挿絵の数"],
+  "kaiwaritu": ["ka", "", "会話率"],
+  "novelupdated_at": ["nu", "", "小説の更新日時"]
+}
+var orderParameterObject = {
+  "new": "",
+  "favnovelcnt": "",
+  "reviewcnt": "",
+  "hyoka": "",
+  "hyokaasc": "",
+  "dailypoint": "",
+  "weeklypoint": "",
+  "monthlypoint": "",
+  "quarterpoint": "",
+  "yearlypoint": "",
+  "impressioncnt": "",
+  "hyokacnt": "",
+  "hyokacntasc": "",
+  "weekly": "",
+  "lengthdesc": "",
+  "lengthasc": "",
+  "ncodedesc": "",
+  "old": ""
+}
+var conditionalExtractionGetParameterObject = {
+  "word": "",
+  "notword": "",
+  "title": "",
+  "ex": "",
+  "keyword": "",
+  "wname": "",
+  "biggenre": "",
+  "notbiggenre": "",
+  "genre": "",
+  "notgenre": "",
+  "userid": "",
+  "isr15": "",
+  "isbl": "",
+  "isgl": "",
+  "iszankoku": "",
+  "istensei": "",
+  "istenni": "",
+  "istt": "",
+  "notisr15": "",
+  "notisbl": "",
+  "notisgl": "",
+  "notiszankoku": "",
+  "notistensei": "",
+  "notistenni": "",
+  "notistt": "",
+  "minlen": "",
+  "maxlen": "",
+  "length": "",
+  "kaiwaritu": "",
+  "sasie": "",
+  "mintime": "",
+  "maxtime": "",
+  "time": "",
+  "ncode": "",
+  "type": "",
+  "buntai": "",
+  "stop": "",
+  "lastup": "",
+  "ispickup": ""
+}
+var biggenreAndGenreListObject = 
+{
+  "1": "恋愛",
+  "2": "ファンタジー",
+  "3": "文芸",
+  "4": "SF",
+  "99": "その他",
+  "98": "ノンジャンル",
+  "101": "異世界〔恋愛〕",
+  "102": "現実世界〔恋愛〕",
+  "201": "ハイファンタジー〔ファンタジー〕",
+  "202": "ローファンタジー〔ファンタジー〕",
+  "301": "純文学〔文芸〕",
+  "302": "ヒューマンドラマ〔文芸〕",
+  "303": "歴史〔文芸〕",
+  "304": "推理〔文芸〕",
+  "305": "ホラー〔文芸〕",
+  "306": "アクション〔文芸〕",
+  "307": "コメディー〔文芸〕",
+  "401": "VRゲーム〔SF〕",
+  "402": "宇宙〔SF〕",
+  "403": "空想科学〔SF〕",
+  "404": "パニック〔SF〕",
+  "9901": "童話〔その他〕",
+  "9902": "詩〔その他〕",
+  "9903": "エッセイ〔その他〕",
+  "9904": "リプレイ〔その他〕",
+  "9999": "その他〔その他〕",
+  "9801": "ノンジャンル〔ノンジャンル〕"
+}
+$(function() {
+  $('#execute').on('click', function(event) {
+    event.preventDefault()
+    startGeggingRanking('html')
+  })
+})
+function startGeggingRanking(sourceMedia) {
+console.log('1 startGeggingRanking') // milestone
+  if (sourceMedia === 'html') {
+    gzipRanking = $('[name="gzipRanking"]').children('option:selected').val()
+    outRanking = $('[name="outRanking"]').children('option:selected').val()
+    dateSource = $('[name="dateSource"]').val()
+    dateRange = Number($('[name="dateRange"]').val())
+    dateUnit = $('[name="dateUnit"]').children('option:selected').val()
+  }
+  getSource()
+}
+function getSource() {
+console.log('2 getSource') // milestone
+  var dateSplitArray = (dateSource.substr(0, 4) + '/' + dateSource.substr(4, 2) + '/' + dateSource.substr(6, 2)).split('/')
+  var date = new Date(dateSplitArray[0], Number(dateSplitArray[1]) - 1, Number(dateSplitArray[2]) + 1)
+  for (var i = 0; dateRange >= i; i++) {
+    var dateString = dateFormat(new Date(date.setDate(date.getDate() - 1)))
+    dateArray.push(dateString)
+    $.ajax({
+      url: urlRankingApi + '?gzip=' + gzipRanking + '&out=' + outRanking + '&rtype=' + dateString + '-' + dateUnit,
+      type: 'GET',
+      dataType: outRanking,
+      cache: 'false',
+      context: {dateString}
+    })
+    .done(function(data) {
+      rankingObject[this.dateString] = data
+      progress++
+      if (progress === dateRange + 1) {
+        mappingNcode()
+      }
+    })
+    .fail(function() {
+      alert('error!')
+    })
+  }
+}
+function mappingNcode() {
+console.log('3 mappingNcode') // milestone
+  for (var i = dateRange; i >= 0; i--) {
+    for (var j = rankingObject[dateArray[i]].length - 1; j >= 0; j--) {
+      var work0 = rankingObject[dateArray[i]][j]['ncode']
+      if (ncodeArray.indexOf(work0) < 0) {
+        ncodeArray.push(work0)
+      }
+    }
+  }
+console.log('ncodeArray ↓')
+console.log(ncodeArray)
+  makeGroupNcode()
+}
+function makeGroupNcode() {
+console.log('4 makeGroupNcode') // milestone
+  ncodeArrayLength = ncodeArray.length
+  var frequencyQuery = Math.ceil(ncodeArrayLength / sizeGroup)
+  var pieceQuery = ncodeArrayLength % sizeGroup
+  for (var i = 0; frequencyQuery - 1 >= i; i++) {
+    var queryWork0 = ''
+    for (var j = 0; sizeGroup - 1 >= j; j++) {
+      queryWork0 = queryWork0 + '-' + ncodeArray[j + i * sizeGroup]
+    }
+console.log('queryWork0 ↓')
+console.log(queryWork0)
+    makeQueryNovel(queryWork0.replace(/^-/, ''), sizeGroup)
+  }
+  if (pieceQuery !== 0) {
+    var queryWork1 = ''
+    for (var i = ncodeArrayLength - pieceQuery; ncodeArrayLength >= i; i++) {
+      queryWork1 = queryWork1 + '-' + ncodeArray[i]
+    }
+console.log('queryWork1 ↓')
+console.log(queryWork1)
+    makeQueryNovel(queryWork1.replace(/^-/, ''), pieceQuery)
+  }
+}
+function dateFormat(date) {
+console.log('0 dateFormat') // milestone
+  var y = new Date(date).getFullYear()
+  var m = new Date(date).getMonth() + 1
+  var d = new Date(date).getDate()
+  y = ('000' + y).slice(-4)
+  m = ('0' + m).slice(-2)
+  d = ('0' + d).slice(-2)
+  return y + m + d
+}
+function makeQueryNovel(groupNcode, numberNcode) {
+console.log('5 makeQueryNovel') // milestone
+  var outputGetParameter = ''
+  var ofParameter = ''
+  var conditionalExtractionGetParameter = ''
+  var orderParameter = ''
+  $('#outputGetParameter :not(#ofParameter,#orderParameter)').find('input,select').each(function(index, el) {
+    var thisType = $(this).attr('type')
+    var thisName = $(this).attr('name')
+    var thisValue = $(this).attr('value')
+    var thisSelection = $(this).children('option:selected').val()
+    var thisVal = $(this).val()
+    if ($(this).prop('tagName') === 'SELECT' && thisSelection) {
+      outputGetParameter = outputGetParameter + '&' + thisName + '=' + thisSelection
+    } else if (thisType === 'radio' && $(this).prop('checked') === true && thisValue !== '') {
+      outputGetParameter = outputGetParameter + '&' + thisValue + '=1'
+    } else if (thisType === 'checkbox' && $(this).prop('checked') === true && thisValue !== '') {
+      outputGetParameter = outputGetParameter + '&' + thisName + '=1'
+    } else if (thisType === 'text' && thisVal !== '') {
+      outputGetParameter = outputGetParameter + '&' + thisName + '=' + thisVal
+    }
+  })
+  $('#ofParameter').find('input').each(function(index, el) {
+    var thisName = $(this).attr('name')
+    var thisChecked = $(this).prop('checked')
+    if (thisChecked) {
+      ofParameter = ofParameter + '-' + ofParameterObject[thisName][0]
+      ofParameterListArray.push(thisName)
+    }
+  })
+  if (!ofParameter) {
+    alert('出力項目が選択されていません')
+    return false
+  }
+  orderParameter = 'order=' + $('[name="order"] option:selected').val()
+  $('#conditionalExtractionGetParameter').find('input,select').each(function(index, el) {
+    var thisType = $(this).attr('type')
+    var thisName = $(this).attr('name')
+    var thisValue = $(this).attr('value')
+    var thisVal = $(this).val()
+    if ($(this).prop('tagName') === 'SELECT' && thisVal) {
+      conditionalExtractionGetParameter = conditionalExtractionGetParameter + '&' + thisName + '=' + thisVal
+    } else if (thisType === 'radio' && $(this).prop('checked') === true && thisValue !== '') {
+      conditionalExtractionGetParameter = conditionalExtractionGetParameter + '&' + thisValue + '=1'
+    } else if (thisType === 'checkbox' && $(this).prop('checked') === true && thisValue !== '') {
+      conditionalExtractionGetParameter = conditionalExtractionGetParameter + '&' + thisName + '=1'
+    } else if (thisType === 'text' && thisVal !== '') {
+      conditionalExtractionGetParameter = conditionalExtractionGetParameter + '&' + thisName + '=' + thisVal
+    }
+  })
+  var query = '?' + outputGetParameter.replace(/^&/, '') + 'lim=' + sizeGroup + '&of=' + ofParameter.replace(/^-/, '') + '&' + orderParameter + '&' + conditionalExtractionGetParameter.replace(/^&/, '') + '&' + groupNcode
+  var out = outputGetParameter.replace(/^.*?(jsonp|yaml|json|php|atom).*?$/, '$1')
+  getNovel(query, out, numberNcode)
+}
+function getNovel(query, out, numberNcode) {
+console.log('6 getNovel') // milestone
+  $.ajax({
+      url: urlNovelApi + query,
+      type: 'GET',
+      dataType: out,
+      cache: 'false'
+  })
+  .done(function(data) {
+    assemblyNovelArray.push(data)
+    numberNcodePool = numberNcodePool + numberNcode
+console.log('data ↓')
+console.log(data)
+    if (numberNcodePool === ncodeArrayLength) {
+      agregateNovel(assemblyNovelArray)
+    }
+  })
+  .fail(function() {
+    alert('error!')
+  })
+}
+function agregateNovel(assemblyNovelArray) {
+console.log('7 agregateNovel') // milestone
+  console.log(assemblyNovelArray)
+}
+function writeNovel(data) {
+  $('#output-area').append('<table id="novel"></table>')
+  $('#novel').append('<thead></thead>')
+  $('#novel').append('<tbody></tbody>')
+  $('#novel thead').append('<tr></tr>')
+  for (var i = 0; ofParameterListArray.length - 1 >= i; i++) {
+    var headText = ofParameterObject[ofParameterListArray[i]][2]
+    $('#novel thead tr').append('<td>' + headText + '</td>')
+  }
+  for (var i = 1; data.length - 1 >= i; i++) {
+    $('#novel tbody').append('<tr class="line-' + i + '"></tr>')
+    for (var j = 0; ofParameterListArray.length - 1 >= j; j++) {
+      $('#novel tr.line-' + i).append('<td class="item-' + j + '"></td>')
+      var itemText = ''
+      if (ofParameterListArray[j] === 'biggenre' || ofParameterListArray[j] === 'genre') {
+        itemText = biggenreAndGenreListObject[data[i][ofParameterListArray[j]]]
+      } else {
+        itemText = data[i][ofParameterListArray[j]]
+      }
+      $('#novel tr.line-' + i + ' td.item-' + j).text(itemText)
+    }
+  }
+}
+</script>
+<div id="container">
+<header>
+  <h1>なろうランキング解析</h1>
+  <input type="button" id="execute" value="開始">
+</header>
+<section class="indicate">
+  <h2>ランキング・インプット</h2>
+  <section class="indicate">
+    <h3>出力GETパラメータ</h3>
+    <section class="indicate">
+      <h4>データ圧縮</h4>
+      gzip圧縮してgzipファイルとして返します。gzip圧縮レベルを1～5で指定できます。転送量上限を減らすためにも推奨<br>
+      <select name="gzipRanking">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>出力形式</h4>
+      出力形式をyamlまたはjsonまたはphpを指定。未指定時はYAMLになる。outパラメータの詳細<br>
+      <select name="outRanking">
+        <option value="jsonp">JSONP形式</option>
+        <option value="">YAML形式(デフォルト)</option>
+        <option value="json">JSON形式</option>
+        <option value="php">PHPのserialize()</option>
+        <option value="atom">Atomフィード</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>基準日</h4>
+      ex.: 20200101
+      <input type="text" name="dateSource" value="20200101">
+      <section>
+        <h5>注意事項</h5>
+        <ul>
+          <li>週間は火曜日分以外提供していないため、例えば 2014 年 5 月 1 日(木曜日)を指定するとエラーになります。</li>
+          <li>月間は毎月 1 日分以外提供していないため、例えば 4 月 2 日を指定するとエラーになります。</li>
+          <li>四半期は毎月 1 日分以外提供していないため、例えば 4 月 3 日を指定するとエラーになります。</li>
+        </ul>
+      </section>
+    </section>
+    <section class="indicate">
+      <h4>期間</h4>
+      基準日からさかのぼる日数。基準日のみの場合は 0 。
+      <input type="text" name="dateRange" value="0">
+    </section>
+    <section class="indicate">
+      <h4>取得単位</h4>
+      <select name="dateUnit">
+        <option value="d">日間</option>
+        <option value="w">週間</option>
+        <option value="m">月間</option>
+        <option value="q">四半期</option>
+        <option value="y">年間</option>
+      </select>
+    </section>
+  </section>
+</section>
+<section id="input-area" class="indicate">
+  <h2>ノベル・インプット</h2>
+  <section id="outputGetParameter" class="indicate">
+    <h3>出力GETパラメータ</h3>
+<!--
+    <section class="indicate">
+      <h4>データ圧縮</h4>
+      gzip圧縮してgzipファイルとして返します。gzip圧縮レベルを1～5で指定できます。転送量上限を減らすためにも推奨<br>
+      <select name="gzip">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>出力形式</h4>
+      出力形式をyamlまたはjsonまたはphpを指定。未指定時はYAMLになる。outパラメータの詳細<br>
+      <select name="out">
+        <option value="jsonp">JSONP形式</option>
+        <option value="">YAML形式(デフォルト)</option>
+        <option value="json">JSON形式</option>
+        <option value="php">PHPのserialize()</option>
+        <option value="atom">Atomフィード</option>
+      </select>
+    </section>
+-->
+    <section id="ofParameter" class="indicate">
+      <h4>出力項目</h4>
+      出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。<br>
+      <input type="checkbox" checked name="title">小説名<br>
+      <input type="checkbox" name="ncode">Nコード<br>
+      <input type="checkbox" name="userid"> 作者のユーザID(数値)<br>
+      <input type="checkbox" name="writer"> 作者名<br>
+      <input type="checkbox" name="story">小説のあらすじ<br>
+      <input type="checkbox" name="biggenre"> 大ジャンル<br>
+      <input type="checkbox" name="genre">ジャンル<br>
+      <input type="checkbox" name="gensaku">現在未使用項目(常に空文字列が返ります)<br>
+      <input type="checkbox" name="keyword">キーワード<br>
+      <input type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
+      <input type="checkbox" name="general_lastup"> 最終掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
+      <input type="checkbox" name="novel_type"> 連載の場合は1、短編の場合は2<br>
+      <input type="checkbox" name="end">短編小説と完結済小説は0となっています。連載中は1です。<br>
+      <input type="checkbox" name="general_all_no"> 全掲載部分数です。短編の場合は1です。<br>
+      <input type="checkbox" name="length"> 小説文字数です。スペースや改行は文字数としてカウントしません。<br>
+      <input type="checkbox" name="time"> 読了時間(分単位)です。読了時間は小説文字数÷500を切り上げした数値です。<br>
+      <input type="checkbox" name="isstop"> 長期連載停止中なら1、それ以外は0です。<br>
+      <input type="checkbox" name="isr15">登録必須キーワードに「R15」が含まれる場合は1、それ以外は0です。<br>
+      <input type="checkbox" name="isbl"> 登録必須キーワードに「ボーイズラブ」が含まれる場合は1、それ以外は0です。<br>
+      <input type="checkbox" name="isgl"> 登録必須キーワードに「ガールズラブ」が含まれる場合は1、それ以外は0です。<br>
+      <input type="checkbox" name="iszankoku">登録必須キーワードに「残酷な描写あり」が含まれる場合は1、それ以外は0です。<br>
+      <input type="checkbox" name="istensei"> 登録必須キーワードに「異世界転生」が含まれる場合は1、それ以外は0です。<br>
+      <input type="checkbox" name="istenni">登録必須キーワードに「異世界転移」が含まれる場合は1、それ以外は0です。<br>
+      <input type="checkbox" name="pc_or_k">1はケータイのみ、2はPCのみ、3はPCとケータイで投稿された作品です。対象は投稿と次話投稿時のみで、どの端末で執筆されたかを表すものではありません。<br>
+      <input type="checkbox" name="global_point"> 総合評価ポイント(=(ブックマーク数×2)+評価点)<br>
+      <input type="checkbox" name="daily_point">日間ポイント(ランキング集計時点から過去24時間以内で新たに登録されたブックマークや評価が対象)<br>
+      <input type="checkbox" name="weekly_point"> 週間ポイント(ランキング集計時点から過去7日以内で新たに登録されたブックマークや評価が対象)<br>
+      <input type="checkbox" name="monthly_point">月間ポイント(ランキング集計時点から過去30日以内で新たに登録されたブックマークや評価が対象)<br>
+      <input type="checkbox" name="quarter_point">四半期ポイント(ランキング集計時点から過去90日以内で新たに登録されたブックマークや評価が対象)<br>
+      <input type="checkbox" name="yearly_point"> 年間ポイント(ランキング集計時点から過去365日以内で新たに登録されたブックマークや評価が対象)<br>
+      <input type="checkbox" name="fav_novel_cnt">ブックマーク数<br>
+      <input type="checkbox" name="impression_cnt"> 感想数<br>
+      <input type="checkbox" name="review_cnt"> レビュー数<br>
+      <input type="checkbox" name="all_point">評価点<br>
+      <input type="checkbox" name="all_hyoka_cnt">評価者数<br>
+      <input type="checkbox" name="sasie_cnt">挿絵の数<br>
+      <input type="checkbox" name="kaiwaritu">会話率<br>
+      <input type="checkbox" name="novelupdated_at">小説の更新日時<br>
+    </section>
+<!--
+    <section class="indicate">
+      <h4>最大出力数</h4>
+      最大出力数を指定できます。最低1、最高500です。半角数字で指定してください。指定しない場合は20件になります。<br>
+      <input type="text" name="lim">
+    </section>
+    <section class="indicate">
+      <h4>表示開始位置</h4>
+      表示開始位置の指定です。半角数字で指定してください。 たとえば全部で10作品あるとして、3作品目以降の小説情報を取得したい場合は3と指定してください。<br>
+      <input type="text" name="st">
+    </section>
+    <section id="orderParameter" class="indicate">
+      <h4>出力順序</h4>
+      出力順序を指定できます。指定しない場合は新着更新順となります。<br>
+      <select name="order">
+        <option value="new">新着更新順</option>
+        <option value="favnovelcnt">ブックマーク数の多い順</option>
+        <option value="reviewcnt">レビュー数の多い順</option>
+        <option value="hyoka">総合ポイントの高い順</option>
+        <option value="hyokaasc">総合ポイントの低い順</option>
+        <option value="dailypoint">日間ポイントの高い順</option>
+        <option value="weeklypoint">週間ポイントの高い順</option>
+        <option value="monthlypoint">月間ポイントの高い順</option>
+        <option value="quarterpoint">四半期ポイントの高い順</option>
+        <option value="yearlypoint">年間ポイントの高い順</option>
+        <option value="impressioncnt">感想の多い順</option>
+        <option value="hyokacnt">評価者数の多い順</option>
+        <option value="hyokacntasc">評価者数の少ない順</option>
+        <option value="weekly">週間ユニークユーザの多い順 毎週火曜日早朝リセット (前週の日曜日から土曜日分)</option>
+        <option value="lengthdesc">小説本文の文字数が多い順</option>
+        <option value="lengthasc">小説本文の文字数が少ない順</option>
+        <option value="ncodedesc">新着投稿順</option>
+        <option value="old">更新が古い順</option>
+      </select>
+    </section>
+-->
+  </section>
+  <section id="conditionalExtractionGetParameter" class="indicate">
+    <h3>条件抽出GETパラメータ</h3>
+    <section class="indicate">
+      <h4>検索単語指定</h4>
+      含める単語<br>
+      <input type="text" name="word"><br>
+      除外する単語<br>
+      <input type="text" name="notword">
+      <section>
+        <form>
+          <h5>含める・除外する単語の対象</h5>
+          <input type="radio" name="scope" value="">指定しない<br>
+          <input type="radio" name="scope" value="title">タイトル<br>
+          <input type="radio" name="scope" value="ex">あらすじ<br>
+          <input type="radio" name="scope" value="keyword">キーワード<br>
+          <input type="radio" name="scope" value="wname">著者名
+        </form>
+      </section>
+    </section>
+    <section class="indicate">
+      <h4>大ジャンル</h4>
+      <input type="text" name="biggenre"><br>
+      <section>
+        <h5>指定する数値</h5>
+        大ジャンルを指定できます。ハイフン(-)記号で区切れば複数大ジャンルを一括抽出できます。<br>
+        <ul>
+          <li>1:恋愛</li>
+          <li>2:ファンタジー</li>
+          <li>3:文芸</li>
+          <li>4:SF</li>
+          <li>99:その他</li>
+          <li>98:ノンジャンル</li>
+        </ul>
+      </section>
+    </section>
+    <section class="indicate">
+      <h4>除外大ジャンル</h4>
+      <input type="text" name="notbiggenre">
+    </section>
+    <section class="indicate">
+      <h4>ジャンル</h4>
+      <input type="text" name="genre" value="201">
+      <section>
+        <h5>指定する数値</h5>
+        ジャンルを指定できます。ハイフン(-)記号で区切れば複数ジャンルを一括抽出できます。<br>
+        <ul>
+          <li>101:異世界〔恋愛〕</li>
+          <li>102:現実世界〔恋愛〕</li>
+          <li>201:ハイファンタジー〔ファンタジー〕</li>
+          <li>202:ローファンタジー〔ファンタジー〕</li>
+          <li>301:純文学〔文芸〕</li>
+          <li>302:ヒューマンドラマ〔文芸〕</li>
+          <li>303:歴史〔文芸〕</li>
+          <li>304:推理〔文芸〕</li>
+          <li>305:ホラー〔文芸〕</li>
+          <li>306:アクション〔文芸〕</li>
+          <li>307:コメディー〔文芸〕</li>
+          <li>401:VRゲーム〔SF〕</li>
+          <li>402:宇宙〔SF〕</li>
+          <li>403:空想科学〔SF〕</li>
+          <li>404:パニック〔SF〕</li>
+          <li>9901:童話〔その他〕</li>
+          <li>9902:詩〔その他〕</li>
+          <li>9903:エッセイ〔その他〕</li>
+          <li>9904:リプレイ〔その他〕</li>
+          <li>9999:その他〔その他〕</li>
+          <li>9801:ノンジャンル〔ノンジャンル〕</li>
+        </ul>
+      </section>
+    </section>
+    <section class="indicate">
+      <h4>除外ジャンル</h4>
+      <input type="text" name="notgenre"><br>
+    </section>
+    <section class="indicate">
+      <h4>ユーザID</h4>
+      <input type="text" name="userid">
+    </section>
+    <section class="indicate">
+      <h4>登録必須キーワード指定</h4>
+      以下が含まれる小説のみを抽出します。<br>
+      <input type="checkbox" name="isr15">「R15」<br>
+      <input type="checkbox" name="isbl">「ボーイズラブ」<br>
+      <input type="checkbox" name="isgl">「ガールズラブ」<br>
+      <input type="checkbox" name="iszankoku">「残酷な描写あり」<br>
+      <input type="checkbox" name="istensei">「異世界転生」<br>
+      <input type="checkbox" name="istenni">「異世界転移」<br>
+      <input type="checkbox" name="istt">「異世界転生」または「異世界転移」
+    </section>
+    <section class="indicate">
+      <h4>登録必須キーワードの除外指定</h4>
+      以下が含まれる小説を除外して抽出します。<br>
+      <input type="checkbox" name="notisr15">「R15」<br>
+      <input type="checkbox" name="notisbl">「ボーイズラブ」<br>
+      <input type="checkbox" name="notisgl">「ガールズラブ」<br>
+      <input type="checkbox" name="notiszankoku">「残酷な描写あり」<br>
+      <input type="checkbox" name="notistensei">「異世界転生」<br>
+      <input type="checkbox" name="notistenni">「異世界転移」<br>
+      <input type="checkbox" name="notistt">「異世界転生」または「異世界転移」
+    </section>
+    <section class="indicate">
+      <h4>文字数指定</h4>
+      <input type="text" name="minlen">抽出する小説の最小文字数を指定できます。文字数とは小説から一部タグ記号(改ページ等)、ルビ、ルビのふりがな部分、みてみんの画像挿入コード、スペース、改行を抜いた値です。<br>
+      <input type="text" name="maxlen">抽出する小説の最大文字数。文字数とは小説から一部タグ記号(改ページ等)、ルビ、ルビのふりがな部分、みてみんの画像挿入コード、スペース、改行を抜いた値です。<br>
+      <input type="text" name="length"> 抽出する小説の文字数を指定できます。minlenまたはmaxlenと併用はできません。文字数とは小説から一部タグ記号(改ページ等)、ルビ、ルビのふりがな部分、みてみんの画像挿入コード、スペース、改行を抜いた値です。範囲指定する場合は、最小文字数と最大文字数をハイフン(-)記号で区切ってください。
+    </section>
+    <section class="indicate">
+      <h4>会話率指定</h4>
+      <input type="text" name="kaiwaritu">抽出する小説の会話率を%単位で指定できます（ % の入力は不要）。範囲指定する場合は、最低数と最大数をハイフン(-)記号で区切ってください。
+    </section>
+    <section class="indicate">
+      <h4>挿絵数指定</h4>
+      <input type="text" name="sasie">抽出する小説の挿絵の数を指定できます。範囲指定する場合は、最小数と最大数を-(ハイフン)記号で区切ってください。
+    </section>
+    <section class="indicate">
+      <h4>読了時間指定</h4>
+      ※読了時間は文字数(minlen、maxlen、length)と併用不可<br>
+      <input type="text" name="mintime">抽出する小説の最低読了時間を分単位で指定できます。読了時間は小説文字数÷500を切り上げした数字です。<br>
+      <input type="text" name="maxtime">抽出する小説の最大読了時間を分単位で指定できます。読了時間は小説文字数÷500を切り上げした数字です。<br>
+      <input type="text" name="time">抽出する小説の読了時間を指定できます。mintimeまたはmaxtimeと併用はできません。読了時間は小説文字数÷500を切り上げした数字です。範囲指定する場合は、最小文字数と最大文字数をハイフン(-)記号で区切ってください。
+    </section>
+<!-- なろうランキングAPIから入力するため不要
+    <section class="indicate">
+      <h4>Nコード指定</h4>
+      <input type="text" name="ncode">Nコードで抽出可能。ハイフン(-)記号で区切ればNコードのOR検索ができます。開示設定が「検索除外中です」となっている作品は抽出できません。
+    </section>
+-->
+    <section class="indicate">
+      <h4>小説タイプ指定</h4>
+      <select name="type">
+        <option value="">指定しない</option>
+        <option value="t">短編</option>
+        <option value="r">連載中</option>
+        <option value="er">完結済連載小説</option>
+        <option value="re">すべての連載小説(連載中および完結済)</option>
+        <option value="ter">短編と完結済連載小説</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>文体指定</h4>
+      <input type="text" name="buntai">文体を指定できます。ハイフン(-)記号で区切ればOR検索できます。<br>
+      <section>
+        <h5>文体リスト</h5>
+        <ul>
+          <li>1：字下げされておらず、連続改行が多い作品</li>
+          <li>2：字下げされていないが、改行数は平均な作品</li>
+          <li>4：字下げが適切だが、連続改行が多い作品</li>
+          <li>6：字下げが適切でかつ改行数も平均な作品</li>
+        </ul>
+      </section>
+    </section>
+    <section class="indicate">
+      <h4>連載停止中指定</h4>
+      連載停止中作品に関する指定ができます。<br>
+      <select name="stop">
+        <option value="">指定しない</option>
+        <option value="1">長期連載停止中を除きます</option>
+        <option value="2">長期連載停止中のみ取得します</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>最終掲載日指定</h4>
+      最終掲載日(general_lastup)で抽出できます。以下の文字列を指定できます。<br>
+      <select name="lastup">
+        <option value="">指定しない</option>
+        <option value="thisweek">今週(日曜日の午前0時はじまり)</option>
+        <option value="lastweek">先週</option>
+        <option value="sevenday">過去7日間(7日前の午前0時はじまり)</option>
+        <option value="thismonth">今月</option>
+        <option value="lastmonth">先月</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>ピックアップ指定</h4>
+      小説ピックアップの対象となっている小説のみを抽出します。<br>
+      <input type="checkbox" name="ispickup">
+    </section>
+  </section>
+</section>
+<section class="indicate">
+  <h2>データ取得の実行</h2>
+  <button id="execute">取得開始</button>
+</section>
+<section class="indicate">
+  <h2>出力</h2>
+  <div id="output-area"></div>
+</section>
+</div>
