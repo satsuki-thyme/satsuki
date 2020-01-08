@@ -1,4 +1,4 @@
-<title>なろうランキング解析</title>
+<title>なろう小説ランキング解析</title>
 <meta charset="utf-8">
 <style>
 body {
@@ -55,22 +55,24 @@ td {
 <script>
 var urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
 var urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
-var progress = 0
-var gzip = ''
-var out = ''
-var dateSource = ''
-var dateRange = 0
-var dateUnit = ''
-var dateArray = []
-var rankingObject = {}
-var ncodeArray = []
-var numberOfNcode = 100           // 一度に取得する NCODE の数。多くするとクエリ URL が長くなって困るかも。
-var ofParameterListArray = []
-var assemblyNovelArray = []
-var numberOfNcodePool = 0
-var ncodeArrayLength = 0
-var rankingGlobalObject = {}
-var ofParameterObject = {
+var progress = 0                  // プログレスバーのカウンター
+var out = ''                      // なろう小説ランキングAPI から取得するデータの種類
+var dateSource = ''               // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
+var dateRange = 0                 // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
+var dateUnit = ''                 // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
+var dateArray = []                // なろう小説ランキングAPI から取得する日付のリスト
+var rankingObject = {}            // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
+var ncodeArray = []               // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
+var ncodeArrayLength = 0          // なろう小説ランキングAPI の上記 ncodeArray の長さ
+var numberOfQuery = 0             // なろう小説ランキングAPI に問い合わせるクエリを数える
+var numberOfNcode = 100           // なろう小説API から一度に取得する NCODE の数。多くするとクエリ URL が長くなって困るかも
+var numberOfNcodePool = 0         // なろう小説API から一度に取得する NCODE の数を数える
+var frequencyQuery = 0            // なろう小説API から GET する回数
+var numberOfNcodePiece = 0        // なろう小説API から numberOfNcode * frequencyQuery で取得しきれない余りの NCODE の数
+var ofParameterListArray = []     // なろう小説API から実際に取得する情報のリスト
+var assemblyNovelArray = []       // なろう小説API から取得した小説情報の全て
+var assemblyNovelArrayMelting = []// なろう小説API から取得した上記の assemblyNovelArray 内のネステッド・アレイを溶かしたもの
+var ofParameterObject = {         // なろう小説API から取得する情報の総リスト
   "title": ["t", "", "小説名"],
   "ncode": ["n", "", "Nコード"],
   "userid": ["u", "", "作者のユーザID"],
@@ -117,8 +119,10 @@ $(function() {
 })
 function start(sourceMedia) {
 console.log('1 start') // milestone
+  /*
+    スタート
+  */
   if (sourceMedia === 'html') {
-    gzip = $('[name="gzip"]').children('option:selected').val()
     out = $('[name="out"]').children('option:selected').val()
     dateSource = $('[name="dateSource"]').val()
     dateRange = Number($('[name="dateRange"]').val())
@@ -128,13 +132,18 @@ console.log('1 start') // milestone
 }
 function getRankingSource() {
 console.log('2 getRankingSource') // milestone
+  /*
+    なろう小説ランキングAPI から NCODE, ポイント, ランクを、指定された日数分取得する
+  */
+  var counter = 0
   var dateSplitArray = (dateSource.substr(0, 4) + '/' + dateSource.substr(4, 2) + '/' + dateSource.substr(6, 2)).split('/')
-  var date = new Date(dateSplitArray[0], Number(dateSplitArray[1]) - 1, Number(dateSplitArray[2]) + 1)
+  var date = new Date(dateSplitArray[0], Number(dateSplitArray[1]) - 1, Number(dateSplitArray[2]))
   for (var i = 0; dateRange >= i; i++) {
-    var dateString = dateFormat(new Date(date.setDate(date.getDate() - 1)))
+    var dateString = dateFormat(new Date(date.setDate(date.getDate() - i)))
+console.log(new Date(date.setDate(date.getDate() - i)))
     dateArray.push(dateString)
     $.ajax({
-      url: urlRankingApi + '?out=' + out + '&rtype=' + dateString + '-' + dateUnit,
+      url: urlRankingApi + '?gzip=0&out=' + out + '&rtype=' + dateString + '-' + dateUnit,
       type: 'GET',
       dataType: out,
       cache: 'false',
@@ -142,9 +151,8 @@ console.log('2 getRankingSource') // milestone
     })
     .done(function(data) {
       rankingObject[dateString] = data
-      console.log(data)
-      progress++
-      if (progress === dateRange + 1) {
+      counter++
+      if (counter === dateRange + 1) {
         makeComparisonTable_makeNcodeList(date)
       }
     })
@@ -155,8 +163,13 @@ console.log('2 getRankingSource') // milestone
 }
 function makeComparisonTable_makeNcodeList(date) {
 console.log('3 makeComparisonTable_makeNcodeList') // milestone
-  for (var i = dateRange; i >= 0; i--) {
-    for (var j = rankingObject[dateArray[i]].length - 1; j >= 0; j--) {
+  /*
+    start で取得した、指定された日数分のランキングリストから、 NCODE のみを重複なしに結合する
+  */
+  for (var i = 0; dateRange >= i; i++) {
+console.log(dateArray)
+console.log(rankingObject)
+    for (var j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
       var work0 = rankingObject[dateArray[i]][j]['ncode']
       if (ncodeArray.indexOf(work0) < 0) {
         ncodeArray.push(work0)
@@ -167,9 +180,12 @@ console.log('3 makeComparisonTable_makeNcodeList') // milestone
 }
 function makeComparisonTable_makeNcodeGroup(date) {
 console.log('4 makeComparisonTable_makeNcodeGroup') // milestone
+  /*
+    makeComparisonTable_makeNcodeList で作った NCODE のリストを、コード内で指定した数ずつグループにする
+  */
   ncodeArrayLength = ncodeArray.length
-  var frequencyQuery = Math.ceil(ncodeArrayLength / numberOfNcode)
-  var numberOfNcodePiece = ncodeArrayLength % numberOfNcode
+  frequencyQuery = Math.ceil(ncodeArrayLength / numberOfNcode)
+  numberOfNcodePiece = ncodeArrayLength % numberOfNcode
   for (var i = 0; frequencyQuery - 1 >= i; i++) {
     var queryWork0 = ''
     for (var j = 0; numberOfNcode - 1 >= j; j++) {
@@ -187,6 +203,9 @@ console.log('4 makeComparisonTable_makeNcodeGroup') // milestone
 }
 function dateFormat(date) {
 console.log('0 dateFormat') // milestone
+  /*
+    日付の形式を変換するサブ関数
+  */
   var y = new Date(date).getFullYear()
   var m = new Date(date).getMonth() + 1
   var d = new Date(date).getDate()
@@ -197,6 +216,9 @@ console.log('0 dateFormat') // milestone
 }
 function makeComparisonTable_makeQuery(groupNcode, numberOfNcode) {
 console.log('5 makeComparisonTable_makeQuery') // milestone
+  /*
+    makeComparisonTable_makeNcodeGroup でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
+  */
   var ofParameter = ''
   $('#ofParameter').find('input').each(function(index, el) {
     var thisName = $(this).attr('name')
@@ -206,15 +228,23 @@ console.log('5 makeComparisonTable_makeQuery') // milestone
       ofParameterListArray.push(thisName)
     }
   })
+  if (!ofParameter.match(/(?!a-z)n(?<!a-z)/)) {
+    ofParameter = ofParameter + '-n'
+    ofParameterListArray.push('ncode')
+  }
   if (!ofParameter) {
     alert('出力項目が選択されていません')
     return false
   }
-  var query = '?out=' + out + '&lim=' + numberOfNcode + '&of=' + ofParameter.replace(/^-/, '') + '&ncode=' + groupNcode
+  var query = '?gzip=0&out=' + out + '&lim=' + numberOfNcode + '&of=' + ofParameter.replace(/^-/, '') + '&ncode=' + groupNcode
   makeComparisonTable_getNovelInformation(query, out, numberOfNcode)
 }
 function makeComparisonTable_getNovelInformation(query, out, numberOfNcode) {
 console.log('6 makeComparisonTable_getNovelInformation') // milestone
+  /*
+    なろう小説API から NCODE 毎に、指定された小説情報を取得する
+  */
+  numberOfQuery++
   $.ajax({
       url: urlNovelApi + query,
       type: 'GET',
@@ -234,7 +264,29 @@ console.log('6 makeComparisonTable_getNovelInformation') // milestone
 }
 function joinRankingAndInformation(assemblyNovelArray) {
 console.log('7 joinRankingAndInformation') // milestone
-console.log(assemblyNovelArray)
+  /*
+    ランキングリストへ、小説情報のリストを、 NCODE をキーとして割り付ける
+  */
+  var numberOfQueryAll = (dateRange + 1) * frequencyQuery + Math.ceil(numberOfNcodePiece)
+  if (numberOfQuery === numberOfQueryAll) {
+    for (var i = 0; assemblyNovelArray.length - 1 >= i; i++) {
+      for (var j = 0; assemblyNovelArray[i].length - 1 >= j; j++) {
+        assemblyNovelArrayMelting.push(assemblyNovelArray[i][j])
+      }
+    }
+    for (var i = 0; dateArray.length - 1 >= i; i++) {
+      for (var j = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= j; j++) {
+        for (var k = 1; assemblyNovelArrayMelting.length - 1 >= k; k++) {
+          if (assemblyNovelArrayMelting[k]['ncode'] === rankingObject[dateArray[i]][j]['ncode']) {
+            for (var l = 0; ofParameterListArray.length - 1 >= l; l++) {
+              rankingObject[dateArray[i]][j][ofParameterListArray[l]] = assemblyNovelArrayMelting[k][ofParameterListArray[l]]
+            }
+          }
+        }
+      }
+    }
+  }
+console.log(rankingObject)
 }
 function writeNovel(data) {
   $('#output-area').append('<table id="novel"></table>')
@@ -262,7 +314,7 @@ function writeNovel(data) {
 </script>
 <div id="container">
 <header>
-  <h1>なろうランキング解析</h1>
+  <h1>なろう小説ランキング解析</h1>
   <input type="button" id="execute" value="開始">
 </header>
 <section class="indicate">
