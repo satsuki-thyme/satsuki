@@ -53,26 +53,32 @@ td {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-var urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
-var urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
-var progress = 0                  // プログレスバーのカウンター
-var out = ''                      // なろう小説ランキングAPI から取得するデータの種類
-var dateSource = ''               // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
-var dateRange = 0                 // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
-var dateUnit = ''                 // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
-var dateArray = []                // なろう小説ランキングAPI から取得する日付のリスト
-var rankingObject = {}            // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
-var ncodeArray = []               // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
-var ncodeArrayLength = 0          // なろう小説ランキングAPI の上記 ncodeArray の長さ
-var numberOfQuery = 0             // なろう小説ランキングAPI に問い合わせるクエリを数える
-var numberOfNcode = 100           // なろう小説API から一度に取得する NCODE の数。多くするとクエリ URL が長くなって困るかも
-var numberOfNcodePool = 0         // なろう小説API から一度に取得する NCODE の数を数える
-var frequencyQuery = 0            // なろう小説API から GET する回数
-var numberOfNcodePiece = 0        // なろう小説API から numberOfNcode * frequencyQuery で取得しきれない余りの NCODE の数
-var ofParameterListArray = []     // なろう小説API から実際に取得する情報のリスト
-var assemblyNovelArray = []       // なろう小説API から取得した小説情報の全て
-var assemblyNovelArrayMelting = []// なろう小説API から取得した上記の assemblyNovelArray 内のネステッド・アレイを溶かしたもの
-var ofParameterObject = {         // なろう小説API から取得する情報の総リスト
+let urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
+let urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
+let progress = 0                         // プログレスバーのカウンター
+let out = ''                             // なろう小説ランキングAPI から取得するデータの種類
+let dateSource = ''                      // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
+let dateRange = 0                        // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
+let dateUnit = ''                        // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
+let dateArray = []                       // なろう小説ランキングAPI から取得する日付のリスト
+let rankingObject = {}                   // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
+let rankingFilteredObject = {}           // 最終的な表示としてフィルタされたレコードのオブジェクト
+let ncodeArray = []                      // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
+let ncodeArrayLength = 0                 // なろう小説ランキングAPI の上記 ncodeArray の長さ
+let numberOfQuery = 0                    // なろう小説ランキングAPI に問い合わせるクエリを数える
+let lim = 500                            // なろう小説API から取得する件数
+let numberOfNcode = 100                  // なろう小説API から一度に取得する NCODE の数。多くするとクエリ URL が長くなって困るかも
+let numberOfNcodePool = 0                // なろう小説API から一度に取得する NCODE の数を数える
+let frequencyQuery = 0                   // なろう小説API から GET する回数
+let numberOfNcodePiece = 0               // なろう小説API から numberOfNcode * frequencyQuery で取得しきれない余りの NCODE の数
+let assemblyNovelArray = []              // なろう小説API から取得した小説情報の全て
+let assemblyNovelArrayMelting = []       // なろう小説API から取得した上記の assemblyNovelArray 内のネステッド・アレイを溶かしたもの
+let ofParameterSelectedArray = []        // なろう小説API から実際に取得する情報のアレイ
+let ofParameterRequiredArray = ["ncode", "biggenre", "genre"]
+let ofParameterRequestArray = []         // Selected + Requireed
+let ofParameterQueryText = 'n-bg-g'      // 
+let filterParameterSelectedObject = {}   // 最終的な表示をフィルタする項目のアレイ
+let ofParameterTableObject = {           // なろう小説API から提供される小説情報の表
   "title": ["t", "", "小説名"],
   "ncode": ["n", "", "Nコード"],
   "userid": ["u", "", "作者のユーザID"],
@@ -111,6 +117,37 @@ var ofParameterObject = {         // なろう小説API から取得する情報
   "kaiwaritu": ["ka", "", "会話率"],
   "novelupdated_at": ["nu", "", "小説の更新日時"]
 }
+let biggenreParameterTableObject = {
+  1: "恋愛",
+  2: "ファンタジー",
+  3: "文芸",
+  4: "SF",
+  99: "その他",
+  98: "ノンジャンル"
+}
+let genreParameterTableObject = {
+  101: "異世界〔恋愛〕",
+  102: "現実世界〔恋愛〕",
+  201: "ハイファンタジー〔ファンタジー〕",
+  202: "ローファンタジー〔ファンタジー〕",
+  301: "純文学〔文芸〕",
+  302: "ヒューマンドラマ〔文芸〕",
+  303: "歴史〔文芸〕",
+  304: "推理〔文芸〕",
+  305: "ホラー〔文芸〕",
+  306: "アクション〔文芸〕",
+  307: "コメディー〔文芸〕",
+  401: "VRゲーム〔SF〕",
+  402: "宇宙〔SF〕",
+  403: "空想科学〔SF〕",
+  404: "パニック〔SF〕",
+  9901: "童話〔その他〕",
+  9902: "詩〔その他〕",
+  9903: "エッセイ〔その他〕",
+  9904: "リプレイ〔その他〕",
+  9999: "その他〔その他〕",
+  9801: "ノンジャンル〔ノンジャンル〕"
+}
 $(function() {
   $('#execute').on('click', function(event) {
     event.preventDefault()
@@ -135,19 +172,17 @@ console.log('2 getRankingSource') // milestone
   /*
     なろう小説ランキングAPI から NCODE, ポイント, ランクを、指定された日数分取得する
   */
-  var counter = 0
-  var dateSplitArray = (dateSource.substr(0, 4) + '/' + dateSource.substr(4, 2) + '/' + dateSource.substr(6, 2)).split('/')
-  var date = new Date(dateSplitArray[0], Number(dateSplitArray[1]) - 1, Number(dateSplitArray[2]))
-  for (var i = 0; dateRange >= i; i++) {
-    var dateString = dateFormat(new Date(date.setDate(date.getDate() - i)))
-console.log(new Date(date.setDate(date.getDate() - i)))
+  let counter = 0
+  let dateSplitArray = (dateSource.substr(0, 4) + '/' + dateSource.substr(4, 2) + '/' + dateSource.substr(6, 2)).split('/')
+  let date = new Date(dateSplitArray[0], Number(dateSplitArray[1]) - 1, Number(dateSplitArray[2]))
+  for (let i = 0; dateRange >= i; i++) {
+    let dateString = dateFormat(new Date(date.setDate(date.getDate() - i)))
     dateArray.push(dateString)
     $.ajax({
       url: urlRankingApi + '?gzip=0&out=' + out + '&rtype=' + dateString + '-' + dateUnit,
       type: 'GET',
       dataType: out,
-      cache: 'false',
-      context: {dateString}
+      cache: 'false'
     })
     .done(function(data) {
       rankingObject[dateString] = data
@@ -166,11 +201,9 @@ console.log('3 makeComparisonTable_makeNcodeList') // milestone
   /*
     start で取得した、指定された日数分のランキングリストから、 NCODE のみを重複なしに結合する
   */
-  for (var i = 0; dateRange >= i; i++) {
-console.log(dateArray)
-console.log(rankingObject)
-    for (var j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
-      var work0 = rankingObject[dateArray[i]][j]['ncode']
+  for (let i = 0; dateRange >= i; i++) {
+    for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
+      let work0 = rankingObject[dateArray[i]][j]['ncode']
       if (ncodeArray.indexOf(work0) < 0) {
         ncodeArray.push(work0)
       }
@@ -184,18 +217,18 @@ console.log('4 makeComparisonTable_makeNcodeGroup') // milestone
     makeComparisonTable_makeNcodeList で作った NCODE のリストを、コード内で指定した数ずつグループにする
   */
   ncodeArrayLength = ncodeArray.length
-  frequencyQuery = Math.ceil(ncodeArrayLength / numberOfNcode)
+  frequencyQuery = Math.floor(ncodeArrayLength / numberOfNcode)
   numberOfNcodePiece = ncodeArrayLength % numberOfNcode
-  for (var i = 0; frequencyQuery - 1 >= i; i++) {
-    var queryWork0 = ''
-    for (var j = 0; numberOfNcode - 1 >= j; j++) {
+  for (let i = 0; frequencyQuery - 1 >= i; i++) {
+    let queryWork0 = ''
+    for (let j = 0; numberOfNcode - 1 >= j; j++) {
       queryWork0 = queryWork0 + '-' + ncodeArray[j + i * numberOfNcode]
     }
     makeComparisonTable_makeQuery(queryWork0.replace(/^-/, ''), numberOfNcode)
   }
   if (numberOfNcodePiece !== 0) {
-    var queryWork1 = ''
-    for (var i = ncodeArrayLength - numberOfNcodePiece; ncodeArrayLength >= i; i++) {
+    let queryWork1 = ''
+    for (let i = ncodeArrayLength - numberOfNcodePiece; ncodeArrayLength >= i; i++) {
       queryWork1 = queryWork1 + '-' + ncodeArray[i]
     }
     makeComparisonTable_makeQuery(queryWork1.replace(/^-/, ''), numberOfNcodePiece)
@@ -206,40 +239,43 @@ console.log('0 dateFormat') // milestone
   /*
     日付の形式を変換するサブ関数
   */
-  var y = new Date(date).getFullYear()
-  var m = new Date(date).getMonth() + 1
-  var d = new Date(date).getDate()
+  let y = new Date(date).getFullYear()
+  let m = new Date(date).getMonth() + 1
+  let d = new Date(date).getDate()
   y = ('000' + y).slice(-4)
   m = ('0' + m).slice(-2)
   d = ('0' + d).slice(-2)
   return y + m + d
 }
-function makeComparisonTable_makeQuery(groupNcode, numberOfNcode) {
+function makeComparisonTable_makeQuery(groupNcode, numberOfNcodeFragment) {
 console.log('5 makeComparisonTable_makeQuery') // milestone
   /*
     makeComparisonTable_makeNcodeGroup でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
   */
-  var ofParameter = ''
-  $('#ofParameter').find('input').each(function(index, el) {
-    var thisName = $(this).attr('name')
-    var thisChecked = $(this).prop('checked')
+  $('#ofParameterQueryText').find('input').each(function(index, el) {
+    let thisName = $(this).attr('name')
+    let thisChecked = $(this).prop('checked')
     if (thisChecked) {
-      ofParameter = ofParameter + '-' + ofParameterObject[thisName][0]
-      ofParameterListArray.push(thisName)
+      ofParameterQueryText = ofParameterQueryText + '-' + ofParameterTableObject[thisName][0]
+      if (ofParameterSelectedArray.indexOf(thisName) < 0) {
+        ofParameterSelectedArray.push(thisName)
+        ofParameterRequestArray.push(thisName)
+      }
     }
   })
-  if (!ofParameter.match(/(?!a-z)n(?<!a-z)/)) {
-    ofParameter = ofParameter + '-n'
-    ofParameterListArray.push('ncode')
+  for (var i = 0; ofParameterRequiredArray.length - 1 >= i; i++) {
+    if (ofParameterRequestArray.indexOf(ofParameterRequiredArray[i]) < 0) {
+      ofParameterRequestArray.push(ofParameterRequiredArray[i])
+    }
   }
-  if (!ofParameter) {
+  if (!ofParameterQueryText) {
     alert('出力項目が選択されていません')
     return false
   }
-  var query = '?gzip=0&out=' + out + '&lim=' + numberOfNcode + '&of=' + ofParameter.replace(/^-/, '') + '&ncode=' + groupNcode
-  makeComparisonTable_getNovelInformation(query, out, numberOfNcode)
+  let query = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofParameterQueryText.replace(/^-/, '') + '&ncode=' + groupNcode
+  makeComparisonTable_getNovelInformation(query, out, numberOfNcodeFragment)
 }
-function makeComparisonTable_getNovelInformation(query, out, numberOfNcode) {
+function makeComparisonTable_getNovelInformation(query, out, numberOfNcodeFragment) {
 console.log('6 makeComparisonTable_getNovelInformation') // milestone
   /*
     なろう小説API から NCODE 毎に、指定された小説情報を取得する
@@ -253,7 +289,7 @@ console.log('6 makeComparisonTable_getNovelInformation') // milestone
   })
   .done(function(data) {
     assemblyNovelArray.push(data)
-    numberOfNcodePool = numberOfNcodePool + numberOfNcode
+    numberOfNcodePool = numberOfNcodePool + numberOfNcodeFragment
     if (numberOfNcodePool === ncodeArrayLength) {
       joinRankingAndInformation(assemblyNovelArray)
     }
@@ -267,47 +303,82 @@ console.log('7 joinRankingAndInformation') // milestone
   /*
     ランキングリストへ、小説情報のリストを、 NCODE をキーとして割り付ける
   */
-  var numberOfQueryAll = (dateRange + 1) * frequencyQuery + Math.ceil(numberOfNcodePiece)
-  if (numberOfQuery === numberOfQueryAll) {
-    for (var i = 0; assemblyNovelArray.length - 1 >= i; i++) {
-      for (var j = 0; assemblyNovelArray[i].length - 1 >= j; j++) {
-        assemblyNovelArrayMelting.push(assemblyNovelArray[i][j])
+  for (let i = 0; assemblyNovelArray.length - 1 >= i; i++) {
+    for (let j = 0; assemblyNovelArray[i].length - 1 >= j; j++) {
+      assemblyNovelArrayMelting.push(assemblyNovelArray[i][j])
+    }
+  }
+  for (let i = 0; dateArray.length - 1 >= i; i++) {
+    for (let k = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= k; k++) {
+      for (let l = 1; assemblyNovelArrayMelting.length - 1 >= l; l++) {
+        if (assemblyNovelArrayMelting[l]['ncode'] === rankingObject[dateArray[i]][k]['ncode']) {
+          for (let m = 0; ofParameterRequestArray.length - 1 >= m; m++) {
+            rankingObject[dateArray[i]][k][ofParameterRequestArray[m]] = assemblyNovelArrayMelting[l][ofParameterRequestArray[m]]
+            rankingObject[dateArray[i]][k]['date'] = dateArray[i]
+          }
+        }
       }
     }
-    for (var i = 0; dateArray.length - 1 >= i; i++) {
-      for (var j = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= j; j++) {
-        for (var k = 1; assemblyNovelArrayMelting.length - 1 >= k; k++) {
-          if (assemblyNovelArrayMelting[k]['ncode'] === rankingObject[dateArray[i]][j]['ncode']) {
-            for (var l = 0; ofParameterListArray.length - 1 >= l; l++) {
-              rankingObject[dateArray[i]][j][ofParameterListArray[l]] = assemblyNovelArrayMelting[k][ofParameterListArray[l]]
+  }
+  filterRecord()
+}
+function filterRecord() {
+console.log('8 filterRecord') // milestone
+  filterParameterSelectedObject['biggenre'] = Number($('[name="filter-biggenre"]').val())
+  filterParameterSelectedObject['genre'] = Number($('[name="filter-genre"]').val())
+  if (filterParameterSelectedObject['biggenre'] === 0 && filterParameterSelectedObject['genre'] === 0) {
+    rankingFilteredObject = Object.assign(rankingObject)
+  } else if (filterParameterSelectedObject['biggenre'] !== 0) {
+    insertRecode('')
+  } else if (filterParameterSelectedObject['genre'] !== 0) {
+    insertRecode('')
+  }
+  function insertRecode(argument) {
+    for (var i = 0; ofParameterRequiredArray.length - 1 >= i; i++) {
+      if (ofParameterSelectedArray.indexOf(ofParameterRequiredArray[i]) < 0) {
+        for (var j = 0; dateArray.length - 1 >= j; j++) {
+          rankingFilteredObject[dateArray[j]] = []
+          for (var k = 0; rankingObject[dateArray[j]].length - 1 >= k; k++) {
+            if (ofParameterSelectedArray) {
+              rankingFilteredObject[dateArray[j]].push(rankingObject[dateArray[j]][k])
             }
           }
         }
       }
     }
   }
-console.log(rankingObject)
+  writeRankingTable()
 }
-function writeNovel(data) {
-  $('#output-area').append('<table id="novel"></table>')
-  $('#novel').append('<thead></thead>')
-  $('#novel').append('<tbody></tbody>')
-  $('#novel thead').append('<tr></tr>')
-  for (var i = 0; ofParameterListArray.length - 1 >= i; i++) {
-    var headText = ofParameterObject[ofParameterListArray[i]][2]
-    $('#novel thead tr').append('<td>' + headText + '</td>')
+function writeRankingTable() {
+console.log('9 writeRankingTable') // milestone
+  /*
+    ランキングを書き出す
+  */
+  $('#ranking-table thead tr').append('<th class="item-ranking-date">ランキング日</th>')
+  for (var i = 0; ofParameterSelectedArray.length - 1 >= i; i++) {
+    $('#ranking-table thead tr').append('<th class="item-' + ofParameterSelectedArray[i] + '">' + ofParameterTableObject[ofParameterSelectedArray[i]][2] + '</td>')
   }
-  for (var i = 1; data.length - 1 >= i; i++) {
-    $('#novel tbody').append('<tr class="line-' + i + '"></tr>')
-    for (var j = 0; ofParameterListArray.length - 1 >= j; j++) {
-      $('#novel tr.line-' + i).append('<td class="item-' + j + '"></td>')
-      var itemText = ''
-      if (ofParameterListArray[j] === 'biggenre' || ofParameterListArray[j] === 'genre') {
-        itemText = biggenreAndGenreListObject[data[i][ofParameterListArray[j]]]
+  let numberOfLineYearly = 0
+  for (let i = 0; Object.keys(rankingFilteredObject).length - 1 >= i; i++) {
+    numberOfLineYearly++
+    if ((numberOfLineYearly + 1) % 2 !== 0) {
+      var oddEvenOfLineYearly = 'odd'
+    } else {
+      var oddEvenOfLineYearly = 'even'
+    }
+    let numberOfLine = 0
+    for (let j = 0; rankingFilteredObject[dateArray[i]].length - 1 >= j; j++) {
+      numberOfLine++
+      if ((numberOfLine + 1) % 2 !== 0) {
+        var oddEvenOfLine = 'odd'
       } else {
-        itemText = data[i][ofParameterListArray[j]]
+        var oddEvenOfLine = 'even'
       }
-      $('#novel tr.line-' + i + ' td.item-' + j).text(itemText)
+      $('#ranking-table tbody').append('<tr class="entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
+      $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-ranking-date">' + dateArray[i] + '</td>')
+      for (let k = 0; ofParameterSelectedArray.length - 1 >= k; k++) {
+        $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterSelectedArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterSelectedArray[k]] + '</td>')
+      }
     }
   }
 }
@@ -358,7 +429,7 @@ function writeNovel(data) {
       <option value="y">年間</option>
     </select>
   </section>
-  <section id="ofParameter" class="indicate">
+  <section id="ofParameterQueryText" class="indicate">
     <h3>出力項目</h3>
     出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。<br>
     <input type="checkbox" checked name="title">小説名<br>
@@ -399,6 +470,50 @@ function writeNovel(data) {
     <input type="checkbox" name="kaiwaritu">会話率<br>
     <input type="checkbox" name="novelupdated_at">小説の更新日時<br>
   </section>
+  <section id="filter" class="indicate">
+    <h3>絞り込み</h3>
+    <p>表示を絞り込みます。この機能を使うと、通常の表示数 300 件より少なくなる可能性があります。</p>
+    <p>ヒント：大ジャンルとジャンルの両方を同時に指定するのは賢明ではありません。</p>
+    <section class="indicate">
+      <h4>大ジャンル</h4>
+      <select name="filter-biggenre">
+        <option value="0">指定しない</option>
+        <option value="1">恋愛</option>
+        <option value="2">ファンタジー</option>
+        <option value="3">文芸</option>
+        <option value="4">SF</option>
+        <option value="99">その他</option>
+        <option value="98">ノンジャンル</option>
+      </select>
+    </section>
+    <section class="indicate">
+      <h4>ジャンル</h4>
+      <select name="filter-genre">
+        <option value="0">指定しない</option>
+        <option value="101">異世界〔恋愛〕</option>
+        <option value="102">現実世界〔恋愛〕</option>
+        <option value="201">ハイファンタジー〔ファンタジー〕</option>
+        <option value="202">ローファンタジー〔ファンタジー〕</option>
+        <option value="301">純文学〔文芸〕</option>
+        <option value="302">ヒューマンドラマ〔文芸〕</option>
+        <option value="303">歴史〔文芸〕</option>
+        <option value="304">推理〔文芸〕</option>
+        <option value="305">ホラー〔文芸〕</option>
+        <option value="306">アクション〔文芸〕</option>
+        <option value="307">コメディー〔文芸〕</option>
+        <option value="401">VRゲーム〔SF〕</option>
+        <option value="402">宇宙〔SF〕</option>
+        <option value="403">空想科学〔SF〕</option>
+        <option value="404">パニック〔SF〕</option>
+        <option value="9901">童話〔その他〕</option>
+        <option value="9902">詩〔その他〕</option>
+        <option value="9903">エッセイ〔その他〕</option>
+        <option value="9904">リプレイ〔その他〕</option>
+        <option value="9999">その他〔その他〕</option>
+        <option value="9801">ノンジャンル〔ノンジャンル〕</option>
+      </select>
+    </section>
+  </section>
 </section>
 <section class="indicate">
   <h2>データ取得の実行</h2>
@@ -406,6 +521,13 @@ function writeNovel(data) {
 </section>
 <section class="indicate">
   <h2>出力</h2>
-  <div id="output-area"></div>
+  <div id="output-area">
+    <table id="ranking-table">
+      <thead>
+        <tr></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </section>
 </div>
