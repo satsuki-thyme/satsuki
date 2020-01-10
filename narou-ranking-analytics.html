@@ -62,7 +62,7 @@ let dateRange = 0                        // なろう小説ランキングAPI �
 let dateUnit = ''                        // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
 let dateArray = []                       // なろう小説ランキングAPI から取得する日付のリスト
 let rankingObject = {}                   // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
-let rankingFilteredObject = {}           // 最終的な表示としてフィルタされたレコードのオブジェクト
+let rankingFilteredObject = {}           // rankingObject を filterParameterSelectedObject でフィルタしたオブジェクト
 let ncodeArray = []                      // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
 let ncodeArrayLength = 0                 // なろう小説ランキングAPI の上記 ncodeArray の長さ
 let numberOfQuery = 0                    // なろう小説ランキングAPI に問い合わせるクエリを数える
@@ -73,12 +73,12 @@ let frequencyQuery = 0                   // なろう小説API から GET する
 let numberOfNcodePiece = 0               // なろう小説API から numberOfNcode * frequencyQuery で取得しきれない余りの NCODE の数
 let assemblyNovelArray = []              // なろう小説API から取得した小説情報の全て
 let assemblyNovelArrayMelting = []       // なろう小説API から取得した上記の assemblyNovelArray 内のネステッド・アレイを溶かしたもの
-let ofParameterSelectedArray = []        // なろう小説API から実際に取得する情報のアレイ
-let ofParameterRequiredArray = ["ncode", "biggenre", "genre"]
-let ofParameterRequestArray = []         // Selected + Requireed
-let ofParameterQueryText = 'n-bg-g'      // 
+let ofParameterSelectedArray = []        // なろう小説API から取得するようユーザが選択した小説情報のアレイ
+let ofParameterQueryText = 'n-bg-g'      // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
+let ofParameterOutputdArray = []         // 最終的に表示する小説情報のアレイ
 let filterParameterSelectedObject = {}   // 最終的な表示をフィルタする項目のアレイ
 let ofParameterTableObject = {           // なろう小説API から提供される小説情報の表
+  "ranking-date": ["", "", "日付"],
   "title": ["t", "", "小説名"],
   "ncode": ["n", "", "Nコード"],
   "userid": ["u", "", "作者のユーザID"],
@@ -117,36 +117,40 @@ let ofParameterTableObject = {           // なろう小説API から提供さ�
   "kaiwaritu": ["ka", "", "会話率"],
   "novelupdated_at": ["nu", "", "小説の更新日時"]
 }
-let biggenreParameterTableObject = {
-  1: "恋愛",
-  2: "ファンタジー",
-  3: "文芸",
-  4: "SF",
-  99: "その他",
-  98: "ノンジャンル"
-}
-let genreParameterTableObject = {
-  101: "異世界〔恋愛〕",
-  102: "現実世界〔恋愛〕",
-  201: "ハイファンタジー〔ファンタジー〕",
-  202: "ローファンタジー〔ファンタジー〕",
-  301: "純文学〔文芸〕",
-  302: "ヒューマンドラマ〔文芸〕",
-  303: "歴史〔文芸〕",
-  304: "推理〔文芸〕",
-  305: "ホラー〔文芸〕",
-  306: "アクション〔文芸〕",
-  307: "コメディー〔文芸〕",
-  401: "VRゲーム〔SF〕",
-  402: "宇宙〔SF〕",
-  403: "空想科学〔SF〕",
-  404: "パニック〔SF〕",
-  9901: "童話〔その他〕",
-  9902: "詩〔その他〕",
-  9903: "エッセイ〔その他〕",
-  9904: "リプレイ〔その他〕",
-  9999: "その他〔その他〕",
-  9801: "ノンジャンル〔ノンジャンル〕"
+let replaceCodeToNameTableObject = {
+  biggenre: { 
+    0: "",
+    1: "恋愛",
+    2: "ファンタジー",
+    3: "文芸",
+    4: "SF",
+    99: "その他",
+    98: "ノンジャンル"
+  },
+  genre: {
+    0: "",
+    101: "異世界〔恋愛〕",
+    102: "現実世界〔恋愛〕",
+    201: "ハイファンタジー〔ファンタジー〕",
+    202: "ローファンタジー〔ファンタジー〕",
+    301: "純文学〔文芸〕",
+    302: "ヒューマンドラマ〔文芸〕",
+    303: "歴史〔文芸〕",
+    304: "推理〔文芸〕",
+    305: "ホラー〔文芸〕",
+    306: "アクション〔文芸〕",
+    307: "コメディー〔文芸〕",
+    401: "VRゲーム〔SF〕",
+    402: "宇宙〔SF〕",
+    403: "空想科学〔SF〕",
+    404: "パニック〔SF〕",
+    9901: "童話〔その他〕",
+    9902: "詩〔その他〕",
+    9903: "エッセイ〔その他〕",
+    9904: "リプレイ〔その他〕",
+    9999: "その他〔その他〕",
+    9801: "ノンジャンル〔ノンジャンル〕"
+  }
 }
 $(function() {
   $('#execute').on('click', function(event) {
@@ -252,22 +256,16 @@ console.log('5 makeComparisonTable_makeQuery') // milestone
   /*
     makeComparisonTable_makeNcodeGroup でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
   */
-  $('#ofParameterQueryText').find('input').each(function(index, el) {
+  $('#ofParameter').find('input').each(function(index, el) {
     let thisName = $(this).attr('name')
     let thisChecked = $(this).prop('checked')
     if (thisChecked) {
       ofParameterQueryText = ofParameterQueryText + '-' + ofParameterTableObject[thisName][0]
       if (ofParameterSelectedArray.indexOf(thisName) < 0) {
         ofParameterSelectedArray.push(thisName)
-        ofParameterRequestArray.push(thisName)
       }
     }
   })
-  for (var i = 0; ofParameterRequiredArray.length - 1 >= i; i++) {
-    if (ofParameterRequestArray.indexOf(ofParameterRequiredArray[i]) < 0) {
-      ofParameterRequestArray.push(ofParameterRequiredArray[i])
-    }
-  }
   if (!ofParameterQueryText) {
     alert('出力項目が選択されていません')
     return false
@@ -308,55 +306,56 @@ console.log('7 joinRankingAndInformation') // milestone
       assemblyNovelArrayMelting.push(assemblyNovelArray[i][j])
     }
   }
+  $('#filter').find('select').each(function(index, el) {
+    let thisVal = $(this).val()
+    if (thisVal !== 0 && thisVal !== '') {
+      filterParameterSelectedObject[$(this).attr('name')] = Number($(this).val())
+    }
+  })
   for (let i = 0; dateArray.length - 1 >= i; i++) {
-    for (let k = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= k; k++) {
-      for (let l = 1; assemblyNovelArrayMelting.length - 1 >= l; l++) {
-        if (assemblyNovelArrayMelting[l]['ncode'] === rankingObject[dateArray[i]][k]['ncode']) {
-          for (let m = 0; ofParameterRequestArray.length - 1 >= m; m++) {
-            rankingObject[dateArray[i]][k][ofParameterRequestArray[m]] = assemblyNovelArrayMelting[l][ofParameterRequestArray[m]]
-            rankingObject[dateArray[i]][k]['date'] = dateArray[i]
+    for (let j = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= j; j++) {
+      for (let k = 0; assemblyNovelArrayMelting.length - 1 >= k; k++) {
+        if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelArrayMelting[k]['ncode']) {
+          for (let l = 0; Object.keys(assemblyNovelArrayMelting[k]).length - 1 >= l; l++) {
+            rankingObject[dateArray[i]][j][Object.keys(assemblyNovelArrayMelting[k])[l]] = assemblyNovelArrayMelting[k][Object.keys(assemblyNovelArrayMelting[k])[l]]
           }
         }
       }
     }
   }
-  filterRecord()
-}
-function filterRecord() {
-console.log('8 filterRecord') // milestone
-  filterParameterSelectedObject['biggenre'] = Number($('[name="filter-biggenre"]').val())
-  filterParameterSelectedObject['genre'] = Number($('[name="filter-genre"]').val())
-  if (filterParameterSelectedObject['biggenre'] === 0 && filterParameterSelectedObject['genre'] === 0) {
-    rankingFilteredObject = Object.assign(rankingObject)
-  } else if (filterParameterSelectedObject['biggenre'] !== 0) {
-    insertRecode('')
-  } else if (filterParameterSelectedObject['genre'] !== 0) {
-    insertRecode('')
-  }
-  function insertRecode(argument) {
-    for (var i = 0; ofParameterRequiredArray.length - 1 >= i; i++) {
-      if (ofParameterSelectedArray.indexOf(ofParameterRequiredArray[i]) < 0) {
-        for (var j = 0; dateArray.length - 1 >= j; j++) {
-          rankingFilteredObject[dateArray[j]] = []
-          for (var k = 0; rankingObject[dateArray[j]].length - 1 >= k; k++) {
-            if (ofParameterSelectedArray) {
-              rankingFilteredObject[dateArray[j]].push(rankingObject[dateArray[j]][k])
-            }
-          }
+  let l = 0
+  for (let i = 0; dateArray.length - 1 >= i; i++) {
+    rankingFilteredObject[dateArray[i]] = []
+    for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
+      let boolean = 1
+      for (let k = 0; Object.keys(filterParameterSelectedObject).length - 1 >= k; k++) {
+        let a = rankingObject[dateArray[i]][j][Object.keys(filterParameterSelectedObject)[k]]
+        let b = filterParameterSelectedObject[Object.keys(filterParameterSelectedObject)[k]]
+        if (a === b) {
+          boolean = boolean * 1
+        } else {
+          boolean = boolean * 0
         }
+      }
+      if (boolean === 1) {
+        rankingFilteredObject[dateArray[i]][l] = rankingObject[dateArray[i]][j]
+        rankingFilteredObject[dateArray[i]][l]['ranking-date'] = dateArray[i]
+        l++
       }
     }
   }
+  ofParameterOutputdArray = Object.assign(ofParameterSelectedArray)
+  ofParameterOutputdArray.unshift('ranking-date')
   writeRankingTable()
 }
 function writeRankingTable() {
-console.log('9 writeRankingTable') // milestone
+console.log('8 writeRankingTable') // milestone
   /*
     ランキングを書き出す
   */
-  $('#ranking-table thead tr').append('<th class="item-ranking-date">ランキング日</th>')
-  for (var i = 0; ofParameterSelectedArray.length - 1 >= i; i++) {
-    $('#ranking-table thead tr').append('<th class="item-' + ofParameterSelectedArray[i] + '">' + ofParameterTableObject[ofParameterSelectedArray[i]][2] + '</td>')
+//  $('#ranking-table thead tr').append('<th class="item-ranking-date">ランキング日</th>')
+  for (var i = 0; ofParameterOutputdArray.length - 1 >= i; i++) {
+    $('#ranking-table thead tr').append('<th class="item-' + ofParameterOutputdArray[i] + '">' + ofParameterTableObject[ofParameterOutputdArray[i]][2] + '</td>')
   }
   let numberOfLineYearly = 0
   for (let i = 0; Object.keys(rankingFilteredObject).length - 1 >= i; i++) {
@@ -367,17 +366,17 @@ console.log('9 writeRankingTable') // milestone
       var oddEvenOfLineYearly = 'even'
     }
     let numberOfLine = 0
-    for (let j = 0; rankingFilteredObject[dateArray[i]].length - 1 >= j; j++) {
+    for (let j = 0; Object.keys(rankingFilteredObject[dateArray[i]]).length - 1 >= j; j++) {
       numberOfLine++
       if ((numberOfLine + 1) % 2 !== 0) {
         var oddEvenOfLine = 'odd'
       } else {
         var oddEvenOfLine = 'even'
       }
-      $('#ranking-table tbody').append('<tr class="entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
-      $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-ranking-date">' + dateArray[i] + '</td>')
-      for (let k = 0; ofParameterSelectedArray.length - 1 >= k; k++) {
-        $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterSelectedArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterSelectedArray[k]] + '</td>')
+      $('#ranking-table tbody').append('<tr class="entity-' + rankingFilteredObject[dateArray[i]][j]['ranking-date'] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
+//      $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-ranking-date">' + dateArray[i] + '</td>')
+      for (let k = 0; ofParameterOutputdArray.length - 1 >= k; k++) {
+        $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterOutputdArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterOutputdArray[k]] + '</td>')
       }
     }
   }
@@ -429,7 +428,7 @@ console.log('9 writeRankingTable') // milestone
       <option value="y">年間</option>
     </select>
   </section>
-  <section id="ofParameterQueryText" class="indicate">
+  <section id="ofParameter" class="indicate">
     <h3>出力項目</h3>
     出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。<br>
     <input type="checkbox" checked name="title">小説名<br>
@@ -438,7 +437,7 @@ console.log('9 writeRankingTable') // milestone
     <input type="checkbox" name="writer"> 作者名<br>
     <input type="checkbox" name="story">小説のあらすじ<br>
     <input type="checkbox" name="biggenre"> 大ジャンル<br>
-    <input type="checkbox" name="genre">ジャンル<br>
+    <input type="checkbox" checked name="genre">ジャンル<br>
     <input type="checkbox" name="keyword">キーワード<br>
     <input type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
     <input type="checkbox" name="general_lastup"> 最終掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
@@ -476,8 +475,8 @@ console.log('9 writeRankingTable') // milestone
     <p>ヒント：大ジャンルとジャンルの両方を同時に指定するのは賢明ではありません。</p>
     <section class="indicate">
       <h4>大ジャンル</h4>
-      <select name="filter-biggenre">
-        <option value="0">指定しない</option>
+      <select name="biggenre">
+        <option value="">指定しない</option>
         <option value="1">恋愛</option>
         <option value="2">ファンタジー</option>
         <option value="3">文芸</option>
@@ -488,11 +487,11 @@ console.log('9 writeRankingTable') // milestone
     </section>
     <section class="indicate">
       <h4>ジャンル</h4>
-      <select name="filter-genre">
-        <option value="0">指定しない</option>
+      <select name="genre">
+        <option value="201">ハイファンタジー〔ファンタジー〕</option>
+        <option value="">指定しない</option>
         <option value="101">異世界〔恋愛〕</option>
         <option value="102">現実世界〔恋愛〕</option>
-        <option value="201">ハイファンタジー〔ファンタジー〕</option>
         <option value="202">ローファンタジー〔ファンタジー〕</option>
         <option value="301">純文学〔文芸〕</option>
         <option value="302">ヒューマンドラマ〔文芸〕</option>
