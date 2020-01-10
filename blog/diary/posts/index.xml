@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja_JP</language>
     <copyright>&amp;copy; Yayoi Thyme</copyright>
-    <lastBuildDate>Thu, 09 Jan 2020 22:35:00 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 10 Jan 2020 21:11:08 +0900</lastBuildDate>
     
 	<atom:link href="/blog/diary/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2020 01 10</title>
+      <link>/blog/diary/posts/2020-01-10/</link>
+      <pubDate>Fri, 10 Jan 2020 21:11:08 +0900</pubDate>
+      
+      <guid>/blog/diary/posts/2020-01-10/</guid>
+      <description>4 時起床。プログラミング（ なろうランキング解析 ）開始。 朝食はいつものやつ。 朝食後はプログラミング。 昼食はハムとか。 午後もプログラミング。 今日はプログラミングで目的の機能を実現するのに何度も失敗して一日</description>
+    </item>
     
     <item>
       <title>2020 01 09</title>
