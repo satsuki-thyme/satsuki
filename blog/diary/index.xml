@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja_JP</language>
     <copyright>&amp;copy; Yayoi Thyme</copyright>
-    <lastBuildDate>Fri, 10 Jan 2020 21:11:08 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 11 Jan 2020 06:35:48 +0900</lastBuildDate>
     
 	<atom:link href="/blog/diary/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2020 01 11</title>
+      <link>/blog/diary/posts/2020-01-11/</link>
+      <pubDate>Sat, 11 Jan 2020 06:35:48 +0900</pubDate>
+      
+      <guid>/blog/diary/posts/2020-01-11/</guid>
+      <description>2 時過ぎに起床。プログラミング（ なろうランキング解析 ）開始。 朝食はいつもどおり。 朝食後プログラミング再開。で、 10 時前になろうAPIの制限が掛かって終了。小説執筆作業 op.12 を開始。晴れていて窓を開けたら寒く</description>
+    </item>
     
     <item>
       <title>2020 01 10</title>
