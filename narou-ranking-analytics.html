@@ -56,7 +56,7 @@ td {
 let urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
 let urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
 let progress = 0                         // プログレスバーのカウンター
-let out = ''                             // なろう小説ランキングAPI から取得するデータの種類
+let out = 'jsonp'                        // なろう小説ランキングAPI から取得するデータの種類
 let dateSource = ''                      // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
 let dateRange = 0                        // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
 let dateUnit = ''                        // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
@@ -74,11 +74,12 @@ let numberOfNcodePiece = 0               // なろう小説API から numberOfNc
 let assemblyNovelArray = []              // なろう小説API から取得した小説情報の全て
 let assemblyNovelArrayMelting = []       // なろう小説API から取得した上記の assemblyNovelArray 内のネステッド・アレイを溶かしたもの
 let ofParameterSelectedArray = []        // なろう小説API から取得するようユーザが選択した小説情報のアレイ
-let ofParameterQueryText = 'n-bg-g'      // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
-let ofParameterOutputdArray = []         // 最終的に表示する小説情報のアレイ
+let ofParameterQueryText = 'n'           // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
+let ofParameterIntermediateArray = []    // 中間のアレイ
+let ofParameterOutputArray = []          // 最終的に表示する小説情報のアレイ
 let filterParameterSelectedObject = {}   // 最終的な表示をフィルタする項目のアレイ
 let ofParameterTableObject = {           // なろう小説API から提供される小説情報の表
-  "ranking-date": ["", "", "日付"],
+  "ranking-date": ["", "", "ランキング日"],
   "title": ["t", "", "小説名"],
   "ncode": ["n", "", "Nコード"],
   "userid": ["u", "", "作者のユーザID"],
@@ -119,7 +120,6 @@ let ofParameterTableObject = {           // なろう小説API から提供さ�
 }
 let replaceCodeToNameTableObject = {
   biggenre: { 
-    0: "",
     1: "恋愛",
     2: "ファンタジー",
     3: "文芸",
@@ -128,7 +128,6 @@ let replaceCodeToNameTableObject = {
     98: "ノンジャンル"
   },
   genre: {
-    0: "",
     101: "異世界〔恋愛〕",
     102: "現実世界〔恋愛〕",
     201: "ハイファンタジー〔ファンタジー〕",
@@ -157,12 +156,42 @@ $(function() {
     event.preventDefault()
     start('html')
   })
+  $('#filter [name="biggenre"], #filter [name="genre"]').on('change', function(event) {
+    event.preventDefault()
+    if ($(this).val() !== '') {
+      $('#ofParameter [name="' + $(this).attr('name') + '"]').prop('checked', 'checked')
+    }
+  })
 })
 function start(sourceMedia) {
 console.log('1 start') // milestone
   /*
     スタート
   */
+  progress = 0
+  out = 'jsonp'
+  dateSource = ''
+  dateRange = 0
+  dateUnit = ''
+  dateArray = []
+  rankingObject = {}
+  rankingFilteredObject = {}
+  ncodeArray = []
+  ncodeArrayLength = 0
+  numberOfQuery = 0
+  lim = 500
+  numberOfNcode = 100
+  numberOfNcodePool = 0
+  frequencyQuery = 0
+  numberOfNcodePiece = 0
+  assemblyNovelArray = []
+  assemblyNovelArrayMelting = []
+  ofParameterSelectedArray = []
+  ofParameterQueryText = 'n'
+  ofParameterIntermediateArray = []
+  ofParameterOutputArray = []
+  filterParameterSelectedObject = {}
+  $('#ranking-table').empty()
   if (sourceMedia === 'html') {
     out = $('[name="out"]').children('option:selected').val()
     dateSource = $('[name="dateSource"]').val()
@@ -178,9 +207,9 @@ console.log('2 getRankingSource') // milestone
   */
   let counter = 0
   let dateSplitArray = (dateSource.substr(0, 4) + '/' + dateSource.substr(4, 2) + '/' + dateSource.substr(6, 2)).split('/')
-  let date = new Date(dateSplitArray[0], Number(dateSplitArray[1]) - 1, Number(dateSplitArray[2]))
+  let date = new Date(dateFormat(dateSource, '/'))
   for (let i = 0; dateRange >= i; i++) {
-    let dateString = dateFormat(new Date(date.setDate(date.getDate() - i)))
+    let dateString = dateFormat(new Date(date.setDate(date.getDate() - i)), '')
     dateArray.push(dateString)
     $.ajax({
       url: urlRankingApi + '?gzip=0&out=' + out + '&rtype=' + dateString + '-' + dateUnit,
@@ -238,25 +267,13 @@ console.log('4 makeComparisonTable_makeNcodeGroup') // milestone
     makeComparisonTable_makeQuery(queryWork1.replace(/^-/, ''), numberOfNcodePiece)
   }
 }
-function dateFormat(date) {
-console.log('0 dateFormat') // milestone
-  /*
-    日付の形式を変換するサブ関数
-  */
-  let y = new Date(date).getFullYear()
-  let m = new Date(date).getMonth() + 1
-  let d = new Date(date).getDate()
-  y = ('000' + y).slice(-4)
-  m = ('0' + m).slice(-2)
-  d = ('0' + d).slice(-2)
-  return y + m + d
-}
 function makeComparisonTable_makeQuery(groupNcode, numberOfNcodeFragment) {
 console.log('5 makeComparisonTable_makeQuery') // milestone
   /*
     makeComparisonTable_makeNcodeGroup でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
   */
-  $('#ofParameter').find('input').each(function(index, el) {
+  ofParameterIntermediateArray = Object.assign(ofParameterSelectedArray)
+  $('#ofParameter').find('input').each(function() {
     let thisName = $(this).attr('name')
     let thisChecked = $(this).prop('checked')
     if (thisChecked) {
@@ -270,6 +287,16 @@ console.log('5 makeComparisonTable_makeQuery') // milestone
     alert('出力項目が選択されていません')
     return false
   }
+  $('#filter').find('select').each(function() {
+    let thisName = $(this).attr('name')
+    let thisSelected
+    if ($(this).val() !== '') {
+      thisSelected = 'selected'
+    }
+    if (thisSelected) {
+      ofParameterQueryText = ofParameterQueryText + '-' + ofParameterTableObject[thisName][0]
+    }
+  })
   let query = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofParameterQueryText.replace(/^-/, '') + '&ncode=' + groupNcode
   makeComparisonTable_getNovelInformation(query, out, numberOfNcodeFragment)
 }
@@ -312,8 +339,10 @@ console.log('7 joinRankingAndInformation') // milestone
       filterParameterSelectedObject[$(this).attr('name')] = Number($(this).val())
     }
   })
+  let m = 0
   for (let i = 0; dateArray.length - 1 >= i; i++) {
-    for (let j = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= j; j++) {
+    rankingFilteredObject[dateArray[i]] = []
+    for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
       for (let k = 0; assemblyNovelArrayMelting.length - 1 >= k; k++) {
         if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelArrayMelting[k]['ncode']) {
           for (let l = 0; Object.keys(assemblyNovelArrayMelting[k]).length - 1 >= l; l++) {
@@ -321,12 +350,6 @@ console.log('7 joinRankingAndInformation') // milestone
           }
         }
       }
-    }
-  }
-  let l = 0
-  for (let i = 0; dateArray.length - 1 >= i; i++) {
-    rankingFilteredObject[dateArray[i]] = []
-    for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
       let boolean = 1
       for (let k = 0; Object.keys(filterParameterSelectedObject).length - 1 >= k; k++) {
         let a = rankingObject[dateArray[i]][j][Object.keys(filterParameterSelectedObject)[k]]
@@ -338,14 +361,20 @@ console.log('7 joinRankingAndInformation') // milestone
         }
       }
       if (boolean === 1) {
-        rankingFilteredObject[dateArray[i]][l] = rankingObject[dateArray[i]][j]
-        rankingFilteredObject[dateArray[i]][l]['ranking-date'] = dateArray[i]
-        l++
+        rankingFilteredObject[dateArray[i]][m] = rankingObject[dateArray[i]][j]
+        rankingFilteredObject[dateArray[i]][m]['ranking-date'] = dateArray[i]
+        for (let k = 0; Object.keys(rankingFilteredObject[dateArray[i]][m]).length - 1 >= k; k++) {
+          for (let l = 0; Object.keys(replaceCodeToNameTableObject).length - 1 >= l; l++) {
+            if (Object.keys(rankingFilteredObject[dateArray[i]][m])[k] === Object.keys(replaceCodeToNameTableObject)[l]) {
+              rankingFilteredObject[dateArray[i]][m][Object.keys(rankingFilteredObject[dateArray[i]][m])[k]] = replaceCodeToNameTableObject[Object.keys(rankingFilteredObject[dateArray[i]][m])[k]][rankingFilteredObject[dateArray[i]][m][Object.keys(rankingFilteredObject[dateArray[i]][m])[k]]]
+            }
+          }
+        }
+        m++
       }
     }
   }
-  ofParameterOutputdArray = Object.assign(ofParameterSelectedArray)
-  ofParameterOutputdArray.unshift('ranking-date')
+  ofParameterOutputArray = Object.assign(ofParameterSelectedArray)
   writeRankingTable()
 }
 function writeRankingTable() {
@@ -353,9 +382,10 @@ console.log('8 writeRankingTable') // milestone
   /*
     ランキングを書き出す
   */
-//  $('#ranking-table thead tr').append('<th class="item-ranking-date">ランキング日</th>')
-  for (var i = 0; ofParameterOutputdArray.length - 1 >= i; i++) {
-    $('#ranking-table thead tr').append('<th class="item-' + ofParameterOutputdArray[i] + '">' + ofParameterTableObject[ofParameterOutputdArray[i]][2] + '</td>')
+  $('#output-area').append('<table id="ranking-table"></table>')
+  $('#ranking-table').append('<thead><tr></tr></thead><tbody></tbody>')
+  for (var i = 0; ofParameterOutputArray.length - 1 >= i; i++) {
+    $('#ranking-table thead tr').append('<th class="item-' + ofParameterOutputArray[i] + '">' + ofParameterTableObject[ofParameterOutputArray[i]][2] + '</td>')
   }
   let numberOfLineYearly = 0
   for (let i = 0; Object.keys(rankingFilteredObject).length - 1 >= i; i++) {
@@ -374,12 +404,40 @@ console.log('8 writeRankingTable') // milestone
         var oddEvenOfLine = 'even'
       }
       $('#ranking-table tbody').append('<tr class="entity-' + rankingFilteredObject[dateArray[i]][j]['ranking-date'] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
-//      $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-ranking-date">' + dateArray[i] + '</td>')
-      for (let k = 0; ofParameterOutputdArray.length - 1 >= k; k++) {
-        $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterOutputdArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterOutputdArray[k]] + '</td>')
+      for (let k = 0; ofParameterOutputArray.length - 1 >= k; k++) {
+        $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterOutputArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterOutputArray[k]] + '</td>')
       }
     }
   }
+}
+function dateFormat(date, separator) {
+  let y
+  let m
+  let d
+  let dataType = Object.prototype.toString.call(date)
+  if (dataType.match('String')) {
+    if (date.length === 8) {
+      y = date.slice(0, 4)
+      m = date.slice(5, 7)
+      d = date.slice(-2)
+    } else {
+      dateProc = date.split(/[^\d]/)
+      y = ('000' + dateProc[0]).slice(-4)
+      m = ('0' + dateProc[1]).slice(-2)
+      d = ('0' + dateProc[2]).slice(-2)
+    }
+  } else if (dataType.match('Date')) {
+    y = ('000' + new Date(date).getFullYear()).slice(-4)
+    m = ('0' + (new Date(date).getMonth() + 1)).slice(-2)
+    d = ('0' + new Date(date).getDate()).slice(-2)
+  } else if (dataType.match('Number')) {
+    y = String(date).slice(0, 4)
+    m = String(date).slice(5, 7)
+    d = String(date).slice(-2)
+  } else {
+    console.log('dateFormat had an error.')
+  }
+ return y + separator + m + separator + d
 }
 </script>
 <div id="container">
@@ -390,20 +448,9 @@ console.log('8 writeRankingTable') // milestone
 <section class="indicate">
   <h2>設定項目</h2>
   <section class="indicate">
-    <h3>出力形式</h3>
-    出力形式をyamlまたはjsonまたはphpを指定。未指定時はYAMLになる。outパラメータの詳細<br>
-    <select name="out">
-      <option value="jsonp">JSONP形式</option>
-      <option value="">YAML形式(デフォルト)</option>
-      <option value="json">JSON形式</option>
-      <option value="php">PHPのserialize()</option>
-      <option value="atom">Atomフィード</option>
-    </select>
-  </section>
-  <section class="indicate">
     <h3>基準日</h3>
     ex.: 20200101
-    <input type="text" name="dateSource" value="20200101">
+    <input type="date" name="dateSource" value="2020-01-01">
     <section>
       <h4>注意事項</h4>
       <ul>
@@ -431,13 +478,14 @@ console.log('8 writeRankingTable') // milestone
   <section id="ofParameter" class="indicate">
     <h3>出力項目</h3>
     出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。<br>
+    <input type="checkbox" checked name="ranking-date">ランキング日<br>
     <input type="checkbox" checked name="title">小説名<br>
     <input type="checkbox" name="ncode">Nコード<br>
     <input type="checkbox" name="userid"> 作者のユーザID(数値)<br>
     <input type="checkbox" name="writer"> 作者名<br>
     <input type="checkbox" name="story">小説のあらすじ<br>
     <input type="checkbox" name="biggenre"> 大ジャンル<br>
-    <input type="checkbox" checked name="genre">ジャンル<br>
+    <input type="checkbox" name="genre">ジャンル<br>
     <input type="checkbox" name="keyword">キーワード<br>
     <input type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
     <input type="checkbox" name="general_lastup"> 最終掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
@@ -521,12 +569,6 @@ console.log('8 writeRankingTable') // milestone
 <section class="indicate">
   <h2>出力</h2>
   <div id="output-area">
-    <table id="ranking-table">
-      <thead>
-        <tr></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
   </div>
 </section>
 </div>
