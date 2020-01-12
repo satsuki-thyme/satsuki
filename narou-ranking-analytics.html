@@ -2,15 +2,14 @@
 <meta charset="utf-8">
 <style>
 body {
-  font-size: 14px;
+  font-size: 16px;
 }
 #container {
   width: 100%;
   max-width: 1000px;
   margin-right: auto;
   margin-left: auto;
-  padding-right: 20px;
-  padding-left: 20px;
+  padding: 20px 20px 80px 20px;
   box-sizing: border-box;
 }
 section {
@@ -38,6 +37,27 @@ table + table {
 td {
   vertical-align: top;
   border: 1px solid #666;
+}
+label,
+input[type="checkbox"],
+input[type="button"] {
+  cursor: pointer;
+}
+input {
+  margin-right: 8px;
+}
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  padding: 2px 6px 0;
+  font-size: 16px;
+}
+select {
+  padding: 0 3px 3px;
+  font-size: 13.5px;
+}
+br + label {
+  line-height: 1.8;
 }
 .progress-frame {
   width: 200px;
@@ -152,15 +172,19 @@ let replaceCodeToNameTableObject = {
   }
 }
 $(function() {
-  $('#execute').on('click', function(event) {
+  $('.start').on('click', function(event) {
     event.preventDefault()
     start('html')
   })
-  $('#filter [name="biggenre"], #filter [name="genre"]').on('change', function(event) {
+  $('.select-all').on('click', function(event) {
     event.preventDefault()
-    if ($(this).val() !== '') {
-      $('#ofParameter [name="' + $(this).attr('name') + '"]').prop('checked', 'checked')
-    }
+    console.log('a')
+    let range = document.createRange()
+    let selectedElement = document.getElementById('output-area')
+    range.selectNodeContents(selectedElement)
+    var selection = window.getSelection()
+    selection.removeAllRanges()
+    selection.addRange(range)
   })
 })
 function start(sourceMedia) {
@@ -443,13 +467,12 @@ function dateFormat(date, separator) {
 <div id="container">
 <header>
   <h1>なろう小説ランキング解析</h1>
-  <input type="button" id="execute" value="開始">
+  <input type="button" class="start" value="取得開始">
 </header>
 <section class="indicate">
   <h2>設定項目</h2>
   <section class="indicate">
     <h3>基準日</h3>
-    ex.: 20200101
     <input type="date" name="dateSource" value="2020-01-01">
     <section>
       <h4>注意事項</h4>
@@ -462,8 +485,8 @@ function dateFormat(date, separator) {
   </section>
   <section class="indicate">
     <h3>期間</h3>
-    基準日からさかのぼる日数。基準日のみの場合は 0 。
-    <input type="text" name="dateRange" value="0">
+    <p>基準日からさかのぼる日数。基準日のみの場合は 0 。</p>
+    <input type="number" name="dateRange" value="0">
   </section>
   <section class="indicate">
     <h3>取得単位</h3>
@@ -477,45 +500,121 @@ function dateFormat(date, separator) {
   </section>
   <section id="ofParameter" class="indicate">
     <h3>出力項目</h3>
-    出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。<br>
-    <input type="checkbox" checked name="ranking-date">ランキング日<br>
-    <input type="checkbox" checked name="title">小説名<br>
-    <input type="checkbox" name="ncode">Nコード<br>
-    <input type="checkbox" name="userid"> 作者のユーザID(数値)<br>
-    <input type="checkbox" name="writer"> 作者名<br>
-    <input type="checkbox" name="story">小説のあらすじ<br>
-    <input type="checkbox" name="biggenre"> 大ジャンル<br>
-    <input type="checkbox" name="genre">ジャンル<br>
-    <input type="checkbox" name="keyword">キーワード<br>
-    <input type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
-    <input type="checkbox" name="general_lastup"> 最終掲載日 YYYY-MM-DD HH:MM:SSの形式<br>
-    <input type="checkbox" name="novel_type"> 連載の場合は1、短編の場合は2<br>
-    <input type="checkbox" name="end">短編小説と完結済小説は0となっています。連載中は1です。<br>
-    <input type="checkbox" name="general_all_no"> 全掲載部分数です。短編の場合は1です。<br>
-    <input type="checkbox" name="length"> 小説文字数です。スペースや改行は文字数としてカウントしません。<br>
-    <input type="checkbox" name="time"> 読了時間(分単位)です。読了時間は小説文字数÷500を切り上げした数値です。<br>
-    <input type="checkbox" name="isstop"> 長期連載停止中なら1、それ以外は0です。<br>
-    <input type="checkbox" name="isr15">登録必須キーワードに「R15」が含まれる場合は1、それ以外は0です。<br>
-    <input type="checkbox" name="isbl"> 登録必須キーワードに「ボーイズラブ」が含まれる場合は1、それ以外は0です。<br>
-    <input type="checkbox" name="isgl"> 登録必須キーワードに「ガールズラブ」が含まれる場合は1、それ以外は0です。<br>
-    <input type="checkbox" name="iszankoku">登録必須キーワードに「残酷な描写あり」が含まれる場合は1、それ以外は0です。<br>
-    <input type="checkbox" name="istensei"> 登録必須キーワードに「異世界転生」が含まれる場合は1、それ以外は0です。<br>
-    <input type="checkbox" name="istenni">登録必須キーワードに「異世界転移」が含まれる場合は1、それ以外は0です。<br>
-    <input type="checkbox" name="pc_or_k">1はケータイのみ、2はPCのみ、3はPCとケータイで投稿された作品です。対象は投稿と次話投稿時のみで、どの端末で執筆されたかを表すものではありません。<br>
-    <input type="checkbox" name="global_point"> 総合評価ポイント(=(ブックマーク数×2)+評価点)<br>
-    <input type="checkbox" name="daily_point">日間ポイント(ランキング集計時点から過去24時間以内で新たに登録されたブックマークや評価が対象)<br>
-    <input type="checkbox" name="weekly_point"> 週間ポイント(ランキング集計時点から過去7日以内で新たに登録されたブックマークや評価が対象)<br>
-    <input type="checkbox" name="monthly_point">月間ポイント(ランキング集計時点から過去30日以内で新たに登録されたブックマークや評価が対象)<br>
-    <input type="checkbox" name="quarter_point">四半期ポイント(ランキング集計時点から過去90日以内で新たに登録されたブックマークや評価が対象)<br>
-    <input type="checkbox" name="yearly_point"> 年間ポイント(ランキング集計時点から過去365日以内で新たに登録されたブックマークや評価が対象)<br>
-    <input type="checkbox" name="fav_novel_cnt">ブックマーク数<br>
-    <input type="checkbox" name="impression_cnt"> 感想数<br>
-    <input type="checkbox" name="review_cnt"> レビュー数<br>
-    <input type="checkbox" name="all_point">評価点<br>
-    <input type="checkbox" name="all_hyoka_cnt">評価者数<br>
-    <input type="checkbox" name="sasie_cnt">挿絵の数<br>
-    <input type="checkbox" name="kaiwaritu">会話率<br>
-    <input type="checkbox" name="novelupdated_at">小説の更新日時<br>
+    <p>出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。</p>
+    <label for="ranking-date">
+      <input id="ranking-date" type="checkbox" name="ranking-date" checked>ランキング日
+    </label><br>
+    <label for="title">
+      <input id="title" type="checkbox" name="title" checked>小説名
+    </label><br>
+    <label for="ncode">
+      <input id="ncode" type="checkbox" name="ncode">Nコード
+    </label><br>
+    <label for="userid">
+      <input id="userid" type="checkbox" name="userid">作者のユーザID(数値)
+    </label><br>
+    <label for="writer">
+      <input id="writer" type="checkbox" name="writer">作者名
+    </label><br>
+    <label for="story">
+      <input id="story" type="checkbox" name="story">小説のあらすじ
+    </label><br>
+    <label for="biggenre">
+      <input id="biggenre" type="checkbox" name="biggenre">大ジャンル
+    </label><br>
+    <label for="genre">
+      <input id="genre" type="checkbox" name="genre">ジャンル
+    </label><br>
+    <label for="keyword">
+      <input id="keyword" type="checkbox" name="keyword">キーワード
+    </label><br>
+    <label for="general_firstup">
+      <input id="general_firstup" type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式
+    </label><br>
+    <label for="general_lastup">
+      <input id="general_lastup" type="checkbox" name="general_lastup">最終掲載日 YYYY-MM-DD HH:MM:SSの形式
+    </label><br>
+    <label for="novel_type">
+      <input id="novel_type" type="checkbox" name="novel_type">連載の場合は1、短編の場合は2
+    </label><br>
+    <label for="end">
+      <input id="end" type="checkbox" name="end">短編小説と完結済小説は0となっています。連載中は1です。
+    </label><br>
+    <label for="general_all_no">
+      <input id="general_all_no" type="checkbox" name="general_all_no">全掲載部分数です。短編の場合は1です。
+    </label><br>
+    <label for="length">
+      <input id="length" type="checkbox" name="length">小説文字数です。スペースや改行は文字数としてカウントしません。
+    </label><br>
+    <label for="time">
+      <input id="time" type="checkbox" name="time">読了時間(分単位)です。読了時間は小説文字数÷500を切り上げした数値です。
+    </label><br>
+    <label for="isstop">
+      <input id="isstop" type="checkbox" name="isstop">長期連載停止中なら1、それ以外は0です。
+    </label><br>
+    <label for="isr15">
+      <input id="isr15" type="checkbox" name="isr15">登録必須キーワードに「R15」が含まれる場合は1、それ以外は0です。
+    </label><br>
+    <label for="isbl">
+      <input id="isbl" type="checkbox" name="isbl">登録必須キーワードに「ボーイズラブ」が含まれる場合は1、それ以外は0です。
+    </label><br>
+    <label for="isgl">
+      <input id="isgl" type="checkbox" name="isgl">登録必須キーワードに「ガールズラブ」が含まれる場合は1、それ以外は0です。
+    </label><br>
+    <label for="iszankoku">
+      <input id="iszankoku" type="checkbox" name="iszankoku">登録必須キーワードに「残酷な描写あり」が含まれる場合は1、それ以外は0です。
+    </label><br>
+    <label for="istensei">
+      <input id="istensei" type="checkbox" name="istensei">登録必須キーワードに「異世界転生」が含まれる場合は1、それ以外は0です。
+    </label><br>
+    <label for="istenni">
+      <input id="istenni" type="checkbox" name="istenni">登録必須キーワードに「異世界転移」が含まれる場合は1、それ以外は0です。
+    </label><br>
+    <label for="pc_or_k">
+      <input id="pc_or_k" type="checkbox" name="pc_or_k">1はケータイのみ、2はPCのみ、3はPCとケータイで投稿された作品です。対象は投稿と次話投稿時のみで、どの端末で執筆されたかを表すものではありません。
+    </label><br>
+    <label for="global_point">
+      <input id="global_point" type="checkbox" name="global_point">総合評価ポイント(=(ブックマーク数×2)+評価点)
+    </label><br>
+    <label for="daily_point">
+      <input id="daily_point" type="checkbox" name="daily_point">日間ポイント(ランキング集計時点から過去24時間以内で新たに登録されたブックマークや評価が対象)
+    </label><br>
+    <label for="weekly_point">
+      <input id="weekly_point" type="checkbox" name="weekly_point">週間ポイント(ランキング集計時点から過去7日以内で新たに登録されたブックマークや評価が対象)
+    </label><br>
+    <label for="monthly_point">
+      <input id="monthly_point" type="checkbox" name="monthly_point">月間ポイント(ランキング集計時点から過去30日以内で新たに登録されたブックマークや評価が対象)
+    </label><br>
+    <label for="quarter_point">
+      <input id="quarter_point" type="checkbox" name="quarter_point">四半期ポイント(ランキング集計時点から過去90日以内で新たに登録されたブックマークや評価が対象)
+    </label><br>
+    <label for="yearly_point">
+      <input id="yearly_point" type="checkbox" name="yearly_point">年間ポイント(ランキング集計時点から過去365日以内で新たに登録されたブックマークや評価が対象)
+    </label><br>
+    <label for="fav_novel_cnt">
+      <input id="fav_novel_cnt" type="checkbox" name="fav_novel_cnt">ブックマーク数
+    </label><br>
+    <label for="impression_cnt">
+      <input id="impression_cnt" type="checkbox" name="impression_cnt">感想数
+    </label><br>
+    <label for="review_cnt">
+      <input id="review_cnt" type="checkbox" name="review_cnt">レビュー数
+    </label><br>
+    <label for="all_point">
+      <input id="all_point" type="checkbox" name="all_point">評価点
+    </label><br>
+    <label for="all_hyoka_cnt">
+      <input id="all_hyoka_cnt" type="checkbox" name="all_hyoka_cnt">評価者数
+    </label><br>
+    <label for="sasie_cnt">
+      <input id="sasie_cnt" type="checkbox" name="sasie_cnt">挿絵の数
+    </label><br>
+    <label for="kaiwaritu">
+      <input id="kaiwaritu" type="checkbox" name="kaiwaritu">会話率
+    </label><br>
+    <label for="novelupdated_at">
+      <input id="novelupdated_at" type="checkbox" name="novelupdated_at">小説の更新日時
+    </label><br>
   </section>
   <section id="filter" class="indicate">
     <h3>絞り込み</h3>
@@ -564,11 +663,16 @@ function dateFormat(date, separator) {
 </section>
 <section class="indicate">
   <h2>データ取得の実行</h2>
-  <button id="execute">取得開始</button>
+  <label>
+  <input class="start" type="button" value="取得開始">
+</label>
 </section>
 <section class="indicate">
   <h2>出力</h2>
-  <div id="output-area">
+  <label for="output-area">
+    <input class="select-all" type="button" name="select-all" value="全て選択">
+  </label>
+  <div id="output-area"><p>aaaaaaaaaaaaaaaaaaaaaaaa</p>
   </div>
 </section>
 </div>
