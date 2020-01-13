@@ -33,13 +33,13 @@ $(function () {
     }
   }
 }
-    var back_host = setting_array['loadContents'][host]['back_host']
-    var user_name = setting_array['loadContents'][host]['user_name']
-    var site_repository = setting_array['loadContents'][host]['site_repository']
-    var branch = setting_array['loadContents'][host]['branch']
-    var default_document = setting_array['loadContents'][host]['default_document']
-    var url_home = setting_array['loadContents'][host]['url_home']
-    var url_base = setting_array['loadContents'][host]['url_base']
+    let back_host = setting_array['loadContents'][host]['back_host']
+    let user_name = setting_array['loadContents'][host]['user_name']
+    let site_repository = setting_array['loadContents'][host]['site_repository']
+    let branch = setting_array['loadContents'][host]['branch']
+    let default_document = setting_array['loadContents'][host]['default_document']
+    let url_home = setting_array['loadContents'][host]['url_home']
+    let url_base = setting_array['loadContents'][host]['url_base']
     if (back_host != '') {
       back_host = '//' + back_host
     }
@@ -74,13 +74,13 @@ $(function () {
   })
 })
 function loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base) {
-  var dfd_load_contents = $.Deferred()
-  var last_period = 0
-  var first_slash = 0
-  var last_slash = 0
-  var opus = ''
-  var url = ''
-  var extention = ''
+  let dfd_load_contents = $.Deferred()
+  let last_period = 0
+  let first_slash = 0
+  let last_slash = 0
+  let opus = ''
+  let url = ''
+  let extention = ''
   const now = $.now()
   setUrl(search)
   .then(
@@ -96,7 +96,7 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     })
   )
   function setUrl(search) {
-    var dfd_set_url = $.Deferred()
+    let dfd_set_url = $.Deferred()
     last_period = search.lastIndexOf('.')
     first_slash = search.indexOf('/')
     last_slash = search.lastIndexOf('/')
@@ -114,9 +114,9 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     return dfd_set_url.promise()
   }
   function writeContents(data) {
-    const word = keywordReplace(rubyParser(marked(data)))
     // Text
     if (extention === 'txt') {
+      const word = keywordReplace(rubyParser(data))
       const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
       const insert_text = ''
       const element_array = []
@@ -125,31 +125,34 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
       $('div#novel_no').append(story_len + '/???')
       $('div#novel_honbun').append(word)
       if (data.indexOf('# ') > -1) {
-        var subtitle = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
+        let subtitle = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
         $('p.novel_subtitle').append(subtitle)
       }
       $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
       prevNextLink(story_len)
     // HTML
     } else if (extention === 'html') {
+      const word = keywordReplace(data)
       $('html').addClass('html')
       $('.html.contents-container').append(word)
       $('title').empty().append(decodeURI(text))
       $('.title').append(decodeURI(text))
     // Markdown
     } else if (extention === 'md') {
+      const word = keywordReplace(rubyParser(marked(data)))
       $('html').addClass('markdown')
-      $('.markdown.contents-container').append(word)
+      $('.markdown.contents-container').append(marked(word))
     // Another
     } else {
+      const word = data
       $('.another.contents-container').append(word)
     }
     dfd_load_contents.resolve()
     function prevNextLink(story_len) {
       const prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
       const next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
-      var prev = ''
-      var next = ''
+      let prev = ''
+      let next = ''
       if (!isNaN(story_len)) {
         prev = '?' + opus + '/' + prev_entity
         next = '?' + opus + '/' + next_entity
@@ -180,16 +183,16 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
                               ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
                             ]
     const word_list_hide = ["_summary_", "_gist_"]
-    var word_list_replace_length = 0
-    var work1 = data
-    for (var i in word_list_replace) {
+    let word_list_replace_length = 0
+    let work1 = data
+    for (let i in word_list_replace) {
       word_list_replace_length++
     }
-    for (var i = word_list_replace_length - 1; i >= 0; i--) {
+    for (let i = word_list_replace_length - 1; i >= 0; i--) {
       const regexp1 = new RegExp(word_list_replace[i][0], 'g')
       work1 = work1.replace(regexp1, word_list_replace[i][1])
     }
-    for (var i = word_list_hide.length - 1; i >= 0; i--) {
+    for (let i = word_list_hide.length - 1; i >= 0; i--) {
       work1 = work1.replace(new RegExp(word_list_hide[i], 'g'), '<span class="hide">' + word_list_hide[i] + '</span>')
     }
     return work1
