@@ -59,13 +59,13 @@ select {
 br + label {
   line-height: 1.8;
 }
-.progress-frame {
+.progressiveBarProgress-frame {
   width: 200px;
   height: 25px;
   padding: 0;
   border: 1px solid #666;
 }
-.progress-bar {
+.progressiveBarProgress-bar {
   height: 100%;
   width: 0;
   background-color: #1e3;
@@ -75,7 +75,9 @@ br + label {
 <script>
 let urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
 let urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
-let progress = 0                         // プログレスバーのカウンター
+let progressiveBarProgress = 0           // プログレスバーのカウンター
+let progressiveBarGoal = 0               // 進捗最終目標値
+let progressiveBarRate = 0               // 進捗率
 let out = 'jsonp'                        // なろう小説ランキングAPI から取得するデータの種類
 let dateSource = ''                      // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
 let dateRange = 0                        // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
@@ -178,7 +180,6 @@ $(function() {
   })
   $('.select-all').on('click', function(event) {
     event.preventDefault()
-    console.log('a')
     let range = document.createRange()
     let selectedElement = document.getElementById('output-area')
     range.selectNodeContents(selectedElement)
@@ -192,7 +193,7 @@ console.log('1 start') // milestone
   /*
     スタート
   */
-  progress = 0
+  progressiveBarProgress = 0
   out = 'jsonp'
   dateSource = ''
   dateRange = 0
@@ -215,9 +216,8 @@ console.log('1 start') // milestone
   ofParameterIntermediateArray = []
   ofParameterOutputArray = []
   filterParameterSelectedObject = {}
-  $('#ranking-table').empty()
+  $('#output-area').empty()
   if (sourceMedia === 'html') {
-    out = $('[name="out"]').children('option:selected').val()
     dateSource = $('[name="dateSource"]').val()
     dateRange = Number($('[name="dateRange"]').val())
     dateUnit = $('[name="dateUnit"]').children('option:selected').val()
@@ -242,7 +242,9 @@ console.log('2 getRankingSource') // milestone
       cache: 'false'
     })
     .done(function(data) {
+console.log('1')
       rankingObject[dateString] = data
+      progressiveBarProgress++
       counter++
       if (counter === dateRange + 1) {
         makeComparisonTable_makeNcodeList(date)
@@ -337,6 +339,7 @@ console.log('6 makeComparisonTable_getNovelInformation') // milestone
       cache: 'false'
   })
   .done(function(data) {
+    console.log('2')
     assemblyNovelArray.push(data)
     numberOfNcodePool = numberOfNcodePool + numberOfNcodeFragment
     if (numberOfNcodePool === ncodeArrayLength) {
@@ -413,6 +416,7 @@ console.log('8 writeRankingTable') // milestone
   }
   let numberOfLineYearly = 0
   for (let i = 0; Object.keys(rankingFilteredObject).length - 1 >= i; i++) {
+console.log(Object.keys(rankingFilteredObject[dateArray[i]]).length)
     numberOfLineYearly++
     if ((numberOfLineYearly + 1) % 2 !== 0) {
       var oddEvenOfLineYearly = 'odd'
@@ -421,6 +425,7 @@ console.log('8 writeRankingTable') // milestone
     }
     let numberOfLine = 0
     for (let j = 0; Object.keys(rankingFilteredObject[dateArray[i]]).length - 1 >= j; j++) {
+console.log(rankingFilteredObject[dateArray[i]][j])
       numberOfLine++
       if ((numberOfLine + 1) % 2 !== 0) {
         var oddEvenOfLine = 'odd'
@@ -672,7 +677,7 @@ function dateFormat(date, separator) {
   <label for="output-area">
     <input class="select-all" type="button" name="select-all" value="全て選択">
   </label>
-  <div id="output-area"><p>aaaaaaaaaaaaaaaaaaaaaaaa</p>
+  <div id="output-area">
   </div>
 </section>
 </div>
