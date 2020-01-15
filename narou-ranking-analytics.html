@@ -242,7 +242,6 @@ console.log('2 getRankingSource') // milestone
       cache: 'false'
     })
     .done(function(data) {
-console.log('1')
       rankingObject[dateString] = data
       progressiveBarProgress++
       counter++
@@ -339,7 +338,6 @@ console.log('6 makeComparisonTable_getNovelInformation') // milestone
       cache: 'false'
   })
   .done(function(data) {
-    console.log('2')
     assemblyNovelArray.push(data)
     numberOfNcodePool = numberOfNcodePool + numberOfNcodeFragment
     if (numberOfNcodePool === ncodeArrayLength) {
@@ -368,12 +366,13 @@ console.log('7 joinRankingAndInformation') // milestone
   })
   let m = 0
   for (let i = 0; dateArray.length - 1 >= i; i++) {
-    rankingFilteredObject[dateArray[i]] = []
+    rankingFilteredObject[dateArray[i]] = [0]
     for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
       for (let k = 0; assemblyNovelArrayMelting.length - 1 >= k; k++) {
         if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelArrayMelting[k]['ncode']) {
           for (let l = 0; Object.keys(assemblyNovelArrayMelting[k]).length - 1 >= l; l++) {
             rankingObject[dateArray[i]][j][Object.keys(assemblyNovelArrayMelting[k])[l]] = assemblyNovelArrayMelting[k][Object.keys(assemblyNovelArrayMelting[k])[l]]
+console.log(rankingFilteredObject)
           }
         }
       }
@@ -416,7 +415,6 @@ console.log('8 writeRankingTable') // milestone
   }
   let numberOfLineYearly = 0
   for (let i = 0; Object.keys(rankingFilteredObject).length - 1 >= i; i++) {
-console.log(Object.keys(rankingFilteredObject[dateArray[i]]).length)
     numberOfLineYearly++
     if ((numberOfLineYearly + 1) % 2 !== 0) {
       var oddEvenOfLineYearly = 'odd'
@@ -425,7 +423,6 @@ console.log(Object.keys(rankingFilteredObject[dateArray[i]]).length)
     }
     let numberOfLine = 0
     for (let j = 0; Object.keys(rankingFilteredObject[dateArray[i]]).length - 1 >= j; j++) {
-console.log(rankingFilteredObject[dateArray[i]][j])
       numberOfLine++
       if ((numberOfLine + 1) % 2 !== 0) {
         var oddEvenOfLine = 'odd'
