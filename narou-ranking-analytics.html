@@ -366,7 +366,7 @@ console.log('7 joinRankingAndInformation') // milestone
   })
   let m = 0
   for (let i = 0; dateArray.length - 1 >= i; i++) {
-    rankingFilteredObject[dateArray[i]] = [0]
+    rankingFilteredObject[dateArray[i]] = []
     for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
       for (let k = 0; assemblyNovelArrayMelting.length - 1 >= k; k++) {
         if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelArrayMelting[k]['ncode']) {
