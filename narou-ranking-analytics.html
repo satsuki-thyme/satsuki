@@ -59,6 +59,13 @@ select {
 br + label {
   line-height: 1.8;
 }
+.warn {
+  font-size: 120%;
+  font-weight: bold;
+  line-height: 24px;
+  vertical-align: middle;
+  color: #d00;
+}
 .progressiveBarProgress-frame {
   width: 200px;
   height: 25px;
@@ -93,8 +100,8 @@ let numberOfNcode = 100                  // なろう小説API から一度に�
 let numberOfNcodePool = 0                // なろう小説API から一度に取得する NCODE の数を数える
 let frequencyQuery = 0                   // なろう小説API から GET する回数
 let numberOfNcodePiece = 0               // なろう小説API から numberOfNcode * frequencyQuery で取得しきれない余りの NCODE の数
-let assemblyNovelArray = []              // なろう小説API から取得した小説情報の全て
-let assemblyNovelArrayMelting = []       // なろう小説API から取得した上記の assemblyNovelArray 内のネステッド・アレイを溶かしたもの
+let assemblyNovelInformationArray = []              // なろう小説API から取得した小説情報の全て
+let assemblyNovelInformationArrayMelting = []       // なろう小説API から取得した上記の assemblyNovelInformationArray 内のネステッド・アレイを溶かしたもの
 let ofParameterSelectedArray = []        // なろう小説API から取得するようユーザが選択した小説情報のアレイ
 let ofParameterQueryText = 'n'           // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
 let ofParameterIntermediateArray = []    // 中間のアレイ
@@ -141,7 +148,7 @@ let ofParameterTableObject = {           // なろう小説API から提供さ�
   "novelupdated_at": ["nu", "", "小説の更新日時"]
 }
 let replaceCodeToNameTableObject = {
-  biggenre: { 
+  "biggenre": { 
     1: "恋愛",
     2: "ファンタジー",
     3: "文芸",
@@ -149,7 +156,7 @@ let replaceCodeToNameTableObject = {
     99: "その他",
     98: "ノンジャンル"
   },
-  genre: {
+  "genre": {
     101: "異世界〔恋愛〕",
     102: "現実世界〔恋愛〕",
     201: "ハイファンタジー〔ファンタジー〕",
@@ -173,10 +180,27 @@ let replaceCodeToNameTableObject = {
     9801: "ノンジャンル〔ノンジャンル〕"
   }
 }
+let inputErrorObject = {
+  "date": 0
+}
+let messageObject = {
+  "date": {
+    "alert": "基準日の入力にエラーがあります。",
+    "week": "<span class=\"warn\">取得単位を「週間」にする場合は「火曜日」に設定してください。</span>",
+    "month": "<span class=\"warn\">取得単位を「月間」にする場合は「 1 日」に設定してください。</span>",
+    "quarter": "<span class=\"warn\">取得単位を「四半期」にする場合は「 1 日」に設定してください。</span>"
+  }
+}
+$(document).ready(function() {
+  checkDate()
+})
 $(function() {
   $('.start').on('click', function(event) {
     event.preventDefault()
     start('html')
+  })
+  $('[name="dateSource"], [name="dateUnit"]').change(function(event) {
+    checkDate()
   })
   $('.select-all').on('click', function(event) {
     event.preventDefault()
@@ -193,36 +217,67 @@ console.log('1 start') // milestone
   /*
     スタート
   */
-  progressiveBarProgress = 0
-  out = 'jsonp'
-  dateSource = ''
-  dateRange = 0
-  dateUnit = ''
-  dateArray = []
-  rankingObject = {}
-  rankingFilteredObject = {}
-  ncodeArray = []
-  ncodeArrayLength = 0
-  numberOfQuery = 0
-  lim = 500
-  numberOfNcode = 100
-  numberOfNcodePool = 0
-  frequencyQuery = 0
-  numberOfNcodePiece = 0
-  assemblyNovelArray = []
-  assemblyNovelArrayMelting = []
-  ofParameterSelectedArray = []
-  ofParameterQueryText = 'n'
-  ofParameterIntermediateArray = []
-  ofParameterOutputArray = []
-  filterParameterSelectedObject = {}
-  $('#output-area').empty()
-  if (sourceMedia === 'html') {
-    dateSource = $('[name="dateSource"]').val()
-    dateRange = Number($('[name="dateRange"]').val())
-    dateUnit = $('[name="dateUnit"]').children('option:selected').val()
+  initialize()
+  function initialize() {
+    progressiveBarProgress = 0
+    dateSource = ''
+    dateRange = 0
+    dateUnit = ''
+    dateArray = []
+    rankingObject = {}
+    rankingFilteredObject = {}
+    ncodeArray = []
+    ncodeArrayLength = 0
+    numberOfQuery = 0
+    numberOfNcodePool = 0
+    frequencyQuery = 0
+    numberOfNcodePiece = 0
+    assemblyNovelInformationArray = []
+    assemblyNovelInformationArrayMelting = []
+    ofParameterSelectedArray = []
+    ofParameterQueryText = 'n'
+    ofParameterIntermediateArray = []
+    ofParameterOutputArray = []
+    filterParameterSelectedObject = {}
+    for (var i = Object.keys(inputErrorObject).length - 1; i >= 0; i--) {
+      inputErrorObject[Object.keys(inputErrorObject)[i]] = 0
+    }
+    checkInputError()
   }
-  getRankingSource()
+  function checkInputError() {
+    let boolean = 1
+    for (var i = Object.keys(inputErrorObject).length - 1; i >= 0; i--) {
+      if (inputErrorObject[Object.keys(inputErrorObject)[i]] === 0) {
+        boolean = boolean * 1
+      } else {
+        boolean = boolean * 0
+      }
+    }
+    if (boolean === 1) {
+      getInputBaseData()
+    } else {
+      alertWarn()
+      return false
+    }
+  }
+  function alertWarn() {
+    let alertMessage = ''
+    for (var i = Object.keys(inputErrorObject).length - 1; i >= 0; i--) {
+      if (inputErrorObject[Object.keys(inputErrorObject)[i]] === 1) {
+        alertMessage = alertMessage + '\n' + messageObject[Object.keys(inputErrorObject)[i]]['alert']
+      }
+    }
+    alert(alertMessage.replace(/^\n/, ''))
+  }
+  function getInputBaseData() {
+    $('#output-area').empty()
+    if (sourceMedia === 'html') {
+      dateSource = $('[name="dateSource"]').val()
+      dateRange = Number($('[name="dateRange"]').val())
+      dateUnit = $('[name="dateUnit"]').val()
+    }
+    getRankingSource()
+  }
 }
 function getRankingSource() {
 console.log('2 getRankingSource') // milestone
@@ -338,24 +393,24 @@ console.log('6 makeComparisonTable_getNovelInformation') // milestone
       cache: 'false'
   })
   .done(function(data) {
-    assemblyNovelArray.push(data)
+    assemblyNovelInformationArray.push(data)
     numberOfNcodePool = numberOfNcodePool + numberOfNcodeFragment
     if (numberOfNcodePool === ncodeArrayLength) {
-      joinRankingAndInformation(assemblyNovelArray)
+      joinRankingAndInformation(assemblyNovelInformationArray)
     }
   })
   .fail(function() {
     alert('error!')
   })
 }
-function joinRankingAndInformation(assemblyNovelArray) {
+function joinRankingAndInformation(assemblyNovelInformationArray) {
 console.log('7 joinRankingAndInformation') // milestone
   /*
     ランキングリストへ、小説情報のリストを、 NCODE をキーとして割り付ける
   */
-  for (let i = 0; assemblyNovelArray.length - 1 >= i; i++) {
-    for (let j = 0; assemblyNovelArray[i].length - 1 >= j; j++) {
-      assemblyNovelArrayMelting.push(assemblyNovelArray[i][j])
+  for (let i = 0; assemblyNovelInformationArray.length - 1 >= i; i++) {
+    for (let j = 0; assemblyNovelInformationArray[i].length - 1 >= j; j++) {
+      assemblyNovelInformationArrayMelting.push(assemblyNovelInformationArray[i][j])
     }
   }
   $('#filter').find('select').each(function(index, el) {
@@ -364,15 +419,14 @@ console.log('7 joinRankingAndInformation') // milestone
       filterParameterSelectedObject[$(this).attr('name')] = Number($(this).val())
     }
   })
-  let m = 0
   for (let i = 0; dateArray.length - 1 >= i; i++) {
+    let m = 0
     rankingFilteredObject[dateArray[i]] = []
-    for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
-      for (let k = 0; assemblyNovelArrayMelting.length - 1 >= k; k++) {
-        if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelArrayMelting[k]['ncode']) {
-          for (let l = 0; Object.keys(assemblyNovelArrayMelting[k]).length - 1 >= l; l++) {
-            rankingObject[dateArray[i]][j][Object.keys(assemblyNovelArrayMelting[k])[l]] = assemblyNovelArrayMelting[k][Object.keys(assemblyNovelArrayMelting[k])[l]]
-console.log(rankingFilteredObject)
+    for (let j = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= j; j++) {
+      for (let k = 0; assemblyNovelInformationArrayMelting.length - 1 >= k; k++) {
+        if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelInformationArrayMelting[k]['ncode']) {
+          for (let l = 0; Object.keys(assemblyNovelInformationArrayMelting[k]).length - 1 >= l; l++) {
+            rankingObject[dateArray[i]][j][Object.keys(assemblyNovelInformationArrayMelting[k])[l]] = assemblyNovelInformationArrayMelting[k][Object.keys(assemblyNovelInformationArrayMelting[k])[l]]
           }
         }
       }
@@ -429,11 +483,44 @@ console.log('8 writeRankingTable') // milestone
       } else {
         var oddEvenOfLine = 'even'
       }
-      $('#ranking-table tbody').append('<tr class="entity-' + rankingFilteredObject[dateArray[i]][j]['ranking-date'] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
+      $('#ranking-table tbody').append('<tr class="entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
       for (let k = 0; ofParameterOutputArray.length - 1 >= k; k++) {
         $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterOutputArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterOutputArray[k]] + '</td>')
       }
     }
+  }
+}
+function checkDate(argument) {
+  displayWarn('.warn-base-date', 'remove')
+  let day = new Date($('[name="dateSource"]').val())
+  let dateUnit = $('[name="dateUnit"]').val()
+  if (dateUnit === 'w') {
+    if (day.getDay() !== 2) {
+      displayWarn('.warn-base-date', messageObject['date']['week'])
+      inputErrorObject['date'] = 1
+    }
+  } else if (dateUnit === 'm') {
+    if (day.getDate() !== 1) {
+      displayWarn('.warn-base-date', messageObject['date']['month'])
+      inputErrorObject['date'] = 1
+    }
+  } else if (dateUnit === 'q') {
+    if (day.getDate() !== 1) {
+      displayWarn('.warn-base-date', messageObject['date']['quarter'])
+      inputErrorObject['date'] = 1
+    }
+  } else {
+    displayWarn('.warn-base-date', 'remove')
+    inputErrorObject['date'] = 0
+  }
+}
+function displayWarn(target, message) {
+  if (message === undefined || message === 'remove') {
+    $(target).empty()
+  } else if (target === 'alert') {
+    alert('aaa')
+  } else {
+    $(target).append(message)
   }
 }
 function dateFormat(date, separator) {
@@ -476,6 +563,7 @@ function dateFormat(date, separator) {
   <section class="indicate">
     <h3>基準日</h3>
     <input type="date" name="dateSource" value="2020-01-01">
+    <span class="warn-base-date"></span>
     <section>
       <h4>注意事項</h4>
       <ul>
