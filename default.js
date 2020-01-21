@@ -1,8 +1,6 @@
-{
-  const search = $(location).attr('search').slice(1)
-  const host = $(location).attr('host')
-  const setting_array =
-{
+const search = $(location).attr('search').slice(1)
+const host = $(location).attr('host')
+const setting_array ={
   "loadContents": {
     "yayoi-thyme.com": {
       "back_host": "raw.githubusercontent.com",
@@ -33,52 +31,49 @@
     }
   }
 }
-  let back_host = setting_array['loadContents'][host]['back_host']
-  let user_name = setting_array['loadContents'][host]['user_name']
-  let site_repository = setting_array['loadContents'][host]['site_repository']
-  let branch = setting_array['loadContents'][host]['branch']
-  let default_document = setting_array['loadContents'][host]['default_document']
-  let url_home = setting_array['loadContents'][host]['url_home']
-  let url_base = setting_array['loadContents'][host]['url_base']
-  if (back_host != '') {
-    back_host = '//' + back_host
-  }
-  if (user_name != '') {
-    user_name = '/' + user_name
-  }
-  if (site_repository != '') {
-    site_repository = '/' + site_repository
-  }
-  if (branch != '') {
-    branch = '/' + branch
-  }
-  if (default_document != '') {
-    default_document = '/' + default_document
-  }
-  $(function () {
-    $(document).ready(function() {
-      if ($('html').attr('class').match(/load-content/g)) {
-        loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base)
-        setUpLink()
-        setReturnLink(search, url_home)
-      }
-    })
-    $(window).scroll(function() {
-      const scroll_amount = $(window).scrollTop()
-      if (scroll_amount > 0) {
-        $('.up').fadeIn()
-      } else if (scroll_amount <= 0) {
-        $('.up').fadeOut()
-      }
-    })
-    $(window).resize(function() {
-      setUpLink()
-    })
-    $('.up button').on('click',function (e) {
-      $('html, body').animate({scrollTop: 0}, 'fast')
-    })
-  })
+let back_host = setting_array['loadContents'][host]['back_host']
+let user_name = setting_array['loadContents'][host]['user_name']
+let site_repository = setting_array['loadContents'][host]['site_repository']
+let branch = setting_array['loadContents'][host]['branch']
+let default_document = setting_array['loadContents'][host]['default_document']
+let url_home = setting_array['loadContents'][host]['url_home']
+let url_base = setting_array['loadContents'][host]['url_base']
+if (back_host != '') {
+  back_host = '//' + back_host
 }
+if (user_name != '') {
+  user_name = '/' + user_name
+}
+if (site_repository != '') {
+  site_repository = '/' + site_repository
+}
+if (branch != '') {
+  branch = '/' + branch
+}
+if (default_document != '') {
+  default_document = '/' + default_document
+}
+$(document).ready(function() {
+  setUpLink()
+  if ($('html').attr('class').match(/load-contents/g)) {
+    loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base)
+    setReturnLink(search, url_home)
+  }
+})
+$(window).scroll(function() {
+  const scroll_amount = $(window).scrollTop()
+  if (scroll_amount > 0) {
+    $('.up').fadeIn()
+  } else if (scroll_amount <= 0) {
+    $('.up').fadeOut()
+  }
+})
+$(window).resize(function() {
+  setUpLink()
+})
+$('.up button').on('click',function (e) {
+  $('html, body').animate({scrollTop: 0}, 'fast')
+})
 function loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base) {
   let dfd_load_contents = $.Deferred()
   let last_period = 0
