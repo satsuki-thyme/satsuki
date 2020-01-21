@@ -82,9 +82,6 @@ br + label {
 <script>
 let urlRnkApi = 'https://api.syosetu.com/rank/rankget/'
 let urlNvlApi = 'https://api.syosetu.com/novelapi/api/'
-let prgBarPrg = 0         // プログレスバーのカウンター
-let prgBarGoal = 0        // 進捗最終目標値
-let prgBarRate = 0        // 進捗率
 let out = 'jsonp'         // なろう小説ランキングAPI から取得するデータの種類
 let dateSrc = ''          // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
 let dateRng = 0           // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
@@ -192,11 +189,9 @@ let msgObj = {
     "not-set": "<span class=\"warn\">出力項目を選択してください。</span>"
   }
 }
-let prgInfDisp
-window.onload = function() {
-  prgInfDisp = document.getElementById('progress-information-display')
+$(document).ready(function() {
   chkDate()
-}
+})
 $(function() {
   $('.start').on('click', function(event) {
     event.preventDefault()
@@ -217,13 +212,11 @@ $(function() {
 })
 function start(srcMda) {
 console.log('1 start') // milestone
-  prgInf('フェイズ 1/8')
   /*
     スタート
   */
   initialize()
   function initialize() {
-    prgBarPrg = 0
     dateSrc = ''
     dateRng = 1
     dateUnt = ''
@@ -309,7 +302,6 @@ console.log('1 start') // milestone
 }
 function getRnkSrc() {
 console.log('2 getRnkSrc') // milestone
-  prgInf('フェイズ 2/8')
   /*
     なろう小説ランキングAPI から NCODE, ポイント, ランクを、指定された日数分取得する
   */
@@ -367,7 +359,6 @@ console.log('2 getRnkSrc') // milestone
 }
 function mkCmpTbl_mkNcodeLst(date) {
 console.log('3 mkCmpTbl_mkNcodeLst') // milestone
-  prgInf('フェイズ 3/8')
   /*
     start で取得した、指定された日数分のランキングリストから、 NCODE のみを重複なしに結合する
   */
@@ -383,7 +374,6 @@ console.log('3 mkCmpTbl_mkNcodeLst') // milestone
 }
 function mkCmpTbl_mkNcodeGrp(date) {
 console.log('4 mkCmpTbl_mkNcodeGrp') // milestone
-  prgInf('フェイズ 4/8')
   /*
     mkCmpTbl_mkNcodeLst で作った NCODE のリストを、コード内で指定した数ずつグループにする
   */
@@ -404,19 +394,13 @@ console.log('4 mkCmpTbl_mkNcodeGrp') // milestone
     }
     mkCmpTbl_mkQ(qWrk1.replace(/^-/, ''), nmbOfNcodePce)
   }
-}
-function mkCmpTbl_mkQ(grpNcode, nmbOfNcodeFrg) {
-console.log('5 mkCmpTbl_mkQ') // milestone
-  prgInf('フェイズ 5/8')
-  /*
-    mkCmpTbl_mkNcodeGrp でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
-  */
-  let q = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofPrmQTxt.replace(/^-/, '') + '&ncode=' + grpNcode
-  mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg)
+  function mkCmpTbl_mkQ(grpNcode, nmbOfNcodeFrg) {
+    let q = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofPrmQTxt.replace(/^-/, '') + '&ncode=' + grpNcode
+    mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg)
+  }
 }
 function mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg) {
-console.log('6 mkCmpTbl_getNvlInf') // milestone
-  prgInf('フェイズ 6/8')
+console.log('5 mkCmpTbl_getNvlInf') // milestone
   /*
     なろう小説API から NCODE 毎に、指定された小説情報を取得する
   */
@@ -438,16 +422,13 @@ console.log('6 mkCmpTbl_getNvlInf') // milestone
   })
 }
 function joinRnkAndInf(asyNvlInfArr) {
-console.log('7 joinRnkAndInf') // milestone
-  prgInf('フェイズ 7/8')
+console.log('6 joinRnkAndInf') // milestone
   let prgIncr = 0
   /*
     ランキングリストへ、小説情報のリストを、 NCODE をキーとして割り付ける
   */
   for (let i = 0; asyNvlInfArr.length - 1 >= i; i++) {
     for (let j = 0; asyNvlInfArr[i].length - 1 >= j; j++) {
-      prgIncr++
-      prgInf('フェイズ 7/8 ' + prgIncr)
       asyNvlInfArrMlt.push(asyNvlInfArr[i][j])
     }
   }
@@ -458,22 +439,15 @@ console.log('7 joinRnkAndInf') // milestone
       for (let k = 0; asyNvlInfArrMlt.length - 1 >= k; k++) {
         if (rnkObj[dateArr[i]][j]['ncode'] === asyNvlInfArrMlt[k]['ncode']) {
           for (let l = 0; Object.keys(asyNvlInfArrMlt[k]).length - 1 >= l; l++) {
-            prgIncr++
-            prgInf('フェイズ 7/8 ' + prgIncr)
             rnkObj[dateArr[i]][j][Object.keys(asyNvlInfArrMlt[k])[l]] = asyNvlInfArrMlt[k][Object.keys(asyNvlInfArrMlt[k])[l]]
           }
         }
       }
       let bln = 1
       for (let k = 0; Object.keys(fltPrmSlcObj).length - 1 >= k; k++) {
-        prgInf('joinRnkAndInf() > for:2nd > for:1st > for:2nd')
         if (rnkObj[dateArr[i]][j][Object.keys(fltPrmSlcObj)[k]] === fltPrmSlcObj[Object.keys(fltPrmSlcObj)[k]]) {
-          prgIncr++
-          prgInf('フェイズ 7/8 ' + prgIncr)
           bln = bln * 1
         } else {
-          prgIncr++
-          prgInf('フェイズ 7/8 ' + prgIncr)
           bln = bln * 0
         }
       }
@@ -483,8 +457,6 @@ console.log('7 joinRnkAndInf') // milestone
         for (let k = 0; Object.keys(rnkFltObj[dateArr[i]][m]).length - 1 >= k; k++) {
           for (let l = 0; Object.keys(rplCodeToNameTblObj).length - 1 >= l; l++) {
             if (Object.keys(rnkFltObj[dateArr[i]][m])[k] === Object.keys(rplCodeToNameTblObj)[l]) {
-              prgIncr++
-              prgInf('フェイズ 7/8 ' + prgIncr)
               rnkFltObj[dateArr[i]][m][Object.keys(rnkFltObj[dateArr[i]][m])[k]] = rplCodeToNameTblObj[Object.keys(rnkFltObj[dateArr[i]][m])[k]][rnkFltObj[dateArr[i]][m][Object.keys(rnkFltObj[dateArr[i]][m])[k]]]
             }
           }
@@ -494,11 +466,10 @@ console.log('7 joinRnkAndInf') // milestone
     }
   }
   ofPrmOutArr = Object.assign(ofPrmSlcArr)
-  wrtRnkTbl()
+  writRnkTbl()
 }
-function wrtRnkTbl() {
-console.log('8 wrtRnkTbl') // milestone
-  prgInf('フェイズ 8/8')
+function writRnkTbl() {
+console.log('7 writRnkTbl') // milestone
   let prgIncr = 0
   /*
     ランキングを書き出す
@@ -506,8 +477,6 @@ console.log('8 wrtRnkTbl') // milestone
   $('#output-area').append('<table id="ranking-table"></table>')
   $('#ranking-table').append('<thead><tr></tr></thead><tbody></tbody>')
   for (var i = 0; ofPrmOutArr.length - 1 >= i; i++) {
-    prgIncr++
-    prgInf('フェイズ 8/8 ' + prgIncr)
     $('#ranking-table thead tr').append('<th class="item-' + ofPrmOutArr[i] + '">' + ofPrmTblObj[ofPrmOutArr[i]][2] + '</td>')
   }
   let nmbOfLnYearly = 0
@@ -520,7 +489,6 @@ console.log('8 wrtRnkTbl') // milestone
     }
     let nmbOfLn = 0
     for (let j = 0; Object.keys(rnkFltObj[dateArr[i]]).length - 1 >= j; j++) {
-      prgBarPrg++
       nmbOfLn++
       if ((nmbOfLn + 1) % 2 !== 0) {
         var oddEvenOfLn = 'odd'
@@ -529,8 +497,6 @@ console.log('8 wrtRnkTbl') // milestone
       }
       $('#ranking-table tbody').append('<tr class="' + dateArr[i] + '-' + rnkFltObj[dateArr[i]][j]['ncode'] + ' line-yearly-' + oddEvnOfLnYea + ' line-' + oddEvenOfLn  + '"></tr>')
       for (let k = 0; ofPrmOutArr.length - 1 >= k; k++) {
-        prgIncr++
-        prgInf('フェイズ 8/8 ' + prgIncr)
         $('tr.' + dateArr[i] + '-' + rnkFltObj[dateArr[i]][j]['ncode']).append('<td class="item-' + ofPrmOutArr[k] + '">' + rnkFltObj[dateArr[i]][j][ofPrmOutArr[k]] + '</td>')
       }
     }
@@ -599,7 +565,6 @@ function dateFmt(date, spr) {
  return y + spr + m + spr + d
 }
 function prgInf(msg) {
-  prgInfDisp.innerHTML = msg
 }
 </script>
 <div id="container">
