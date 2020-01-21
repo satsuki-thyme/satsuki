@@ -66,13 +66,13 @@ br + label {
   vertical-align: middle;
   color: #d00;
 }
-.progressiveBarProgress-frame {
+.prgBarPrg-frame {
   width: 200px;
   height: 25px;
   padding: 0;
   border: 1px solid #666;
 }
-.progressiveBarProgress-bar {
+.prgBarPrg-bar {
   height: 100%;
   width: 0;
   background-color: #1e3;
@@ -80,34 +80,32 @@ br + label {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-let urlRankingApi = 'https://api.syosetu.com/rank/rankget/'
-let urlNovelApi = 'https://api.syosetu.com/novelapi/api/'
-let progressiveBarProgress = 0           // プログレスバーのカウンター
-let progressiveBarGoal = 0               // 進捗最終目標値
-let progressiveBarRate = 0               // 進捗率
-let out = 'jsonp'                        // なろう小説ランキングAPI から取得するデータの種類
-let dateSource = ''                      // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
-let dateRange = 0                        // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
-let dateUnit = ''                        // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
-let dateArray = []                       // なろう小説ランキングAPI から取得する日付のリスト
-let rankingObject = {}                   // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
-let rankingFilteredObject = {}           // rankingObject を filterParameterSelectedObject でフィルタしたオブジェクト
-let ncodeArray = []                      // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
-let ncodeArrayLength = 0                 // なろう小説ランキングAPI の上記 ncodeArray の長さ
-let numberOfQuery = 0                    // なろう小説ランキングAPI に問い合わせるクエリを数える
-let lim = 500                            // なろう小説API から取得する件数
-let numberOfNcode = 100                  // なろう小説API から一度に取得する NCODE の数。多くするとクエリ URL が長くなって困るかも
-let numberOfNcodePool = 0                // なろう小説API から一度に取得する NCODE の数を数える
-let frequencyQuery = 0                   // なろう小説API から GET する回数
-let numberOfNcodePiece = 0               // なろう小説API から numberOfNcode * frequencyQuery で取得しきれない余りの NCODE の数
-let assemblyNovelInformationArray = []              // なろう小説API から取得した小説情報の全て
-let assemblyNovelInformationArrayMelting = []       // なろう小説API から取得した上記の assemblyNovelInformationArray 内のネステッド・アレイを溶かしたもの
-let ofParameterSelectedArray = []        // なろう小説API から取得するようユーザが選択した小説情報のアレイ
-let ofParameterQueryText = 'n'           // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
-let ofParameterIntermediateArray = []    // 中間のアレイ
-let ofParameterOutputArray = []          // 最終的に表示する小説情報のアレイ
-let filterParameterSelectedObject = {}   // 最終的な表示をフィルタする項目のアレイ
-let ofParameterTableObject = {           // なろう小説API から提供される小説情報の表
+let urlRnkApi = 'https://api.syosetu.com/rank/rankget/'
+let urlNvlApi = 'https://api.syosetu.com/novelapi/api/'
+let prgBarPrg = 0         // プログレスバーのカウンター
+let prgBarGoal = 0        // 進捗最終目標値
+let prgBarRate = 0        // 進捗率
+let out = 'jsonp'         // なろう小説ランキングAPI から取得するデータの種類
+let dateSrc = ''          // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
+let dateRng = 0           // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
+let dateUnt = ''          // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
+let dateArr = []          // なろう小説ランキングAPI から取得する日付のリスト
+let rnkObj = {}           // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
+let rnkFltObj = {}        // rnkObj を fltPrmSlcObj でフィルタしたオブジェクト
+let ncodeArr = []         // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
+let ncodeArrleng = 0      // なろう小説ランキングAPI の上記 ncodeArr の長さ
+let lim = 500             // なろう小説API から取得する件数
+let nmbOfNcodeInGrp = 100 // なろう小説API から一度に取得する NCODE の数。多くするとクエリ URL が長くなって困るかも
+let nmbOfNcodePool = 0    // なろう小説API から一度に取得する NCODE の数を数える
+let frqQ = 0              // なろう小説API から GET する回数
+let nmbOfNcodePce = 0     // なろう小説API から nmbOfNcodeInGrp * frqQ で取得しきれない余りの NCODE の数
+let asyNvlInfArr = []     // なろう小説API から取得した小説情報の全て
+let asyNvlInfArrMlt = []  // なろう小説API から取得した上記の asyNvlInfArr 内のネステッド・アレイを溶かしたもの
+let ofPrmSlcArr = []      // なろう小説API から取得するようユーザが選択した小説情報のアレイ
+let ofPrmQTxt = 'n'       // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
+let ofPrmOutArr = []      // 最終的に表示する小説情報のアレイ
+let fltPrmSlcObj = {}     // 最終的な表示をフィルタする項目のアレイ
+let ofPrmTblObj = {       // なろう小説API から提供される小説情報の表
   "ranking-date": ["", "", "ランキング日"],
   "title": ["t", "", "小説名"],
   "ncode": ["n", "", "Nコード"],
@@ -140,14 +138,14 @@ let ofParameterTableObject = {           // なろう小説API から提供さ�
   "yearly_point": ["yp", "", "年間ポイント"],
   "fav_novel_cnt": ["f", "", "ブックマーク数"],
   "impression_cnt": ["imp", "", "感想数"],
-  "review_cnt": ["r", "", "レビュー数"],
+  "review-count": ["r", "", "レビュー数"],
   "all_point": ["a", "", "評価点"],
   "all_hyoka_cnt": ["ah", "", "評価者数"],
   "sasie_cnt": ["sa", "", "挿絵の数"],
   "kaiwaritu": ["ka", "", "会話率"],
   "novelupdated_at": ["nu", "", "小説の更新日時"]
 }
-let replaceCodeToNameTableObject = {
+let rplCodeToNameTblObj = {
   "biggenre": { 
     1: "恋愛",
     2: "ファンタジー",
@@ -180,273 +178,314 @@ let replaceCodeToNameTableObject = {
     9801: "ノンジャンル〔ノンジャンル〕"
   }
 }
-let inputErrorObject = {
+let inErrObj = {
   "date": 0
 }
-let messageObject = {
+let msgObj = {
   "date": {
     "alert": "基準日の入力にエラーがあります。",
     "week": "<span class=\"warn\">取得単位を「週間」にする場合は「火曜日」に設定してください。</span>",
     "month": "<span class=\"warn\">取得単位を「月間」にする場合は「 1 日」に設定してください。</span>",
     "quarter": "<span class=\"warn\">取得単位を「四半期」にする場合は「 1 日」に設定してください。</span>"
+  },
+  "of-parameter": {
+    "not-set": "<span class=\"warn\">出力項目を選択してください。</span>"
   }
 }
-$(document).ready(function() {
-  checkDate()
-})
+let prgInfDisp
+window.onload = function() {
+  prgInfDisp = document.getElementById('progress-information-display')
+  chkDate()
+}
 $(function() {
   $('.start').on('click', function(event) {
     event.preventDefault()
     start('html')
   })
-  $('[name="dateSource"], [name="dateUnit"]').change(function(event) {
-    checkDate()
+  $('[name="date-source"], [name="date-unit"]').change(function(event) {
+    chkDate()
   })
   $('.select-all').on('click', function(event) {
     event.preventDefault()
-    let range = document.createRange()
-    let selectedElement = document.getElementById('output-area')
-    range.selectNodeContents(selectedElement)
-    var selection = window.getSelection()
-    selection.removeAllRanges()
-    selection.addRange(range)
+    let rng = document.createRng()
+    let slcElm = document.getElementById('output-area')
+    rng.selectNodeContents(slcElm)
+    var slc = window.getSelection()
+    slc.removeAllRngs()
+    slc.addRng(rng)
   })
 })
-function start(sourceMedia) {
+function start(srcMda) {
 console.log('1 start') // milestone
+  prgInf('フェイズ 1/8')
   /*
     スタート
   */
   initialize()
   function initialize() {
-    progressiveBarProgress = 0
-    dateSource = ''
-    dateRange = 0
-    dateUnit = ''
-    dateArray = []
-    rankingObject = {}
-    rankingFilteredObject = {}
-    ncodeArray = []
-    ncodeArrayLength = 0
-    numberOfQuery = 0
-    numberOfNcodePool = 0
-    frequencyQuery = 0
-    numberOfNcodePiece = 0
-    assemblyNovelInformationArray = []
-    assemblyNovelInformationArrayMelting = []
-    ofParameterSelectedArray = []
-    ofParameterQueryText = 'n'
-    ofParameterIntermediateArray = []
-    ofParameterOutputArray = []
-    filterParameterSelectedObject = {}
-    for (var i = Object.keys(inputErrorObject).length - 1; i >= 0; i--) {
-      inputErrorObject[Object.keys(inputErrorObject)[i]] = 0
+    prgBarPrg = 0
+    dateSrc = ''
+    dateRng = 1
+    dateUnt = ''
+    dateArr = []
+    rnkObj = {}
+    rnkFltObj = {}
+    ncodeArr = []
+    ncodeArrleng = 0
+    nmbOfNcodePool = 0
+    frqQ = 0
+    nmbOfNcodePce = 0
+    asyNvlInfArr = []
+    asyNvlInfArrMlt = []
+    ofPrmSlcArr = []
+    ofPrmQTxt = 'n'
+    ofPrmOutArr = []
+    fltPrmSlcObj = {}
+    for (var i = Object.keys(inErrObj).length - 1; i >= 0; i--) {
+      inErrObj[Object.keys(inErrObj)[i]] = 0
     }
-    checkInputError()
+    chkInputError()
   }
-  function checkInputError() {
-    let boolean = 1
-    for (var i = Object.keys(inputErrorObject).length - 1; i >= 0; i--) {
-      if (inputErrorObject[Object.keys(inputErrorObject)[i]] === 0) {
-        boolean = boolean * 1
+  function chkInputError() {
+    let bln = 1
+    for (var i = Object.keys(inErrObj).length - 1; i >= 0; i--) {
+      if (inErrObj[Object.keys(inErrObj)[i]] === 0) {
+        bln = bln * 1
       } else {
-        boolean = boolean * 0
+        bln = bln * 0
       }
     }
-    if (boolean === 1) {
+    if (bln === 1) {
       getInputBaseData()
     } else {
-      alertWarn()
+      altWarn()
       return false
     }
   }
-  function alertWarn() {
-    let alertMessage = ''
-    for (var i = Object.keys(inputErrorObject).length - 1; i >= 0; i--) {
-      if (inputErrorObject[Object.keys(inputErrorObject)[i]] === 1) {
-        alertMessage = alertMessage + '\n' + messageObject[Object.keys(inputErrorObject)[i]]['alert']
+  function altWarn() {
+    let altMsg = ''
+    for (var i = Object.keys(inErrObj).length - 1; i >= 0; i--) {
+      if (inErrObj[Object.keys(inErrObj)[i]] === 1) {
+        altMsg = altMsg + '\n' + msgObj[Object.keys(inErrObj)[i]]['alert']
       }
     }
-    alert(alertMessage.replace(/^\n/, ''))
+    alert(altMsg.replace(/^\n/, ''))
   }
   function getInputBaseData() {
     $('#output-area').empty()
-    if (sourceMedia === 'html') {
-      dateSource = $('[name="dateSource"]').val()
-      dateRange = Number($('[name="dateRange"]').val())
-      dateUnit = $('[name="dateUnit"]').val()
+    if (srcMda === 'html') {
+      dateSrc = $('[name="date-source"]').val()
+      dateRng = Number($('[name="date-range"]').val())
+      dateUnt = $('[name="date-unit"]').val()
+      $('#of-parameter').find('input').each(function() {
+        let thisName = $(this).attr('name')
+        let thisChk = $(this).prop('checked')
+        if (thisChk) {
+          ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisName][0]
+          if (ofPrmSlcArr.indexOf(thisName) < 0) {
+            ofPrmSlcArr.push(thisName)
+          }
+        }
+      })
+      $('#filter').find('select').each(function() {
+        let thisName = $(this).attr('name')
+        let thisSlc
+        if ($(this).val() !== '') {
+          thisSlc = 'selected'
+        }
+        if (thisSlc) {
+          ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisName][0]
+        }
+      })
     }
-    getRankingSource()
+    $('#filter').find('select').each(function(index, el) {
+      let thisVal = $(this).val()
+      if (thisVal !== 0 && thisVal !== '') {
+        fltPrmSlcObj[$(this).attr('name')] = Number($(this).val())
+      }
+    })
+    getRnkSrc()
   }
 }
-function getRankingSource() {
-console.log('2 getRankingSource') // milestone
+function getRnkSrc() {
+console.log('2 getRnkSrc') // milestone
+  prgInf('フェイズ 2/8')
   /*
     なろう小説ランキングAPI から NCODE, ポイント, ランクを、指定された日数分取得する
   */
-  let counter = 0
-  let dateSplitArray = (dateSource.substr(0, 4) + '/' + dateSource.substr(4, 2) + '/' + dateSource.substr(6, 2)).split('/')
-  let date = new Date(dateFormat(dateSource, '/'))
-  for (let i = 0; dateRange >= i; i++) {
-    let dateString = dateFormat(new Date(date.setDate(date.getDate() - i)), '')
-    dateArray.push(dateString)
+  let cnt = 0
+  let dateSplitArr = (dateSrc.substr(0, 4) + '/' + dateSrc.substr(4, 2) + '/' + dateSrc.substr(6, 2)).split('/')
+  let date = new Date(dateFmt(dateSrc, '/'))
+  if (dateUnt === 'd') {
+    for (let i = 0; dateRng - 1 >= i; i++) {
+      let dateWrk = new Date(date)
+      get(dateWrk.setDate(dateWrk.getDate() - i))
+    }
+  } else if (dateUnt === 'w') {
+    for (let i = 0; dateRng - 1 >= i; i++) {
+      let dateWrk = new Date(date)
+      get(dateWrk.setDate(dateWrk.getDate() - i * 7))
+    }
+  } else if (dateUnt === 'm') {
+    for (let i = 0; dateRng - 1 >= i; i++) {
+      let dateWrk = new Date(date)
+      get(dateWrk.setMonth(dateWrk.getMonth() - i))
+    }
+  } else if (dateUnt === 'q') {
+    for (let i = 0; dateRng - 1 >= i; i++) {
+      let dateWrk = new Date(date)
+      get(dateWrk.setMonth(dateWrk.getMonth() - i * 4))
+    }
+  } else if (dateUnt === 'y') {
+    for (let i = 0; dateRng - 1 >= i; i++) {
+      let dateWrk = new Date(date)
+      get(date.setFullYear(date.getFullYear() - i))
+    }
+  } else {
+    console.log('getRnkSrc() > if 文で予期しない入力によってエラーが発生しました。')
+  }
+  function get(prm) {
+    let dateStr = dateFmt(new Date(prm), '')
+    dateArr.push(dateStr)
     $.ajax({
-      url: urlRankingApi + '?gzip=0&out=' + out + '&rtype=' + dateString + '-' + dateUnit,
+      url: urlRnkApi + '?gzip=0&out=' + out + '&rtype=' + dateStr + '-' + dateUnt,
       type: 'GET',
       dataType: out,
       cache: 'false'
     })
     .done(function(data) {
-      rankingObject[dateString] = data
-      progressiveBarProgress++
-      counter++
-      if (counter === dateRange + 1) {
-        makeComparisonTable_makeNcodeList(date)
+      rnkObj[dateStr] = data
+      cnt++
+      if (cnt === dateRng) {
+        mkCmpTbl_mkNcodeLst(date)
       }
     })
     .fail(function() {
-      alert('error!')
+      console.log('getRnkSrc > get() でエラーが発生しました。')
     })
   }
 }
-function makeComparisonTable_makeNcodeList(date) {
-console.log('3 makeComparisonTable_makeNcodeList') // milestone
+function mkCmpTbl_mkNcodeLst(date) {
+console.log('3 mkCmpTbl_mkNcodeLst') // milestone
+  prgInf('フェイズ 3/8')
   /*
     start で取得した、指定された日数分のランキングリストから、 NCODE のみを重複なしに結合する
   */
-  for (let i = 0; dateRange >= i; i++) {
-    for (let j = 0; rankingObject[dateArray[i]].length - 1 >= j; j++) {
-      let work0 = rankingObject[dateArray[i]][j]['ncode']
-      if (ncodeArray.indexOf(work0) < 0) {
-        ncodeArray.push(work0)
+  for (let i = 0; dateRng - 1 >= i; i++) {
+    for (let j = 0; rnkObj[dateArr[i]].length - 1 >= j; j++) {
+      let work0 = rnkObj[dateArr[i]][j]['ncode']
+      if (ncodeArr.indexOf(work0) < 0) {
+        ncodeArr.push(work0)
       }
     }
   }
-  makeComparisonTable_makeNcodeGroup(date)
+  mkCmpTbl_mkNcodeGrp(date)
 }
-function makeComparisonTable_makeNcodeGroup(date) {
-console.log('4 makeComparisonTable_makeNcodeGroup') // milestone
+function mkCmpTbl_mkNcodeGrp(date) {
+console.log('4 mkCmpTbl_mkNcodeGrp') // milestone
+  prgInf('フェイズ 4/8')
   /*
-    makeComparisonTable_makeNcodeList で作った NCODE のリストを、コード内で指定した数ずつグループにする
+    mkCmpTbl_mkNcodeLst で作った NCODE のリストを、コード内で指定した数ずつグループにする
   */
-  ncodeArrayLength = ncodeArray.length
-  frequencyQuery = Math.floor(ncodeArrayLength / numberOfNcode)
-  numberOfNcodePiece = ncodeArrayLength % numberOfNcode
-  for (let i = 0; frequencyQuery - 1 >= i; i++) {
-    let queryWork0 = ''
-    for (let j = 0; numberOfNcode - 1 >= j; j++) {
-      queryWork0 = queryWork0 + '-' + ncodeArray[j + i * numberOfNcode]
+  ncodeArrleng = ncodeArr.length
+  frqQ = Math.floor(ncodeArrleng / nmbOfNcodeInGrp)
+  nmbOfNcodePce = ncodeArrleng % nmbOfNcodeInGrp
+  for (let i = 0; frqQ - 1 >= i; i++) {
+    let qWrk0 = ''
+    for (let j = 0; nmbOfNcodeInGrp - 1 >= j; j++) {
+      qWrk0 = qWrk0 + '-' + ncodeArr[j + i * nmbOfNcodeInGrp]
     }
-    makeComparisonTable_makeQuery(queryWork0.replace(/^-/, ''), numberOfNcode)
+    mkCmpTbl_mkQ(qWrk0.replace(/^-/, ''), nmbOfNcodeInGrp)
   }
-  if (numberOfNcodePiece !== 0) {
-    let queryWork1 = ''
-    for (let i = ncodeArrayLength - numberOfNcodePiece; ncodeArrayLength >= i; i++) {
-      queryWork1 = queryWork1 + '-' + ncodeArray[i]
+  if (nmbOfNcodePce !== 0) {
+    let qWrk1 = ''
+    for (let i = ncodeArrleng - nmbOfNcodePce; ncodeArrleng >= i; i++) {
+      qWrk1 = qWrk1 + '-' + ncodeArr[i]
     }
-    makeComparisonTable_makeQuery(queryWork1.replace(/^-/, ''), numberOfNcodePiece)
+    mkCmpTbl_mkQ(qWrk1.replace(/^-/, ''), nmbOfNcodePce)
   }
 }
-function makeComparisonTable_makeQuery(groupNcode, numberOfNcodeFragment) {
-console.log('5 makeComparisonTable_makeQuery') // milestone
+function mkCmpTbl_mkQ(grpNcode, nmbOfNcodeFrg) {
+console.log('5 mkCmpTbl_mkQ') // milestone
+  prgInf('フェイズ 5/8')
   /*
-    makeComparisonTable_makeNcodeGroup でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
+    mkCmpTbl_mkNcodeGrp でグループにされた NCODE リストを使って API に問い合わせるクエリを作る
   */
-  ofParameterIntermediateArray = Object.assign(ofParameterSelectedArray)
-  $('#ofParameter').find('input').each(function() {
-    let thisName = $(this).attr('name')
-    let thisChecked = $(this).prop('checked')
-    if (thisChecked) {
-      ofParameterQueryText = ofParameterQueryText + '-' + ofParameterTableObject[thisName][0]
-      if (ofParameterSelectedArray.indexOf(thisName) < 0) {
-        ofParameterSelectedArray.push(thisName)
-      }
-    }
-  })
-  if (!ofParameterQueryText) {
-    alert('出力項目が選択されていません')
-    return false
-  }
-  $('#filter').find('select').each(function() {
-    let thisName = $(this).attr('name')
-    let thisSelected
-    if ($(this).val() !== '') {
-      thisSelected = 'selected'
-    }
-    if (thisSelected) {
-      ofParameterQueryText = ofParameterQueryText + '-' + ofParameterTableObject[thisName][0]
-    }
-  })
-  let query = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofParameterQueryText.replace(/^-/, '') + '&ncode=' + groupNcode
-  makeComparisonTable_getNovelInformation(query, out, numberOfNcodeFragment)
+  let q = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofPrmQTxt.replace(/^-/, '') + '&ncode=' + grpNcode
+  mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg)
 }
-function makeComparisonTable_getNovelInformation(query, out, numberOfNcodeFragment) {
-console.log('6 makeComparisonTable_getNovelInformation') // milestone
+function mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg) {
+console.log('6 mkCmpTbl_getNvlInf') // milestone
+  prgInf('フェイズ 6/8')
   /*
     なろう小説API から NCODE 毎に、指定された小説情報を取得する
   */
-  numberOfQuery++
   $.ajax({
-      url: urlNovelApi + query,
+      url: urlNvlApi + q,
       type: 'GET',
       dataType: out,
       cache: 'false'
   })
   .done(function(data) {
-    assemblyNovelInformationArray.push(data)
-    numberOfNcodePool = numberOfNcodePool + numberOfNcodeFragment
-    if (numberOfNcodePool === ncodeArrayLength) {
-      joinRankingAndInformation(assemblyNovelInformationArray)
+    asyNvlInfArr.push(data)
+    nmbOfNcodePool = nmbOfNcodePool + nmbOfNcodeFrg
+    if (nmbOfNcodePool === ncodeArrleng) {
+      joinRnkAndInf(asyNvlInfArr)
     }
   })
   .fail(function() {
     alert('error!')
   })
 }
-function joinRankingAndInformation(assemblyNovelInformationArray) {
-console.log('7 joinRankingAndInformation') // milestone
+function joinRnkAndInf(asyNvlInfArr) {
+console.log('7 joinRnkAndInf') // milestone
+  prgInf('フェイズ 7/8')
+  let prgIncr = 0
   /*
     ランキングリストへ、小説情報のリストを、 NCODE をキーとして割り付ける
   */
-  for (let i = 0; assemblyNovelInformationArray.length - 1 >= i; i++) {
-    for (let j = 0; assemblyNovelInformationArray[i].length - 1 >= j; j++) {
-      assemblyNovelInformationArrayMelting.push(assemblyNovelInformationArray[i][j])
+  for (let i = 0; asyNvlInfArr.length - 1 >= i; i++) {
+    for (let j = 0; asyNvlInfArr[i].length - 1 >= j; j++) {
+      prgIncr++
+      prgInf('フェイズ 7/8 ' + prgIncr)
+      asyNvlInfArrMlt.push(asyNvlInfArr[i][j])
     }
   }
-  $('#filter').find('select').each(function(index, el) {
-    let thisVal = $(this).val()
-    if (thisVal !== 0 && thisVal !== '') {
-      filterParameterSelectedObject[$(this).attr('name')] = Number($(this).val())
-    }
-  })
-  for (let i = 0; dateArray.length - 1 >= i; i++) {
+  for (let i = 0; dateArr.length - 1 >= i; i++) {
     let m = 0
-    rankingFilteredObject[dateArray[i]] = []
-    for (let j = 0; Object.keys(rankingObject[dateArray[i]]).length - 1 >= j; j++) {
-      for (let k = 0; assemblyNovelInformationArrayMelting.length - 1 >= k; k++) {
-        if (rankingObject[dateArray[i]][j]['ncode'] === assemblyNovelInformationArrayMelting[k]['ncode']) {
-          for (let l = 0; Object.keys(assemblyNovelInformationArrayMelting[k]).length - 1 >= l; l++) {
-            rankingObject[dateArray[i]][j][Object.keys(assemblyNovelInformationArrayMelting[k])[l]] = assemblyNovelInformationArrayMelting[k][Object.keys(assemblyNovelInformationArrayMelting[k])[l]]
+    rnkFltObj[dateArr[i]] = []
+    for (let j = 0; Object.keys(rnkObj[dateArr[i]]).length - 1 >= j; j++) {
+      for (let k = 0; asyNvlInfArrMlt.length - 1 >= k; k++) {
+        if (rnkObj[dateArr[i]][j]['ncode'] === asyNvlInfArrMlt[k]['ncode']) {
+          for (let l = 0; Object.keys(asyNvlInfArrMlt[k]).length - 1 >= l; l++) {
+            prgIncr++
+            prgInf('フェイズ 7/8 ' + prgIncr)
+            rnkObj[dateArr[i]][j][Object.keys(asyNvlInfArrMlt[k])[l]] = asyNvlInfArrMlt[k][Object.keys(asyNvlInfArrMlt[k])[l]]
           }
         }
       }
-      let boolean = 1
-      for (let k = 0; Object.keys(filterParameterSelectedObject).length - 1 >= k; k++) {
-        let a = rankingObject[dateArray[i]][j][Object.keys(filterParameterSelectedObject)[k]]
-        let b = filterParameterSelectedObject[Object.keys(filterParameterSelectedObject)[k]]
-        if (a === b) {
-          boolean = boolean * 1
+      let bln = 1
+      for (let k = 0; Object.keys(fltPrmSlcObj).length - 1 >= k; k++) {
+        prgInf('joinRnkAndInf() > for:2nd > for:1st > for:2nd')
+        if (rnkObj[dateArr[i]][j][Object.keys(fltPrmSlcObj)[k]] === fltPrmSlcObj[Object.keys(fltPrmSlcObj)[k]]) {
+          prgIncr++
+          prgInf('フェイズ 7/8 ' + prgIncr)
+          bln = bln * 1
         } else {
-          boolean = boolean * 0
+          prgIncr++
+          prgInf('フェイズ 7/8 ' + prgIncr)
+          bln = bln * 0
         }
       }
-      if (boolean === 1) {
-        rankingFilteredObject[dateArray[i]][m] = rankingObject[dateArray[i]][j]
-        rankingFilteredObject[dateArray[i]][m]['ranking-date'] = dateArray[i]
-        for (let k = 0; Object.keys(rankingFilteredObject[dateArray[i]][m]).length - 1 >= k; k++) {
-          for (let l = 0; Object.keys(replaceCodeToNameTableObject).length - 1 >= l; l++) {
-            if (Object.keys(rankingFilteredObject[dateArray[i]][m])[k] === Object.keys(replaceCodeToNameTableObject)[l]) {
-              rankingFilteredObject[dateArray[i]][m][Object.keys(rankingFilteredObject[dateArray[i]][m])[k]] = replaceCodeToNameTableObject[Object.keys(rankingFilteredObject[dateArray[i]][m])[k]][rankingFilteredObject[dateArray[i]][m][Object.keys(rankingFilteredObject[dateArray[i]][m])[k]]]
+      if (bln === 1) {
+        rnkFltObj[dateArr[i]][m] = rnkObj[dateArr[i]][j]
+        rnkFltObj[dateArr[i]][m]['ranking-date'] = dateArr[i]
+        for (let k = 0; Object.keys(rnkFltObj[dateArr[i]][m]).length - 1 >= k; k++) {
+          for (let l = 0; Object.keys(rplCodeToNameTblObj).length - 1 >= l; l++) {
+            if (Object.keys(rnkFltObj[dateArr[i]][m])[k] === Object.keys(rplCodeToNameTblObj)[l]) {
+              prgIncr++
+              prgInf('フェイズ 7/8 ' + prgIncr)
+              rnkFltObj[dateArr[i]][m][Object.keys(rnkFltObj[dateArr[i]][m])[k]] = rplCodeToNameTblObj[Object.keys(rnkFltObj[dateArr[i]][m])[k]][rnkFltObj[dateArr[i]][m][Object.keys(rnkFltObj[dateArr[i]][m])[k]]]
             }
           }
         }
@@ -454,76 +493,83 @@ console.log('7 joinRankingAndInformation') // milestone
       }
     }
   }
-  ofParameterOutputArray = Object.assign(ofParameterSelectedArray)
-  writeRankingTable()
+  ofPrmOutArr = Object.assign(ofPrmSlcArr)
+  wrtRnkTbl()
 }
-function writeRankingTable() {
-console.log('8 writeRankingTable') // milestone
+function wrtRnkTbl() {
+console.log('8 wrtRnkTbl') // milestone
+  prgInf('フェイズ 8/8')
+  let prgIncr = 0
   /*
     ランキングを書き出す
   */
   $('#output-area').append('<table id="ranking-table"></table>')
   $('#ranking-table').append('<thead><tr></tr></thead><tbody></tbody>')
-  for (var i = 0; ofParameterOutputArray.length - 1 >= i; i++) {
-    $('#ranking-table thead tr').append('<th class="item-' + ofParameterOutputArray[i] + '">' + ofParameterTableObject[ofParameterOutputArray[i]][2] + '</td>')
+  for (var i = 0; ofPrmOutArr.length - 1 >= i; i++) {
+    prgIncr++
+    prgInf('フェイズ 8/8 ' + prgIncr)
+    $('#ranking-table thead tr').append('<th class="item-' + ofPrmOutArr[i] + '">' + ofPrmTblObj[ofPrmOutArr[i]][2] + '</td>')
   }
-  let numberOfLineYearly = 0
-  for (let i = 0; Object.keys(rankingFilteredObject).length - 1 >= i; i++) {
-    numberOfLineYearly++
-    if ((numberOfLineYearly + 1) % 2 !== 0) {
-      var oddEvenOfLineYearly = 'odd'
+  let nmbOfLnYearly = 0
+  for (let i = 0; Object.keys(rnkFltObj).length - 1 >= i; i++) {
+    nmbOfLnYearly++
+    if ((nmbOfLnYearly + 1) % 2 !== 0) {
+      var oddEvnOfLnYea = 'odd'
     } else {
-      var oddEvenOfLineYearly = 'even'
+      var oddEvnOfLnYea = 'even'
     }
-    let numberOfLine = 0
-    for (let j = 0; Object.keys(rankingFilteredObject[dateArray[i]]).length - 1 >= j; j++) {
-      numberOfLine++
-      if ((numberOfLine + 1) % 2 !== 0) {
-        var oddEvenOfLine = 'odd'
+    let nmbOfLn = 0
+    for (let j = 0; Object.keys(rnkFltObj[dateArr[i]]).length - 1 >= j; j++) {
+      prgBarPrg++
+      nmbOfLn++
+      if ((nmbOfLn + 1) % 2 !== 0) {
+        var oddEvenOfLn = 'odd'
       } else {
-        var oddEvenOfLine = 'even'
+        var oddEvenOfLn = 'even'
       }
-      $('#ranking-table tbody').append('<tr class="entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode'] + ' line-yearly-' + oddEvenOfLineYearly + ' line-' + oddEvenOfLine  + '"></tr>')
-      for (let k = 0; ofParameterOutputArray.length - 1 >= k; k++) {
-        $('tr.entity-' + dateArray[i] + '-' + rankingFilteredObject[dateArray[i]][j]['ncode']).append('<td class="item-' + ofParameterOutputArray[k] + '">' + rankingFilteredObject[dateArray[i]][j][ofParameterOutputArray[k]] + '</td>')
+      $('#ranking-table tbody').append('<tr class="' + dateArr[i] + '-' + rnkFltObj[dateArr[i]][j]['ncode'] + ' line-yearly-' + oddEvnOfLnYea + ' line-' + oddEvenOfLn  + '"></tr>')
+      for (let k = 0; ofPrmOutArr.length - 1 >= k; k++) {
+        prgIncr++
+        prgInf('フェイズ 8/8 ' + prgIncr)
+        $('tr.' + dateArr[i] + '-' + rnkFltObj[dateArr[i]][j]['ncode']).append('<td class="item-' + ofPrmOutArr[k] + '">' + rnkFltObj[dateArr[i]][j][ofPrmOutArr[k]] + '</td>')
       }
     }
   }
 }
-function checkDate(argument) {
-  displayWarn('.warn-base-date', 'remove')
-  let day = new Date($('[name="dateSource"]').val())
-  let dateUnit = $('[name="dateUnit"]').val()
-  if (dateUnit === 'w') {
+function chkDate() {
+  dispWarn('.warn-base-date', 'remove')
+  let day = new Date($('[name="date-source"]').val())
+  let dateUnt = $('[name="date-unit"]').val()
+  if (dateUnt === 'w') {
     if (day.getDay() !== 2) {
-      displayWarn('.warn-base-date', messageObject['date']['week'])
-      inputErrorObject['date'] = 1
+      dispWarn('.warn-base-date', msgObj['date']['week'])
+      inErrObj['date'] = 1
     }
-  } else if (dateUnit === 'm') {
+  } else if (dateUnt === 'm') {
     if (day.getDate() !== 1) {
-      displayWarn('.warn-base-date', messageObject['date']['month'])
-      inputErrorObject['date'] = 1
+      dispWarn('.warn-base-date', msgObj['date']['month'])
+      inErrObj['date'] = 1
     }
-  } else if (dateUnit === 'q') {
+  } else if (dateUnt === 'q') {
     if (day.getDate() !== 1) {
-      displayWarn('.warn-base-date', messageObject['date']['quarter'])
-      inputErrorObject['date'] = 1
+      dispWarn('.warn-base-date', msgObj['date']['quarter'])
+      inErrObj['date'] = 1
     }
   } else {
-    displayWarn('.warn-base-date', 'remove')
-    inputErrorObject['date'] = 0
+    dispWarn('.warn-base-date', 'remove')
+    inErrObj['date'] = 0
   }
 }
-function displayWarn(target, message) {
-  if (message === undefined || message === 'remove') {
-    $(target).empty()
-  } else if (target === 'alert') {
-    alert('aaa')
+function dispWarn(trg, msg) {
+  if (msg === undefined || msg === 'remove') {
+    $(trg).empty()
+  } else if (trg === 'alert') {
+    alert(msg)
   } else {
-    $(target).append(message)
+    $(trg).append(msg)
   }
 }
-function dateFormat(date, separator) {
+function dateFmt(date, spr) {
   let y
   let m
   let d
@@ -548,221 +594,230 @@ function dateFormat(date, separator) {
     m = String(date).slice(5, 7)
     d = String(date).slice(-2)
   } else {
-    console.log('dateFormat had an error.')
+    console.log('dateFmt() でエラーが発生しました。')
   }
- return y + separator + m + separator + d
+ return y + spr + m + spr + d
+}
+function prgInf(msg) {
+  prgInfDisp.innerHTML = msg
 }
 </script>
 <div id="container">
 <header>
   <h1>なろう小説ランキング解析</h1>
-  <input type="button" class="start" value="取得開始">
 </header>
-<section class="indicate">
-  <h2>設定項目</h2>
-  <section class="indicate">
-    <h3>基準日</h3>
-    <input type="date" name="dateSource" value="2020-01-01">
-    <span class="warn-base-date"></span>
-    <section>
-      <h4>注意事項</h4>
-      <ul>
-        <li>週間は火曜日分以外提供していないため、例えば 2014 年 5 月 1 日(木曜日)を指定するとエラーになります。</li>
-        <li>月間は毎月 1 日分以外提供していないため、例えば 4 月 2 日を指定するとエラーになります。</li>
-        <li>四半期は毎月 1 日分以外提供していないため、例えば 4 月 3 日を指定するとエラーになります。</li>
-      </ul>
-    </section>
+<main>
+  <section>
+    <input type="button" class="start" value="取得開始">
+    <div id="progress-information-display"></div>
   </section>
   <section class="indicate">
-    <h3>期間</h3>
-    <p>基準日からさかのぼる日数。基準日のみの場合は 0 。</p>
-    <input type="number" name="dateRange" value="0">
-  </section>
-  <section class="indicate">
-    <h3>取得単位</h3>
-    <select name="dateUnit">
-      <option value="d">日間</option>
-      <option value="w">週間</option>
-      <option value="m">月間</option>
-      <option value="q">四半期</option>
-      <option value="y">年間</option>
-    </select>
-  </section>
-  <section id="ofParameter" class="indicate">
-    <h3>出力項目</h3>
-    <p>出力する項目を個別に指定できます。未指定時は全項目出力されます。 転送量軽減のため、このパラメータの使用が推奨されます。 複数項目を出力する場合は-で区切ってください。詳しくは出力の項目をご覧ください。</p>
-    <label for="ranking-date">
-      <input id="ranking-date" type="checkbox" name="ranking-date" checked>ランキング日
-    </label><br>
-    <label for="title">
-      <input id="title" type="checkbox" name="title" checked>小説名
-    </label><br>
-    <label for="ncode">
-      <input id="ncode" type="checkbox" name="ncode">Nコード
-    </label><br>
-    <label for="userid">
-      <input id="userid" type="checkbox" name="userid">作者のユーザID(数値)
-    </label><br>
-    <label for="writer">
-      <input id="writer" type="checkbox" name="writer">作者名
-    </label><br>
-    <label for="story">
-      <input id="story" type="checkbox" name="story">小説のあらすじ
-    </label><br>
-    <label for="biggenre">
-      <input id="biggenre" type="checkbox" name="biggenre">大ジャンル
-    </label><br>
-    <label for="genre">
-      <input id="genre" type="checkbox" name="genre">ジャンル
-    </label><br>
-    <label for="keyword">
-      <input id="keyword" type="checkbox" name="keyword">キーワード
-    </label><br>
-    <label for="general_firstup">
-      <input id="general_firstup" type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式
-    </label><br>
-    <label for="general_lastup">
-      <input id="general_lastup" type="checkbox" name="general_lastup">最終掲載日 YYYY-MM-DD HH:MM:SSの形式
-    </label><br>
-    <label for="novel_type">
-      <input id="novel_type" type="checkbox" name="novel_type">連載の場合は1、短編の場合は2
-    </label><br>
-    <label for="end">
-      <input id="end" type="checkbox" name="end">短編小説と完結済小説は0となっています。連載中は1です。
-    </label><br>
-    <label for="general_all_no">
-      <input id="general_all_no" type="checkbox" name="general_all_no">全掲載部分数です。短編の場合は1です。
-    </label><br>
-    <label for="length">
-      <input id="length" type="checkbox" name="length">小説文字数です。スペースや改行は文字数としてカウントしません。
-    </label><br>
-    <label for="time">
-      <input id="time" type="checkbox" name="time">読了時間(分単位)です。読了時間は小説文字数÷500を切り上げした数値です。
-    </label><br>
-    <label for="isstop">
-      <input id="isstop" type="checkbox" name="isstop">長期連載停止中なら1、それ以外は0です。
-    </label><br>
-    <label for="isr15">
-      <input id="isr15" type="checkbox" name="isr15">登録必須キーワードに「R15」が含まれる場合は1、それ以外は0です。
-    </label><br>
-    <label for="isbl">
-      <input id="isbl" type="checkbox" name="isbl">登録必須キーワードに「ボーイズラブ」が含まれる場合は1、それ以外は0です。
-    </label><br>
-    <label for="isgl">
-      <input id="isgl" type="checkbox" name="isgl">登録必須キーワードに「ガールズラブ」が含まれる場合は1、それ以外は0です。
-    </label><br>
-    <label for="iszankoku">
-      <input id="iszankoku" type="checkbox" name="iszankoku">登録必須キーワードに「残酷な描写あり」が含まれる場合は1、それ以外は0です。
-    </label><br>
-    <label for="istensei">
-      <input id="istensei" type="checkbox" name="istensei">登録必須キーワードに「異世界転生」が含まれる場合は1、それ以外は0です。
-    </label><br>
-    <label for="istenni">
-      <input id="istenni" type="checkbox" name="istenni">登録必須キーワードに「異世界転移」が含まれる場合は1、それ以外は0です。
-    </label><br>
-    <label for="pc_or_k">
-      <input id="pc_or_k" type="checkbox" name="pc_or_k">1はケータイのみ、2はPCのみ、3はPCとケータイで投稿された作品です。対象は投稿と次話投稿時のみで、どの端末で執筆されたかを表すものではありません。
-    </label><br>
-    <label for="global_point">
-      <input id="global_point" type="checkbox" name="global_point">総合評価ポイント(=(ブックマーク数×2)+評価点)
-    </label><br>
-    <label for="daily_point">
-      <input id="daily_point" type="checkbox" name="daily_point">日間ポイント(ランキング集計時点から過去24時間以内で新たに登録されたブックマークや評価が対象)
-    </label><br>
-    <label for="weekly_point">
-      <input id="weekly_point" type="checkbox" name="weekly_point">週間ポイント(ランキング集計時点から過去7日以内で新たに登録されたブックマークや評価が対象)
-    </label><br>
-    <label for="monthly_point">
-      <input id="monthly_point" type="checkbox" name="monthly_point">月間ポイント(ランキング集計時点から過去30日以内で新たに登録されたブックマークや評価が対象)
-    </label><br>
-    <label for="quarter_point">
-      <input id="quarter_point" type="checkbox" name="quarter_point">四半期ポイント(ランキング集計時点から過去90日以内で新たに登録されたブックマークや評価が対象)
-    </label><br>
-    <label for="yearly_point">
-      <input id="yearly_point" type="checkbox" name="yearly_point">年間ポイント(ランキング集計時点から過去365日以内で新たに登録されたブックマークや評価が対象)
-    </label><br>
-    <label for="fav_novel_cnt">
-      <input id="fav_novel_cnt" type="checkbox" name="fav_novel_cnt">ブックマーク数
-    </label><br>
-    <label for="impression_cnt">
-      <input id="impression_cnt" type="checkbox" name="impression_cnt">感想数
-    </label><br>
-    <label for="review_cnt">
-      <input id="review_cnt" type="checkbox" name="review_cnt">レビュー数
-    </label><br>
-    <label for="all_point">
-      <input id="all_point" type="checkbox" name="all_point">評価点
-    </label><br>
-    <label for="all_hyoka_cnt">
-      <input id="all_hyoka_cnt" type="checkbox" name="all_hyoka_cnt">評価者数
-    </label><br>
-    <label for="sasie_cnt">
-      <input id="sasie_cnt" type="checkbox" name="sasie_cnt">挿絵の数
-    </label><br>
-    <label for="kaiwaritu">
-      <input id="kaiwaritu" type="checkbox" name="kaiwaritu">会話率
-    </label><br>
-    <label for="novelupdated_at">
-      <input id="novelupdated_at" type="checkbox" name="novelupdated_at">小説の更新日時
-    </label><br>
-  </section>
-  <section id="filter" class="indicate">
-    <h3>絞り込み</h3>
-    <p>表示を絞り込みます。この機能を使うと、通常の表示数 300 件より少なくなる可能性があります。</p>
-    <p>ヒント：大ジャンルとジャンルの両方を同時に指定するのは賢明ではありません。</p>
+    <h2>設定項目</h2>
     <section class="indicate">
-      <h4>大ジャンル</h4>
-      <select name="biggenre">
-        <option value="">指定しない</option>
-        <option value="1">恋愛</option>
-        <option value="2">ファンタジー</option>
-        <option value="3">文芸</option>
-        <option value="4">SF</option>
-        <option value="99">その他</option>
-        <option value="98">ノンジャンル</option>
-      </select>
+      <h3>基準日</h3>
+      <input type="date" name="date-source" value="2020-01-01">
+      <span class="warn-base-date"></span>
+      <section>
+        <h4>注意事項</h4>
+        <ul>
+          <li>週間は火曜日分以外提供していないため、例えば 2014 年 5 月 1 日(木曜日)を指定するとエラーになります。</li>
+          <li>月間は毎月 1 日分以外提供していないため、例えば 4 月 2 日を指定するとエラーになります。</li>
+          <li>四半期は毎月 1 日分以外提供していないため、例えば 4 月 3 日を指定するとエラーになります。</li>
+        </ul>
+      </section>
     </section>
     <section class="indicate">
-      <h4>ジャンル</h4>
-      <select name="genre">
-        <option value="201">ハイファンタジー〔ファンタジー〕</option>
-        <option value="">指定しない</option>
-        <option value="101">異世界〔恋愛〕</option>
-        <option value="102">現実世界〔恋愛〕</option>
-        <option value="202">ローファンタジー〔ファンタジー〕</option>
-        <option value="301">純文学〔文芸〕</option>
-        <option value="302">ヒューマンドラマ〔文芸〕</option>
-        <option value="303">歴史〔文芸〕</option>
-        <option value="304">推理〔文芸〕</option>
-        <option value="305">ホラー〔文芸〕</option>
-        <option value="306">アクション〔文芸〕</option>
-        <option value="307">コメディー〔文芸〕</option>
-        <option value="401">VRゲーム〔SF〕</option>
-        <option value="402">宇宙〔SF〕</option>
-        <option value="403">空想科学〔SF〕</option>
-        <option value="404">パニック〔SF〕</option>
-        <option value="9901">童話〔その他〕</option>
-        <option value="9902">詩〔その他〕</option>
-        <option value="9903">エッセイ〔その他〕</option>
-        <option value="9904">リプレイ〔その他〕</option>
-        <option value="9999">その他〔その他〕</option>
-        <option value="9801">ノンジャンル〔ノンジャンル〕</option>
+      <h3>期間</h3>
+      <p>基準日からさかのぼる日数。基準日のみの場合は 1 。</p>
+      <input type="number" name="date-range" value="1">
+    </section>
+    <section class="indicate">
+      <h3>取得単位</h3>
+      <select name="date-unit">
+        <option value="d">日間</option>
+        <option value="w">週間</option>
+        <option value="m">月間</option>
+        <option value="q">四半期</option>
       </select>
     </section>
+    <section id="of-parameter" class="indicate">
+      <h3>出力項目</h3>
+      <label for="ranking-date">
+        <input id="ranking-date" type="checkbox" name="ranking-date" checked>ランキング日
+      </label><br>
+      <label for="title">
+        <input id="title" type="checkbox" name="title" checked>小説名
+      </label><br>
+      <label for="ncode">
+        <input id="ncode" type="checkbox" name="ncode">Nコード
+      </label><br>
+      <label for="userid">
+        <input id="userid" type="checkbox" name="userid">作者のユーザID(数値)
+      </label><br>
+      <label for="writer">
+        <input id="writer" type="checkbox" name="writer">作者名
+      </label><br>
+      <label for="story">
+        <input id="story" type="checkbox" name="story">小説のあらすじ
+      </label><br>
+      <label for="biggenre">
+        <input id="biggenre" type="checkbox" name="biggenre">大ジャンル
+      </label><br>
+      <label for="genre">
+        <input id="genre" type="checkbox" name="genre">ジャンル
+      </label><br>
+      <label for="keyword">
+        <input id="keyword" type="checkbox" name="keyword">キーワード
+      </label><br>
+      <label for="general_firstup">
+        <input id="general_firstup" type="checkbox" name="general_firstup">初回掲載日 YYYY-MM-DD HH:MM:SSの形式
+      </label><br>
+      <label for="general_lastup">
+        <input id="general_lastup" type="checkbox" name="general_lastup">最終掲載日 YYYY-MM-DD HH:MM:SSの形式
+      </label><br>
+      <label for="novel_type">
+        <input id="novel_type" type="checkbox" name="novel_type">連載の場合は1、短編の場合は2
+      </label><br>
+      <label for="end">
+        <input id="end" type="checkbox" name="end">短編小説と完結済小説は0となっています。連載中は1です。
+      </label><br>
+      <label for="general_all_no">
+        <input id="general_all_no" type="checkbox" name="general_all_no">全掲載部分数です。短編の場合は1です。
+      </label><br>
+      <label for="length">
+        <input id="length" type="checkbox" name="length">小説文字数です。スペースや改行は文字数としてカウントしません。
+      </label><br>
+      <label for="time">
+        <input id="time" type="checkbox" name="time">読了時間(分単位)です。読了時間は小説文字数÷500を切り上げした数値です。
+      </label><br>
+      <label for="isstop">
+        <input id="isstop" type="checkbox" name="isstop">長期連載停止中なら1、それ以外は0です。
+      </label><br>
+      <label for="isr15">
+        <input id="isr15" type="checkbox" name="isr15">登録必須キーワードに「R15」が含まれる場合は1、それ以外は0です。
+      </label><br>
+      <label for="isbl">
+        <input id="isbl" type="checkbox" name="isbl">登録必須キーワードに「ボーイズラブ」が含まれる場合は1、それ以外は0です。
+      </label><br>
+      <label for="isgl">
+        <input id="isgl" type="checkbox" name="isgl">登録必須キーワードに「ガールズラブ」が含まれる場合は1、それ以外は0です。
+      </label><br>
+      <label for="iszankoku">
+        <input id="iszankoku" type="checkbox" name="iszankoku">登録必須キーワードに「残酷な描写あり」が含まれる場合は1、それ以外は0です。
+      </label><br>
+      <label for="istensei">
+        <input id="istensei" type="checkbox" name="istensei">登録必須キーワードに「異世界転生」が含まれる場合は1、それ以外は0です。
+      </label><br>
+      <label for="istenni">
+        <input id="istenni" type="checkbox" name="istenni">登録必須キーワードに「異世界転移」が含まれる場合は1、それ以外は0です。
+      </label><br>
+      <label for="pc_or_k">
+        <input id="pc_or_k" type="checkbox" name="pc_or_k">1はケータイのみ、2はPCのみ、3はPCとケータイで投稿された作品です。対象は投稿と次話投稿時のみで、どの端末で執筆されたかを表すものではありません。
+      </label><br>
+      <label for="global_point">
+        <input id="global_point" type="checkbox" name="global_point">総合評価ポイント(=(ブックマーク数×2)+評価点)
+      </label><br>
+      <label for="daily_point">
+        <input id="daily_point" type="checkbox" name="daily_point">日間ポイント(ランキング集計時点から過去24時間以内で新たに登録されたブックマークや評価が対象)
+      </label><br>
+      <label for="weekly_point">
+        <input id="weekly_point" type="checkbox" name="weekly_point">週間ポイント(ランキング集計時点から過去7日以内で新たに登録されたブックマークや評価が対象)
+      </label><br>
+      <label for="monthly_point">
+        <input id="monthly_point" type="checkbox" name="monthly_point">月間ポイント(ランキング集計時点から過去30日以内で新たに登録されたブックマークや評価が対象)
+      </label><br>
+      <label for="quarter_point">
+        <input id="quarter_point" type="checkbox" name="quarter_point">四半期ポイント(ランキング集計時点から過去90日以内で新たに登録されたブックマークや評価が対象)
+      </label><br>
+      <label for="yearly_point">
+        <input id="yearly_point" type="checkbox" name="yearly_point">年間ポイント(ランキング集計時点から過去365日以内で新たに登録されたブックマークや評価が対象)
+      </label><br>
+      <label for="fav_novel_cnt">
+        <input id="fav_novel_cnt" type="checkbox" name="fav_novel_cnt">ブックマーク数
+      </label><br>
+      <label for="impression_cnt">
+        <input id="impression_cnt" type="checkbox" name="impression_cnt">感想数
+      </label><br>
+      <label for="review_cnt">
+        <input id="review_cnt" type="checkbox" name="review_cnt">レビュー数
+      </label><br>
+      <label for="all_point">
+        <input id="all_point" type="checkbox" name="all_point">評価点
+      </label><br>
+      <label for="all_hyoka_cnt">
+        <input id="all_hyoka_cnt" type="checkbox" name="all_hyoka_cnt">評価者数
+      </label><br>
+      <label for="sasie_cnt">
+        <input id="sasie_cnt" type="checkbox" name="sasie_cnt">挿絵の数
+      </label><br>
+      <label for="kaiwaritu">
+        <input id="kaiwaritu" type="checkbox" name="kaiwaritu">会話率
+      </label><br>
+      <label for="novelupdated_at">
+        <input id="novelupdated_at" type="checkbox" name="novelupdated_at">小説の更新日時
+      </label><br>
+    </section>
+    <section id="filter" class="indicate">
+      <h3>絞り込み</h3>
+      <p>表示を絞り込みます。この機能を使うと、通常の表示数 300 件より少なくなる可能性があります。</p>
+      <p>ヒント：大ジャンルとジャンルの両方を同時に指定するのは賢明ではありません。</p>
+      <section class="indicate">
+        <h4>大ジャンル</h4>
+        <select name="biggenre">
+          <option value="">指定しない</option>
+          <option value="1">恋愛</option>
+          <option value="2">ファンタジー</option>
+          <option value="3">文芸</option>
+          <option value="4">SF</option>
+          <option value="99">その他</option>
+          <option value="98">ノンジャンル</option>
+        </select>
+      </section>
+      <section class="indicate">
+        <h4>ジャンル</h4>
+        <select name="genre">
+          <option value="">指定しない</option>
+          <option value="101">異世界〔恋愛〕</option>
+          <option value="102">現実世界〔恋愛〕</option>
+          <option value="201">ハイファンタジー〔ファンタジー〕</option>
+          <option value="202">ローファンタジー〔ファンタジー〕</option>
+          <option value="301">純文学〔文芸〕</option>
+          <option value="302">ヒューマンドラマ〔文芸〕</option>
+          <option value="303">歴史〔文芸〕</option>
+          <option value="304">推理〔文芸〕</option>
+          <option value="305">ホラー〔文芸〕</option>
+          <option value="306">アクション〔文芸〕</option>
+          <option value="307">コメディー〔文芸〕</option>
+          <option value="401">VRゲーム〔SF〕</option>
+          <option value="402">宇宙〔SF〕</option>
+          <option value="403">空想科学〔SF〕</option>
+          <option value="404">パニック〔SF〕</option>
+          <option value="9901">童話〔その他〕</option>
+          <option value="9902">詩〔その他〕</option>
+          <option value="9903">エッセイ〔その他〕</option>
+          <option value="9904">リプレイ〔その他〕</option>
+          <option value="9999">その他〔その他〕</option>
+          <option value="9801">ノンジャンル〔ノンジャンル〕</option>
+        </select>
+      </section>
+    </section>
   </section>
-</section>
-<section class="indicate">
-  <h2>データ取得の実行</h2>
-  <label>
-  <input class="start" type="button" value="取得開始">
-</label>
-</section>
-<section class="indicate">
-  <h2>出力</h2>
-  <label for="output-area">
-    <input class="select-all" type="button" name="select-all" value="全て選択">
+  <section class="indicate">
+    <h2>データ取得の実行</h2>
+    <label>
+    <input class="start" type="button" value="取得開始">
   </label>
-  <div id="output-area">
-  </div>
-</section>
+  </section>
+  <section class="indicate">
+    <h2>出力</h2>
+    <label for="output-area">
+      <input class="select-all" type="button" name="select-all" value="全て選択">
+    </label>
+    <div id="output-area">
+    </div>
+  </section>
+</main>
+<footer>
+  <p>&copy;<a href="https://yayoi-thyme.com/">Yayoi Thyme</a></p>
+</footer>
 </div>
