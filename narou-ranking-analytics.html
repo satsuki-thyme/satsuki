@@ -88,7 +88,6 @@ let dateRng = 0           // なろう小説ランキングAPI から取得す�
 let dateUnt = ''          // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
 let dateArr = []          // なろう小説ランキングAPI から取得する日付のリスト
 let rnkObj = {}           // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
-let rnkFltObj = {}        // rnkObj を fltPrmSlcObj でフィルタしたオブジェクト
 let ncodeArr = []         // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したもの
 let ncodeArrleng = 0      // なろう小説ランキングAPI の上記 ncodeArr の長さ
 let lim = 500             // なろう小説API から取得する件数
@@ -97,7 +96,6 @@ let nmbOfNcodePool = 0    // なろう小説API から一度に取得する NCOD
 let frqQ = 0              // なろう小説API から GET する回数
 let nmbOfNcodePce = 0     // なろう小説API から nmbOfNcodeInGrp * frqQ で取得しきれない余りの NCODE の数
 let asyNvlInfArr = []     // なろう小説API から取得した小説情報の全て
-let asyNvlInfArrMlt = []  // なろう小説API から取得した上記の asyNvlInfArr 内のネステッド・アレイを溶かしたもの
 let ofPrmSlcArr = []      // なろう小説API から取得するようユーザが選択した小説情報のアレイ
 let ofPrmQTxt = 'n'       // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
 let ofPrmOutArr = []      // 最終的に表示する小説情報のアレイ
@@ -222,7 +220,6 @@ console.log('1 start') // milestone
     dateUnt = ''
     dateArr = []
     rnkObj = {}
-    rnkFltObj = {}
     ncodeArr = []
     ncodeArrleng = 0
     nmbOfNcodePool = 0
@@ -414,92 +411,22 @@ console.log('5 mkCmpTbl_getNvlInf') // milestone
     asyNvlInfArr.push(data)
     nmbOfNcodePool = nmbOfNcodePool + nmbOfNcodeFrg
     if (nmbOfNcodePool === ncodeArrleng) {
-      joinRnkAndInf(asyNvlInfArr)
+      writRnkTbl()
     }
   })
   .fail(function() {
     alert('error!')
   })
 }
-function joinRnkAndInf(asyNvlInfArr) {
-console.log('6 joinRnkAndInf') // milestone
-  let prgIncr = 0
-  /*
-    ランキングリストへ、小説情報のリストを、 NCODE をキーとして割り付ける
-  */
-  for (let i = 0; asyNvlInfArr.length - 1 >= i; i++) {
-    for (let j = 0; asyNvlInfArr[i].length - 1 >= j; j++) {
-      asyNvlInfArrMlt.push(asyNvlInfArr[i][j])
-    }
-  }
-  for (let i = 0; dateArr.length - 1 >= i; i++) {
-    let m = 0
-    rnkFltObj[dateArr[i]] = []
-    for (let j = 0; Object.keys(rnkObj[dateArr[i]]).length - 1 >= j; j++) {
-      for (let k = 0; asyNvlInfArrMlt.length - 1 >= k; k++) {
-        if (rnkObj[dateArr[i]][j]['ncode'] === asyNvlInfArrMlt[k]['ncode']) {
-          for (let l = 0; Object.keys(asyNvlInfArrMlt[k]).length - 1 >= l; l++) {
-            rnkObj[dateArr[i]][j][Object.keys(asyNvlInfArrMlt[k])[l]] = asyNvlInfArrMlt[k][Object.keys(asyNvlInfArrMlt[k])[l]]
-          }
-        }
-      }
-      let bln = 1
-      for (let k = 0; Object.keys(fltPrmSlcObj).length - 1 >= k; k++) {
-        if (rnkObj[dateArr[i]][j][Object.keys(fltPrmSlcObj)[k]] === fltPrmSlcObj[Object.keys(fltPrmSlcObj)[k]]) {
-          bln = bln * 1
-        } else {
-          bln = bln * 0
-        }
-      }
-      if (bln === 1) {
-        rnkFltObj[dateArr[i]][m] = rnkObj[dateArr[i]][j]
-        rnkFltObj[dateArr[i]][m]['ranking-date'] = dateArr[i]
-        for (let k = 0; Object.keys(rnkFltObj[dateArr[i]][m]).length - 1 >= k; k++) {
-          for (let l = 0; Object.keys(rplCodeToNameTblObj).length - 1 >= l; l++) {
-            if (Object.keys(rnkFltObj[dateArr[i]][m])[k] === Object.keys(rplCodeToNameTblObj)[l]) {
-              rnkFltObj[dateArr[i]][m][Object.keys(rnkFltObj[dateArr[i]][m])[k]] = rplCodeToNameTblObj[Object.keys(rnkFltObj[dateArr[i]][m])[k]][rnkFltObj[dateArr[i]][m][Object.keys(rnkFltObj[dateArr[i]][m])[k]]]
-            }
-          }
-        }
-        m++
-      }
-    }
-  }
-  ofPrmOutArr = Object.assign(ofPrmSlcArr)
-  writRnkTbl()
-}
 function writRnkTbl() {
-console.log('7 writRnkTbl') // milestone
-  let prgIncr = 0
+console.log('6 writRnkTbl') // milestone
   /*
     ランキングを書き出す
   */
   $('#output-area').append('<table id="ranking-table"></table>')
   $('#ranking-table').append('<thead><tr></tr></thead><tbody></tbody>')
-  for (var i = 0; ofPrmOutArr.length - 1 >= i; i++) {
-    $('#ranking-table thead tr').append('<th class="item-' + ofPrmOutArr[i] + '">' + ofPrmTblObj[ofPrmOutArr[i]][2] + '</td>')
-  }
-  let nmbOfLnYearly = 0
-  for (let i = 0; Object.keys(rnkFltObj).length - 1 >= i; i++) {
-    nmbOfLnYearly++
-    if ((nmbOfLnYearly + 1) % 2 !== 0) {
-      var oddEvnOfLnYea = 'odd'
-    } else {
-      var oddEvnOfLnYea = 'even'
-    }
-    let nmbOfLn = 0
-    for (let j = 0; Object.keys(rnkFltObj[dateArr[i]]).length - 1 >= j; j++) {
-      nmbOfLn++
-      if ((nmbOfLn + 1) % 2 !== 0) {
-        var oddEvenOfLn = 'odd'
-      } else {
-        var oddEvenOfLn = 'even'
-      }
-      $('#ranking-table tbody').append('<tr class="' + dateArr[i] + '-' + rnkFltObj[dateArr[i]][j]['ncode'] + ' line-yearly-' + oddEvnOfLnYea + ' line-' + oddEvenOfLn  + '"></tr>')
-      for (let k = 0; ofPrmOutArr.length - 1 >= k; k++) {
-        $('tr.' + dateArr[i] + '-' + rnkFltObj[dateArr[i]][j]['ncode']).append('<td class="item-' + ofPrmOutArr[k] + '">' + rnkFltObj[dateArr[i]][j][ofPrmOutArr[k]] + '</td>')
-      }
-    }
+  for (let i = 0; ofPrmSlcArr.length - 1 >= i; i++) {
+    $('#ranking-table thead tr').append('<th>' + ofPrmTblObj[ofPrmSlcArr[i]][2] + '</th>')
   }
 }
 function chkDate() {
