@@ -13,7 +13,7 @@ body {
 textarea {
   width: 100%;
   margin: 0;
-  padding: 0 0.3em 0.3em 0.3em;
+  padding: 10px;
   box-sizing: border-box;
   font-size: 128px;
   border-width: 0;
@@ -22,4 +22,18 @@ textarea {
   resize: none;
 }
 </style>
-<textarea></textarea>
+<textarea id="obj"></textarea>
+<script>
+let txtArea = document.getElementById('obj')
+let lnH = 1.1     // line-height
+let nmbLn = 5     // 最低行数
+let pdngH = 10    // padding-top & padding-bottom
+let aspRto = 1.2  // 一文字の占める領域のアスペクト比 h/w
+let est_fntSz = 140 // およその font-size
+let est_nmbLn = Math.floor(window.innerHeight / (140 * lnH))
+let fntSz = 
+txtArea.style.paddingRight = window.innerWidth % ((lnH / 1.1) * 1.05)
+txtArea.style.paddingLeft = window.innerWidth % ((lnH / 1.1) * 1.05)
+txtArea.style.lineHeight = lnH + 'px'
+txtArea.style.fontSize = lnH / 1.1 + 'px'
+</script>
