@@ -14,26 +14,27 @@ textarea {
   width: 100%;
   margin: 0;
   padding: 10px;
+  font-family: monospace;
+  line-height: 1.1;
   box-sizing: border-box;
-  font-size: 128px;
   border-width: 0;
   outline: none;
   overflow: auto;
   resize: none;
 }
 </style>
-<textarea id="obj"></textarea>
+<textarea id="elm"></textarea>
 <script>
-let txtArea = document.getElementById('obj')
-let lnH = 1.1     // line-height
-let nmbLn = 5     // 最低行数
-let pdngH = 10    // padding-top & padding-bottom
-let aspRto = 1.2  // 一文字の占める領域のアスペクト比 h/w
+let elm = document.getElementById('elm')
+let wndH = window.innerHeight
 let est_fntSz = 140 // およその font-size
-let est_nmbLn = Math.floor(window.innerHeight / (140 * lnH))
-let fntSz = 
-txtArea.style.paddingRight = window.innerWidth % ((lnH / 1.1) * 1.05)
-txtArea.style.paddingLeft = window.innerWidth % ((lnH / 1.1) * 1.05)
-txtArea.style.lineHeight = lnH + 'px'
-txtArea.style.fontSize = lnH / 1.1 + 'px'
+let est_nmbOfLn = (wndH - 20) / (est_fntSz * 1.1)
+let nmbOfLn = 0
+if (wndH - est_fntSz * 1.1 * est_nmbOfLn >= 10) {
+  nmbOfLn = est_nmbOfLn
+} else {
+  nmbOfLn = est_nmbOfLn - 1
+}
+let fntSz = (wndH - 20) / nmbOfLn / 1.1
+elm.style.fontSize = fntSz + 'px'
 </script>
