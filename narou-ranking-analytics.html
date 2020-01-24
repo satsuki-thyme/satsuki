@@ -2,6 +2,8 @@
 <meta charset="utf-8">
 <style>
 body {
+  margin: 0;
+  padding: 0;
   font-size: 16px;
 }
 #container {
@@ -9,23 +11,54 @@ body {
   max-width: 1000px;
   margin-right: auto;
   margin-left: auto;
-  padding: 20px 20px 80px 20px;
+  padding-right: 2%;
+  padding-left: 2%;
   box-sizing: border-box;
 }
+header {
+  padding-top: 30px;
+}
+main {
+  margin-top: 50px;
+}
+footer {
+  margin-top: 80px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+footer p {
+  margin: 0;
+}
+footer a {
+  text-decoration: none;
+  color: #000;
+}
 section {
-  margin-top: 35px;
   padding-left: 30px;
+}
+section + section {
+  margin-top: 20px;
+}
+section > section:first-of-type {
+  margin-top: 20px;
 }
 section.indicate {
   border-left: 3px solid #18b7cd;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  line-height: 1;
 }
 h2,
 h3,
 h4,
 h5,
 h6 {
-  margin-top: 0;
-  margin-bottom: 0;
   margin-left: -20px;
 }
 table {
@@ -34,23 +67,65 @@ table {
 table + table {
   margin-top: 50px;
 }
-td {
+td,
+th {
   vertical-align: top;
-  border: 1px solid #666;
+  border: 1px solid #000;
+}
+p,
+ul,
+ol,
+input,
+select,
+label {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+p:first-child,
+ul:first-child,
+ol:first-child,
+input:first-child,
+select:first-child,
+label:first-child {
+  margin-top: 15px;
 }
 label,
 input[type="checkbox"],
 input[type="button"] {
   cursor: pointer;
 }
+ul,
+ol {
+  padding-left: 0;
+}
 input {
   margin-right: 8px;
+  border-width: 1px;
+  border-color: #999;
 }
 input[type="text"],
 input[type="number"],
 input[type="date"] {
   padding: 2px 6px 0;
   font-size: 16px;
+}
+input[type="date"] {
+  width: 140px;
+}
+input[type=date]::-webkit-calendar-picker-indicator {
+  width: 25px;
+  margin: 0 -11px 0;
+  padding: 0;
+}
+input[type="number"] {
+  width: 50px;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 select {
   padding: 0 3px 3px;
@@ -77,11 +152,36 @@ br + label {
   width: 0;
   background-color: #1e3;
 }
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #ccc;
+    background-color: #000;
+  }
+  footer a {
+    color: #ccc;
+  }
+  td,
+  th {
+    border-color: #ccc;
+  }
+  input,
+  select {
+    color : #ccc;
+    background-color: #000;
+  }
+  input[type="button"] {
+    background-color: #444;
+  }
+  input[type=date]::-webkit-calendar-picker-indicator {
+    background-color: #fff;
+  }
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 let urlRnkApi = 'https://api.syosetu.com/rank/rankget/'
 let urlNvlApi = 'https://api.syosetu.com/novelapi/api/'
+let prg = 0
 let out = 'jsonp'         // なろう小説ランキングAPI から取得するデータの種類
 let dateSrc = ''          // なろう小説ランキングAPI から取得する基準日を示す文字列。 20200101 形式
 let dateRng = 0           // なろう小説ランキングAPI から取得する日数。基準日の一日だけなら 0
@@ -96,6 +196,7 @@ let nmbOfNcodePool = 0    // なろう小説API から一度に取得する NCOD
 let frqQ = 0              // なろう小説API から GET する回数
 let nmbOfNcodePce = 0     // なろう小説API から nmbOfNcodeInGrp * frqQ で取得しきれない余りの NCODE の数
 let asyNvlInfArr = []     // なろう小説API から取得した小説情報の全て
+let asyNvlInfArrMlt = []  // なろう小説API から取得した asyNvlInfArr の構造を溶かしたやつ
 let ofPrmSlcArr = []      // なろう小説API から取得するようユーザが選択した小説情報のアレイ
 let ofPrmQTxt = 'n'       // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
 let ofPrmOutArr = []      // 最終的に表示する小説情報のアレイ
@@ -215,6 +316,7 @@ console.log('1 start') // milestone
   */
   initialize()
   function initialize() {
+    prg = 0
     dateSrc = ''
     dateRng = 1
     dateUnt = ''
@@ -302,8 +404,8 @@ console.log('2 getRnkSrc') // milestone
   /*
     なろう小説ランキングAPI から NCODE, ポイント, ランクを、指定された日数分取得する
   */
+  prg++
   let cnt = 0
-  let dateSplitArr = (dateSrc.substr(0, 4) + '/' + dateSrc.substr(4, 2) + '/' + dateSrc.substr(6, 2)).split('/')
   let date = new Date(dateFmt(dateSrc, '/'))
   if (dateUnt === 'd') {
     for (let i = 0; dateRng - 1 >= i; i++) {
@@ -333,20 +435,20 @@ console.log('2 getRnkSrc') // milestone
   } else {
     console.log('getRnkSrc() > if 文で予期しない入力によってエラーが発生しました。')
   }
-  function get(prm) {
-    let dateStr = dateFmt(new Date(prm), '')
-    dateArr.push(dateStr)
+  function get(dateProc) {
+    let dateRnk = dateFmt(new Date(dateProc), '')
+    dateArr.push(dateRnk)
     $.ajax({
-      url: urlRnkApi + '?gzip=0&out=' + out + '&rtype=' + dateStr + '-' + dateUnt,
+      url: urlRnkApi + '?gzip=0&out=' + out + '&rtype=' + dateRnk + '-' + dateUnt,
       type: 'GET',
       dataType: out,
       cache: 'false'
     })
     .done(function(data) {
-      rnkObj[dateStr] = data
+      rnkObj[dateRnk] = data
       cnt++
       if (cnt === dateRng) {
-        mkCmpTbl_mkNcodeLst(date)
+        mkCmpTbl_mkNcodeLst()
       }
     })
     .fail(function() {
@@ -354,11 +456,12 @@ console.log('2 getRnkSrc') // milestone
     })
   }
 }
-function mkCmpTbl_mkNcodeLst(date) {
+function mkCmpTbl_mkNcodeLst() {
 console.log('3 mkCmpTbl_mkNcodeLst') // milestone
   /*
     start で取得した、指定された日数分のランキングリストから、 NCODE のみを重複なしに結合する
   */
+  prg++
   for (let i = 0; dateRng - 1 >= i; i++) {
     for (let j = 0; rnkObj[dateArr[i]].length - 1 >= j; j++) {
       let work0 = rnkObj[dateArr[i]][j]['ncode']
@@ -367,13 +470,14 @@ console.log('3 mkCmpTbl_mkNcodeLst') // milestone
       }
     }
   }
-  mkCmpTbl_mkNcodeGrp(date)
+  mkCmpTbl_mkNcodeGrp()
 }
-function mkCmpTbl_mkNcodeGrp(date) {
+function mkCmpTbl_mkNcodeGrp() {
 console.log('4 mkCmpTbl_mkNcodeGrp') // milestone
   /*
     mkCmpTbl_mkNcodeLst で作った NCODE のリストを、コード内で指定した数ずつグループにする
   */
+  prg++
   ncodeArrleng = ncodeArr.length
   frqQ = Math.floor(ncodeArrleng / nmbOfNcodeInGrp)
   nmbOfNcodePce = ncodeArrleng % nmbOfNcodeInGrp
@@ -401,6 +505,7 @@ console.log('5 mkCmpTbl_getNvlInf') // milestone
   /*
     なろう小説API から NCODE 毎に、指定された小説情報を取得する
   */
+  prg++
   $.ajax({
       url: urlNvlApi + q,
       type: 'GET',
@@ -411,6 +516,11 @@ console.log('5 mkCmpTbl_getNvlInf') // milestone
     asyNvlInfArr.push(data)
     nmbOfNcodePool = nmbOfNcodePool + nmbOfNcodeFrg
     if (nmbOfNcodePool === ncodeArrleng) {
+      for (var i = 0; asyNvlInfArr.length - 1 >= i; i++) {
+        for (var j = 0; asyNvlInfArr[i].length - 1 >= j; j++) {
+          asyNvlInfArrMlt.push(asyNvlInfArr[i][j])
+        }
+      }
       writRnkTbl()
     }
   })
@@ -423,10 +533,44 @@ console.log('6 writRnkTbl') // milestone
   /*
     ランキングを書き出す
   */
+  prg++
   $('#output-area').append('<table id="ranking-table"></table>')
   $('#ranking-table').append('<thead><tr></tr></thead><tbody></tbody>')
   for (let i = 0; ofPrmSlcArr.length - 1 >= i; i++) {
     $('#ranking-table thead tr').append('<th>' + ofPrmTblObj[ofPrmSlcArr[i]][2] + '</th>')
+  }
+  for (let i = 0; dateArr.length - 1 >= i; i++) {
+    for (let j = 0; Object.keys(rnkObj[dateArr[i]]).length - 1 >= j; j++) {
+      let oddEvn = ''
+      if (i % 2 === 0) {
+        oddEvn = 'even'
+      } else {
+        oddEvn = 'odd'
+      }
+      $('#ranking-table tbody').append('<tr data-ranking-date="' + dateArr[i] + '" data-ncode="' + rnkObj[dateArr[i]][j]['ncode'] + '" class="' + oddEvn + '"></tr>')
+    }
+  }
+  if (ofPrmSlcArr.indexOf('ranking-date') < 0) {
+    for (let i = 0; asyNvlInfArrMlt.length - 1 >= i; i++) {
+      for (let j = 0; ofPrmSlcArr.length - 1 >= j; j++) {
+        $('#ranking-table tbody tr[data-ncode="' + asyNvlInfArrMlt[i]['ncode'] + '"]').append('<td>' + asyNvlInfArrMlt[i][ofPrmSlcArr[j]] + '</td>')
+      }
+    }
+  } else {
+    let ofPrmSlcArrExcldDateRnk = []
+    for (var i = 0; ofPrmSlcArr.length - 1 >= i; i++) {
+      if (ofPrmSlcArr[i] !== 'ranking-date') {
+        ofPrmSlcArrExcldDateRnk.push(ofPrmSlcArr[i])
+      }
+    }
+    $('#ranking-table tbody').find('tr').each(function() {
+      $(this).append('<td>' + $(this).data('ranking-date') + '</td>')
+    })
+    for (let i = 0; asyNvlInfArrMlt.length - 1 >= i; i++) {
+      for (let j = 0; ofPrmSlcArrExcldDateRnk.length - 1 >= j; j++) {
+        $('#ranking-table tbody tr[data-ncode="' + asyNvlInfArrMlt[i]['ncode'] + '"]').append('<td>' + asyNvlInfArrMlt[i][ofPrmSlcArrExcldDateRnk[j]] + '</td>')
+      }
+    }
   }
 }
 function chkDate() {
