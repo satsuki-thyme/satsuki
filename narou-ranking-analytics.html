@@ -188,6 +188,8 @@ let dateRng = 0           // なろう小説ランキングAPI から取得す�
 let dateUnt = ''          // なろう小説ランキングAPI から取得するランキングの期間。日間、週間、月間、年間
 let dateArr = []          // なろう小説ランキングAPI から取得する日付のアレイ
 let rnkObj = {}           // なろう小説ランキングAPI から取得したランキングの全ての日付分が収まるオブジェクト
+                          // rnkObj = {20200101: Array(300)}
+                          //                     ┣[0: {ncode: "N3669FW", pt: 6165, rank: 1}]
 let ncodeArr = []         // なろう小説ランキングAPI から取得したランキングの全ての日付分から重複なしに NCODE のみを抽出したアレイ
 let ncodeArrleng = 0      // なろう小説ランキングAPI の上記 ncodeArr の長さ
 let lim = 500             // なろう小説API から取得する件数
@@ -195,17 +197,16 @@ let nmbOfNcodeInGrp = 100 // なろう小説API から一度に取得する NCOD
 let nmbOfNcodePool = 0    // なろう小説API から一度に取得する NCODE の数を数える
 let frqQ = 0              // なろう小説API から GET する回数
 let nmbOfNcodePce = 0     // なろう小説API から nmbOfNcodeInGrp * frqQ で取得しきれない余りの NCODE の数
-let asyNvlInfArr = []     // なろう小説API から取得した小説情報の全てのアレイ
-let asyNvlInfMltArr = []  // なろう小説API から取得した asyNvlInfArr の構造を溶かしたアレイ
-let asyNvlInfKeyObj = {}  // なろう小説API から取得して作った asyNvlInfMltArr の NCODE をキーにしたオブジェクト
+let asyNvlArr = []     // なろう小説API から取得した小説情報のアレイ。作者退会で消滅した作品情報を除く
+let asyNvlKeyObj = {}  // なろう小説API から取得して作った asyNvlArr をゴニョゴニョして NCODE をキーにしたオブジェクト
 let ofPrmSlcArr = []      // なろう小説API から取得するようユーザが選択した小説情報のアレイ
 let ofPrmProcArr = []     // なろう小説API から取得するようユーザが選択した小説情報から global_point を抜いたアレイ
 let ofPrmQTxt = 'n'       // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
-let ofPrmOutArr = []      // 最終的に表示する小説情報のアレイ
-let fltPrmSlcObj = {}     // 最終的な表示をフィルタする項目のアレイ
-let ofPrmTblObj = {       // なろう小説API から提供される小説情報の表
+let fltPrmSlcObj = {}     // 最終的な表示を絞り込みする項目を HTML から取得して格納するアレイ
+let ofPrmTblObj = {       // なろう小説API から取得する値の選択肢のオブジェクト
   "ranking-date": ["", "", "ランキング日"],
   "rank": ["", "", "ランク"],
+  "pt": ["", "", "ポイント"],
   "title": ["t", "", "小説名"],
   "ncode": ["n", "", "Nコード"],
   "userid": ["u", "", "作者のユーザID"],
@@ -244,7 +245,12 @@ let ofPrmTblObj = {       // なろう小説API から提供される小説情�
   "kaiwaritu": ["ka", "", "会話率"],
   "novelupdated_at": ["nu", "", "小説の更新日時"]
 }
-let rplCodeToNameTblObj = {
+let ofPrmRnkTblArr = [ // なろう小説ランキングAPI で取得する値のアレイ
+  "ncode",
+  "ranking-date",
+  "global_point"
+]
+let rplCodeToNameTblObj = { // 絞り込み項目「大ジャンル」の選択肢のオブジェクト
   "biggenre": { 
     1: "恋愛",
     2: "ファンタジー",
@@ -253,7 +259,7 @@ let rplCodeToNameTblObj = {
     99: "その他",
     98: "ノンジャンル"
   },
-  "genre": {
+  "genre": { // 絞り込み項目「ジャンル」の選択肢のオブジェクト
     101: "異世界〔恋愛〕",
     102: "現実世界〔恋愛〕",
     201: "ハイファンタジー〔ファンタジー〕",
@@ -277,10 +283,10 @@ let rplCodeToNameTblObj = {
     9801: "ノンジャンル〔ノンジャンル〕"
   }
 }
-let inErrObj = {
+let inErrObj = { // 「取得開始」ボタンを押す際にチェックするために、エラー状態を格納するオブジェクト
   "date": 0
 }
-let msgObj = {
+let msgObj = { // エラーメッセージのオブジェクト
   "date": {
     "alert": "基準日の入力にエラーがあります。",
     "week": "<span class=\"warn\">取得単位を「週間」にする場合は「火曜日」に設定してください。</span>",
@@ -298,7 +304,7 @@ $(function() {
   $('.start').on('click', function(event) {
     event.preventDefault()
     start('html')
-    prg()
+//    prg()
   })
   $('[name="date-source"], [name="date-unit"]').change(function(event) {
     chkDate()
@@ -331,13 +337,11 @@ console.log('1 start') // milestone
     nmbOfNcodePool = 0
     frqQ = 0
     nmbOfNcodePce = 0
-    asyNvlInfArr = []
-    asyNvlInfMltArr = []
-    asyNvlInfKeyObj = {}
+    asyNvlArr = []
+    asyNvlKeyObj = {}
     ofPrmSlcArr = []
     ofPrmProcArr = []
     ofPrmQTxt = 'n'
-    ofPrmOutArr = []
     fltPrmSlcObj = {}
     for (var i = Object.keys(inErrObj).length - 1; i >= 0; i--) {
       inErrObj[Object.keys(inErrObj)[i]] = 0
@@ -375,34 +379,25 @@ console.log('1 start') // milestone
       dateSrc = $('[name="date-source"]').val()
       dateRng = Number($('[name="date-range"]').val())
       dateUnt = $('[name="date-unit"]').val()
-      $('#of-parameter').find('input').each(function() {
-        let thisName = $(this).attr('name')
-        let thisChk = $(this).prop('checked')
-        if (thisChk === 'checked') {
-          ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisName][0]
-          ofPrmSlcArr.push(thisName)
-          if (thisName !== 'ncode' || thisName !== 'global_point' && thisName !== '') {
-            ofPrmProcArr.push(thisName)
+      for (i = 1; $('#of-parameter input').length >= i; i++) {
+        let thisElm = $('#of-parameter label:nth-child(' + i + ') input')
+//console.log(thisElm)
+        if (thisElm.prop('checked')) {
+          ofPrmSlcArr.push(thisElm.attr('name'))
+          if (thisElm.attr('name') !== 'ncode' && thisElm.attr('name') !== 'ranking-date' || thisElm.attr('name') === 'global_point') {
+            ofPrmProcArr.push(thisElm.attr('name'))
           }
         }
-      })
-      $('#filter').find('select').each(function() {
-        let thisName = $(this).attr('name')
-        let thisSlc
-        if ($(this).val() !== '') {
-          thisSlc = 'selected'
-        }
-        if (thisSlc) {
-          ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisName][0]
-        }
-      })
-    }
-    $('#filter').find('select').each(function(index, el) {
-      let thisVal = $(this).val()
-      if (thisVal !== 0 && thisVal !== '') {
-        fltPrmSlcObj[$(this).attr('name')] = Number($(this).val())
       }
-    })
+      for (i = 1; $('#filter select').length >= i; i++) {
+        let thisElm = $('#filter section:nth-child(' + i + ') select')
+console.log($('#filter section:nth-child(' + i + ') select'))
+console.log(thisElm)
+        if (thisElm.val() !== '') {
+          ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisElm.val()][0]
+        }
+      }
+    }
     getRnkSrc()
   }
 }
@@ -504,11 +499,11 @@ console.log('4 mkCmpTbl_mkNcodeGrp') // milestone
   }
   function mkCmpTbl_mkQ(grpNcode, nmbOfNcodeFrg) {
     let q = '?gzip=0&out=' + out + '&lim=' + lim + '&of=' + ofPrmQTxt.replace(/^-/, '') + '&ncode=' + grpNcode
-    mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg)
+    mkCmpTbl_getNvl(q, out, nmbOfNcodeFrg)
   }
 }
-function mkCmpTbl_getNvlInf(q, out, nmbOfNcodeFrg) {
-console.log('5 mkCmpTbl_getNvlInf') // milestone
+function mkCmpTbl_getNvl(q, out, nmbOfNcodeFrg) {
+console.log('5 mkCmpTbl_getNvl') // milestone
   /*
     なろう小説API から NCODE 毎に、指定された小説情報を取得する
   */
@@ -520,19 +515,17 @@ console.log('5 mkCmpTbl_getNvlInf') // milestone
       cache: 'false'
   })
   .done(function(data) {
-    asyNvlInfArr.push(data)
+    data.shift()
+    asyNvlArr.push(data)
     nmbOfNcodePool = nmbOfNcodePool + nmbOfNcodeFrg
     if (nmbOfNcodePool >= ncodeArrleng) {
-      for (var i = 0; asyNvlInfArr.length - 1 >= i; i++) {
-        for (var j = 0; asyNvlInfArr[i].length - 1 >= j; j++) {
-          asyNvlInfMltArr.push(asyNvlInfArr[i][j])
-        }
-      }
-      for (var i = 0; asyNvlInfMltArr.length - 1 >= i; i++) {
-        asyNvlInfKeyObj[i] = {}
-        asyNvlInfKeyObj[i]['ncode'] = asyNvlInfMltArr[i]['ncode']
-        for (var j = 0; ofPrmProcArr.length - 1 >= j; j++) {
-          asyNvlInfKeyObj[i]['ncode'][ofPrmProcArr[j]] = asyNvlInfMltArr[i][ofPrmProcArr[j]]
+      for (var i = 0; asyNvlArr.length - 1 >= i; i++) {
+        for (var j = 0; asyNvlArr[i].length - 1 >= j; j++) {
+          let rcdWrkObj = {}
+          for (var k = 0; ofPrmProcArr.length - 1 >= k; k++) {
+            rcdWrkObj[ofPrmProcArr[k]] = asyNvlArr[i][j][ofPrmProcArr[k]]
+          }
+          asyNvlKeyObj[asyNvlArr[i][j]['ncode']] = rcdWrkObj
         }
       }
       writRnkTbl()
@@ -548,48 +541,52 @@ console.log('6 writRnkTbl') // milestone
     ランキングを書き出す
   */
   prgGrw++
-  $('#output-area').append('<table id="ranking-table"></table>')
-  $('#ranking-table').append('<thead><tr></tr></thead><tbody></tbody>')
+  let ofPrmNvlArr = ofPrmSlcArr.splice(ofPrmSlcArr.indexOf('ncode') - 1, 1).splice(ofPrmSlcArr.indexOf('ranking-date') - 1, 1).splice(ofPrmSlcArr.indexOf('global_point') - 1, 1)
+  let ofPrmRnkArr = []
+  for (i = 0; ofPrmRnkTblArr.length - 1 >= i; i++) {
+    if (ofPrmSlcArr.indexOf(ofPrmRnkTblArr[i])) {
+      ofPrmRnkArr.push(ofPrmRnkTblArr[i])
+    }
+  }
+  $('#output-area').append(`
+<table id="ranking-table">
+  <thead>
+    <tr></tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+`)
   for (let i = 0; ofPrmSlcArr.length - 1 >= i; i++) {
     $('#ranking-table thead tr').append('<th>' + ofPrmTblObj[ofPrmSlcArr[i]][2] + '</th>')
   }
+  let tblItmAllArr = []
   for (let i = 0; dateArr.length - 1 >= i; i++) {
     for (let j = 0; Object.keys(rnkObj[dateArr[i]]).length - 1 >= j; j++) {
-      prgGrw++
-      let oddEvn = ''
-      if (i % 2 === 0) {
-        oddEvn = 'even'
-      } else {
-        oddEvn = 'odd'
+      let tblItmTr = ''
+      let tblItmTrCls = ''
+      let tblItmTdSet = ''
+      for (let k = 0; ofPrmSlcArr.length - 1 >= k; k++) {
+        let thisOfPrm = ofPrmSlcArr[k]
+        if (ofPrmRnkArr.indexOf(thisOfPrm) >= 0) {
+          tblItmTdSet = tblItmTdSet + '<td>' + rnkObj[dateArr[i]][j][thisOfPrm] + '</td>'
+        } else {
+          if (asyNvlKeyObj[rnkObj[dateArr[i]][j]['ncode']]) {
+            tblItmTdSet = tblItmTdSet + '<td>' + asyNvlKeyObj[rnkObj[dateArr[i]][j]['ncode']][thisOfPrm] + '</td>'
+          } else {
+            tblItmTdSet = tblItmTdSet + '<td>情報なし</td>'
+            tblItmTrCls = 'information-not-found'
+          }
+        }
       }
-      $('#ranking-table tbody').append('<tr class="' + oddEvn + '">' + (function() {
-        console.log('aaaa')
-      )} + '</tr>')
+      if (tblItmTrCls === '') {
+        tblItmAllArr.push('<tr>' + tblItmTdSet + '</tr>')
+      }
+      tblItmAllArr.push('<tr class="' + tblItmTrCls + '">' + tblItmTdSet + '</tr>')
     }
   }
-  if (ofPrmSlcArr.indexOf('ranking-date') > 0) {
-    for (let i = 0; asyNvlInfMltArr.length - 1 >= i; i++) {
-      prgGrw++
-      for (let j = 0; ofPrmSlcArr.length - 1 >= j; j++) {
-        $('#ranking-table tbody tr[data-ncode="' + asyNvlInfMltArr[i]['ncode'] + '"]').append('<td>' + asyNvlInfMltArr[i][ofPrmSlcArr[j]] + '</td>')
-      }
-    }
-  } else {
-    let ofPrmProcArrExcldDateRnk = []
-    for (var i = 0; ofPrmSlcArr.length - 1 >= i; i++) {
-      if (ofPrmSlcArr[i] !== 'ranking-date') {
-        ofPrmProcArrExcldDateRnk.push(ofPrmSlcArr[i])
-      }
-    }
-    $('#ranking-table tbody').find('tr').each(function() {
-      $(this).append('<td>' + $(this).data('ranking-date') + '</td>')
-    })
-    for (let i = 0; asyNvlInfMltArr.length - 1 >= i; i++) {
-      prgGrw++
-      for (let j = 0; ofPrmProcArrExcldDateRnk.length - 1 >= j; j++) {
-        $('#ranking-table tbody tr[data-ncode="' + asyNvlInfMltArr[i]['ncode'] + '"]').append('<td>' + asyNvlInfMltArr[i][ofPrmProcArrExcldDateRnk[j]] + '</td>')
-      }
-    }
+  for (i = 0; tblItmAllArr.length - 1 >= i; i++) {
+    $('#ranking-table tbody').append(tblItmAllArr[i])
   }
 }
 function prg() {
@@ -709,6 +706,9 @@ function dateFmt(date, spr) {
       </label><br>
       <label for="rank">
         <input id="rank" type="checkbox" name="rank">ランク
+      </label><br>
+      <label for="pt">
+        <input id="pt" type="checkbox" name="pt">ポイント（なんのポイントかは不明です）
       </label><br>
       <label for="title">
         <input id="title" type="checkbox" name="title" checked>小説名
