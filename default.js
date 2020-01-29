@@ -117,7 +117,7 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
   function writeContents(data) {
     // Text
     if (extention === 'txt') {
-      const word = keywordReplace(rubyParser(data))
+      const word = keywordReplace(mdparse(rubyParser(data)))
       const char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
       const insert_text = ''
       const element_array = []
@@ -172,7 +172,7 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
   }
   function rubyParser(data) {
                    /* | ------------ルビとは無関係------------| */
-    const word = data.replace(/(^[\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/(\r\n|\n|\r|$)/gm, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
+    const word = data.replace(/(^[\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
     return word
   }
   function keywordReplace(data) {

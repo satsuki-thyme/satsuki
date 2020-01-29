@@ -297,6 +297,12 @@ let msgObj = { // エラーメッセージのオブジェクト
     "not-set": "<span class=\"warn\">出力項目を選択してください。</span>"
   }
 }
+;(function() {
+  { // 全て選択
+    let btnSlcAll = document.getElementsByClassName('select-all')
+    btnSlcAll.setEventListener('mousedown', selectAll)
+  }
+})
 $(document).ready(function() {
   chkDate()
 })
@@ -309,15 +315,15 @@ $(function() {
   $('[name="date-source"], [name="date-unit"]').change(function(event) {
     chkDate()
   })
-  $('.select-all').on('click', function(event) {
-    event.preventDefault()
-    let rng = document.createRng()
-    let slcElm = document.getElementById('output-area')
-    rng.selectNodeContents(slcElm)
-    var slc = window.getSelection()
-    slc.removeAllRngs()
-    slc.addRng(rng)
-  })
+//  $('.select-all').on('click', function(event) {
+//    event.preventDefault()
+//    let rng = document.createRange()
+//    let slcElm = document.getElementById('output-area')
+//    rng.selectNodeContents(slcElm)
+//    var slc = window.getSelection()
+//    slc.removeAllRanges()
+//    slc.addRange(rng)
+//  })
 })
 function start(srcMda) {
 console.log('1 start') // milestone
@@ -389,12 +395,14 @@ console.log('1 start') // milestone
           }
         }
       }
-      for (i = 1; $('#filter select').length >= i; i++) {
-        let thisElm = $('#filter section:nth-child(' + i + ') select')
+      let fltSlcLng = $('#filter select').length
+      for (i = 1; fltSlcLng >= i; i++) {
+        const thisElm = $('#filter section:nth-child(' + i + ') select')
 console.log($('#filter section:nth-child(' + i + ') select'))
 console.log(thisElm)
         if (thisElm.val() !== '') {
           ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisElm.val()][0]
+          thisElm = null
         }
       }
     }
@@ -617,6 +625,15 @@ function chkDate() {
     dispWarn('.warn-base-date', 'remove')
     inErrObj['date'] = 0
   }
+}
+function selectAll() {
+  event.preventDefault()
+  let rng = document.createRange()
+  let slcElm = document.getElementById('output-area')
+  rng.selectNodeContents(slcElm)
+  var slc = window.getSelection()
+  slc.removeAllRanges()
+  slc.addRange(rng)
 }
 function dispWarn(trg, msg) {
   if (msg === undefined || msg === 'remove') {
