@@ -60,19 +60,21 @@ $(document).ready(function() {
     setReturnLink(search, url_home)
   }
 })
-$(window).scroll(function() {
-  const scroll_amount = $(window).scrollTop()
-  if (scroll_amount > 0) {
-    $('.up').fadeIn()
-  } else if (scroll_amount <= 0) {
-    $('.up').fadeOut()
-  }
-})
-$(window).resize(function() {
-  setUpLink()
-})
-$('.up button').on('click',function (e) {
-  $('html, body').animate({scrollTop: 0}, 'fast')
+$(function() {
+  $(window).scroll(function() {
+    const scroll_amount = $(window).scrollTop()
+    if (scroll_amount > 0) {
+      $('.up').fadeIn()
+    } else if (scroll_amount <= 0) {
+      $('.up').fadeOut()
+    }
+  })
+  $(window).resize(function() {
+    setUpLink()
+  })
+  $('.up button').on('click',function (e) {
+    $('html, body').animate({scrollTop: 0}, 'fast')
+  })
 })
 function loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base) {
   let dfd_load_contents = $.Deferred()
