@@ -397,7 +397,7 @@ console.log('1 start') // milestone
       }
       let fltSlcLng = $('#filter select').length
       for (i = 1; fltSlcLng >= i; i++) {
-        const thisElm = $('#filter section:nth-child(' + i + ') select')
+        let thisElm = $('#filter section:nth-child(' + i + ') select')
 console.log($('#filter section:nth-child(' + i + ') select'))
 console.log(thisElm)
         if (thisElm.val() !== '') {
