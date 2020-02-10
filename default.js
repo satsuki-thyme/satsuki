@@ -230,10 +230,10 @@ function setReturnLink() {
   let srch_path_filenameless = srch.slice(1, lastSlsh_srch)
   let srch_path_filename_extnless = srch.slice(lastSlsh_srch+ 1, lastProd_srch)
   let srch_path_extn = srch.slice(lastProd_srch+ 1, lastProd_srch- lastSlsh_srch)
-  if (srch_path_filename_extnless === 'index') {
+  if (srch_path_filename_extnless === 'README') {
     prependAnchor(urlHome, '小説関連に戻る')
   } else {
-    prependAnchor('?/' + srch_path_filenameless + '/index.md', srch_path_filenameless + 'に戻る')
+    prependAnchor('?/' + srch_path_filenameless + '/README.md', srch_path_filenameless + 'に戻る')
   }
 }
 function prependAnchor(target, label) {
