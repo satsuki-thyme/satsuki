@@ -118,8 +118,8 @@ function loadCnt() {
     return dfr.promise()
   }
   function writeContents(data) {
-    // Text
     if (extn === 'txt') {
+    // Text
       let word = keyWrdRpl(mdparse(rubyParser(data)))
       let wrdLen = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
       let insTxt = ''
@@ -134,20 +134,26 @@ function loadCnt() {
       }
       $('#info').append('<p class="number">文字数：' + wrdLen + '文字</p>')
       prvNextLink(stoNmb)
-    // HTML
     } else if (extn === 'html') {
+    // HTML
       let word = keyWrdRpl(data)
       $('html').addClass('html')
       $('.html.contents-container').append(word)
       $('title').empty().append(decodeURI(text))
       $('.title').append(decodeURI(text))
-    // Markdown
+    } else if (fileName === '/README.md') {
+    // README.md
+    console.log('aa')
+      let word = keyWrdRpl(rubyParser(marked(data).replace(/href="(.*?)"/g, 'href="?' + ops + '/$1"')))
+      $('html').addClass('markdown')
+      $('.markdown.contents-container').append(marked(word))
     } else if (extn === 'md') {
+    // Markdown
       let word = keyWrdRpl(rubyParser(marked(data)))
       $('html').addClass('markdown')
       $('.markdown.contents-container').append(marked(word))
-    // Another
     } else {
+    // Another
       let word = data
       $('.another.contents-container').append(word)
     }
