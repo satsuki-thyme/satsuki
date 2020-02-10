@@ -1,91 +1,92 @@
-let search = location.search.slice(1)
+let srch= location.search.slice(1)
 let host = location.hostname
-let setting_array ={
-  "loadContents": {
+let stgObj ={
+  "loadCnt": {
     "yayoi-thyme.com": {
-      "back_host": "raw.githubusercontent.com",
-      "user_name": "yayoi-thyme",
-      "site_repository": "yayoi-thyme.github.io",
-      "branch": "master",
-      "default_document": "novel.md",
-      "url_home": "/novel.html",
-      "url_base": "/view-opus.html"
+      "backHost": "raw.githubusercontent.com",
+      "usrName": "yayoi-thyme",
+      "siteRepo": "yayoi-thyme.github.io",
+      "brch": "master",
+      "defDoc": "novel.md",
+      "urlHome": "/novel.html",
+      "urlBase": "/view-opus.html"
     },
     "yayoi-thyme.c": {
-      "back_host": "novel.c",
-      "user_name": "",
-      "site_repository": "",
-      "branch": "",
-      "default_document": "novel.md",
-      "url_home": "/novel.html",
-      "url_base": "/view-opus.html"
+      "backHost": "novel.c",
+      "usrName": "",
+      "siteRepo": "",
+      "brch": "",
+      "defDoc": "novel.md",
+      "urlHome": "/novel.html",
+      "urlBase": "/view-opus.html"
     },
     "novel.c": {
-      "back_host": "novel.c",
-      "user_name": "",
-      "site_repository": "",
-      "branch": "",
-      "default_document": "novel.md",
-      "url_home": "?index.md",
-      "url_base": "/view-opus.html"
+      "backHost": "novel.c",
+      "usrName": "",
+      "siteRepo": "",
+      "brch": "",
+      "defDoc": "novel.md",
+      "urlHome": "?index.md",
+      "urlBase": "/view-opus.html"
     }
   }
 }
-let back_host = setting_array['loadContents'][host]['back_host']
-let user_name = setting_array['loadContents'][host]['user_name']
-let site_repository = setting_array['loadContents'][host]['site_repository']
-let branch = setting_array['loadContents'][host]['branch']
-let default_document = setting_array['loadContents'][host]['default_document']
-let url_home = setting_array['loadContents'][host]['url_home']
-let url_base = setting_array['loadContents'][host]['url_base']
-if (back_host != '') {
-  back_host = '//' + back_host
+let backHost = stgObj['loadCnt'][host]['backHost']
+let usrName = stgObj['loadCnt'][host]['usrName']
+let siteRepo = stgObj['loadCnt'][host]['siteRepo']
+let brch = stgObj['loadCnt'][host]['brch']
+let defDoc = stgObj['loadCnt'][host]['defDoc']
+let urlHome = stgObj['loadCnt'][host]['urlHome']
+let urlBase = stgObj['loadCnt'][host]['urlBase']
+if (backHost != '') {
+  backHost = '//' + backHost
 }
-if (user_name != '') {
-  user_name = '/' + user_name
+if (usrName != '') {
+  usrName = '/' + usrName
 }
-if (site_repository != '') {
-  site_repository = '/' + site_repository
+if (siteRepo != '') {
+  siteRepo = '/' + siteRepo
 }
-if (branch != '') {
-  branch = '/' + branch
+if (brch != '') {
+  brch = '/' + brch
 }
-if (default_document != '') {
-  default_document = '/' + default_document
+if (defDoc != '') {
+  defDoc = '/' + defDoc
 }
 $(document).ready(function() {
   setUpLink()
   if ($('html').attr('class').match(/load-contents/g)) {
-    loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base)
-    setReturnLink(search, url_home)
+    loadCnt()
+    setReturnLink()
   }
 })
+$(window).scroll(function() {
+  let scrlAmnt = $(window).scrollTop()
+  if (scrlAmnt > 0) {
+    $('.up').fadeIn()
+  } else if (scrlAmnt <= 0) {
+    $('.up').fadeOut()
+  }
+})
+$(window).resize(function() {
+  setUpLink()
+})
 $(function() {
-  $(window).scroll(function() {
-    let scroll_amount = $(window).scrollTop()
-    if (scroll_amount > 0) {
-      $('.up').fadeIn()
-    } else if (scroll_amount <= 0) {
-      $('.up').fadeOut()
-    }
-  })
-  $(window).resize(function() {
-    setUpLink()
-  })
   $('.up button').on('click',function (e) {
     $('html, body').animate({scrollTop: 0}, 'fast')
   })
 })
-function loadContents(search, back_host, user_name, site_repository, branch, default_document, url_home, url_base) {
-  let dfd_load_contents = $.Deferred()
-  let last_period = 0
-  let first_slash = 0
-  let last_slash = 0
-  let opus = ''
+function loadCnt() {
+  let dfr = $.Deferred()
+  let lastProd = 0
+  let fistSlsh = 0
+  let lastSlsh = 0
+  let ops = ''
   let url = ''
-  let extention = ''
+  let extn = ''
+  let fileName = ''
   let now = $.now()
-  setUrl(search)
+  setUrl(srch)
   .then(
     $.ajax({
       url: url + '?' + now,
@@ -98,51 +99,51 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
       
     })
   )
-  function setUrl(search) {
-    let dfd_set_url = $.Deferred()
-    last_period = search.lastIndexOf('.')
-    first_slash = search.indexOf('/')
-    last_slash = search.lastIndexOf('/')
-    opus = '/' + search.slice(first_slash + 1, last_slash - first_slash)
-    let file_name = '/' + search.slice(last_slash + 1)
-    if (search.length === 0) {
-      extention = 'md'
-      url = back_host + user_name + site_repository + branch + default_document
-      dfd_set_url.resolve(url)
+  function setUrl() {
+    let dfr = $.Deferred()
+    lastProd = srch.lastIndexOf('.')
+    fistSlsh = srch.indexOf('/')
+    lastSlsh = srch.lastIndexOf('/')
+    ops = '/' + srch.slice(fistSlsh + 1, lastSlsh - fistSlsh)
+    fileName = '/' + srch.slice(lastSlsh + 1)
+    if (srch.length === 0) {
+      extn = 'md'
+      url = backHost + usrName + siteRepo + brch + defDoc
+      dfr.resolve(url)
     } else {
-      extention = search.slice(last_period + 1)
-      url = back_host + user_name + opus + branch + file_name
-      dfd_set_url.resolve(url)
+      extn = srch.slice(lastProd + 1)
+      url = backHost + usrName + ops + brch + fileName
+      dfr.resolve(url)
     }
-    return dfd_set_url.promise()
+    return dfr.promise()
   }
   function writeContents(data) {
     // Text
-    if (extention === 'txt') {
-      let word = mdparse(rubyParser(data))
-      let char_len = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
-      let insert_text = ''
-      let element_array = []
-      let story_len = Number(search.slice(last_slash + 1, last_period))
+    if (extn === 'txt') {
+      let word = keyWrdRpl(mdparse(rubyParser(data)))
+      let wrdLen = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
+      let insTxt = ''
+      let elmArr = []
+      let stoNmb = Number(srch.slice(lastSlsh + 1, lastProd))
       $('html').addClass('narou')
-      $('div#novel_no').append(story_len + '/???')
+      $('div#novel_no').append(stoNmb + '/???')
       $('div#novel_honbun').append(word)
       if (data.indexOf('# ') > -1) {
         let subtitle = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
         $('p.novel_subtitle').append(subtitle)
       }
-      $('#info').append('<p class="number">文字数：' + char_len + '文字</p>')
-      prevNextLink(story_len)
+      $('#info').append('<p class="number">文字数：' + wrdLen + '文字</p>')
+      prvNextLink(stoNmb)
     // HTML
-    } else if (extention === 'html') {
-      let word = data
+    } else if (extn === 'html') {
+      let word = keyWrdRpl(data)
       $('html').addClass('html')
       $('.html.contents-container').append(word)
       $('title').empty().append(decodeURI(text))
       $('.title').append(decodeURI(text))
     // Markdown
-    } else if (extention === 'md') {
-      let word = rubyParser(marked(data))
+    } else if (extn === 'md') {
+      let word = keyWrdRpl(rubyParser(marked(data)))
       $('html').addClass('markdown')
       $('.markdown.contents-container').append(marked(word))
     // Another
@@ -150,25 +151,37 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
       let word = data
       $('.another.contents-container').append(word)
     }
-    dfd_load_contents.resolve()
-    function prevNextLink(story_len) {
-      let prev_entity = ('000' + (story_len - 1)).slice(-3) + '.' + extention
-      let next_entity = ('000' + (story_len + 1)).slice(-3) + '.' + extention
-      let prev = ''
-      let next = ''
-      if (!isNaN(story_len)) {
-        prev = '?' + opus + '/' + prev_entity
-        next = '?' + opus + '/' + next_entity
-      }
-      $.get(back_host + user_name + opus + branch + '/' + prev_entity).then(function() {
-        $('a.prev').attr('href', prev)
-      }).fail(function() {
-        $('a.prev').css('display', 'none')
+    dfr.resolve()
+    function prvNextLink(stoNmb) {
+      $.ajax({
+        url: backHost + usrName + ops + brch + '/README.md',
+        dataType: 'text',
       })
-      $.get(back_host + user_name + opus + branch + '/' + next_entity).then(function() {
-        $('a.next').attr('href', next)
-      }).fail(function() {
-        $('a.next').css('display', 'none')
+      .done(function(data) {
+        let epsArr = data.replace(/#{1,6}[\s\S]*?#{1,6} 本文\n([\s\S]*?)(\n\n|#|$)/g, '$1')
+                          .replace(/^[\s]*[*+-] .*?\(\s*?([^\s].*?)\)$/gm, '$1')
+                          .replace(/\n$/g, '')
+                          .split('\n')
+        let epsObj = {}
+        for (var i = epsArr.length - 1; i >= 0; i--) {
+          epsObj[Number(epsArr[i].match(/\d+/)[0])] = [ epsArr[i].match(/^[^\d]*/)[0], epsArr[i].match(/[^\d]*$/)[0]]
+        }
+        let crrEps = Number(fileName.match(/\d+/)[0])
+        let prvLnk = ''
+        let nxtLnk = ''
+        if (epsObj[crrEps - 1]) {
+          $('a.prev').attr('href', '?' + ops + '/' + epsObj[crrEps - 1][0] + ('000' + (crrEps - 1)).slice(-3) + epsObj[crrEps - 1][1])
+          $('a.prev').css('display', 'initial')
+        }
+        if (epsObj[crrEps + 1]) {
+          $('a.next').attr('href', '?' + ops + '/' + epsObj[crrEps + 1][0] + ('000' + (crrEps + 1)).slice(-3) + epsObj[crrEps + 1][1])
+          $('a.next').css('display', 'initial')
+        }
+      })
+      .fail(function() {
+        console.log("error")
+      })
+      .always(function() {
       })
     }
   }
@@ -177,44 +190,44 @@ function loadContents(search, back_host, user_name, site_repository, branch, def
     let word = data.replace(/(^[\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
     return word
   }
-  function keywordReplace(data) {
-    let word_list_replace = [
+  function keyWrdRpl(data) {
+    let wrdLstRpl = [
                               ["\\{", '<span style="font-size: 50%; color: #999;">{</span><span>'],
                               ["\\}", '</span><span style="font-size: 50%; color: #999;">}</span>'],
                               ["(?<=\{)g(?=\})", '<span style="font-size: 50%; color: #00d;">いいところ</span>'],
                               ["(?<=\{)b(?=\})", '<span style="font-size: 50%; color: #d00;">わるいところ</span>'],
                               ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
                             ]
-    let word_list_hide = ["_summary_", "_gist_"]
-    let word_list_replace_length = 0
-    let work1 = data
-    for (let i in word_list_replace) {
-      word_list_replace_length++
+    let wrdLst_hide = ["_summary_", "_gist_"]
+    let wrdLstRpl_len = 0
+    let wrk1 = data
+    for (let i in wrdLstRpl) {
+      wrdLstRpl_len++
     }
-    for (let i = word_list_replace_length - 1; i >= 0; i--) {
-      let regexp1 = new RegExp(word_list_replace[i][0], 'g')
-      work1 = work1.replace(regexp1, word_list_replace[i][1])
+    for (let i = wrdLstRpl_len - 1; i >= 0; i--) {
+      let rgxp = new RegExp('wrdLstRpl[i][0]', 'g')
+      wrk1 = wrk1.replace(rgxp, wrdLstRpl[i][1])
     }
-    for (let i = word_list_hide.length - 1; i >= 0; i--) {
-      work1 = work1.replace(new RegExp(word_list_hide[i], 'g'), '<span class="hide">' + word_list_hide[i] + '</span>')
+    for (let i = wrdLst_hide.length - 1; i >= 0; i--) {
+      wrk1 = wrk1.replace(new RegExp(wrdLst_hide[i], 'g'), '<span class="hide">' + wrdLst_hide[i] + '</span>')
     }
-    return work1
+    return wrk1
   }
 }
 function setUpLink() {
   $('.up button').css('right', ($(window).width() - $('.up').width()) / 2 + 5)
 }
-function setReturnLink(search, url_home) {
-  let last_period_search = search.lastIndexOf('.')
-  let first_slash_search = search.indexOf('/')
-  let last_slash_search = search.lastIndexOf('/')
-  let search_path_filenameless = search.slice(1, last_slash_search)
-  let search_path_filename_extentionless = search.slice(last_slash_search + 1, last_period_search)
-  let search_path_extention = search.slice(last_period_search + 1, last_period_search - last_slash_search)
-  if (search_path_filename_extentionless === 'index') {
-    prependAnchor(url_home, '小説関連に戻る')
+function setReturnLink() {
+  let lastProd_srch= srch.lastIndexOf('.')
+  let fistSlsh_srch= srch.indexOf('/')
+  let lastSlsh_srch= srch.lastIndexOf('/')
+  let srch_path_filenameless = srch.slice(1, lastSlsh_srch)
+  let srch_path_filename_extnless = srch.slice(lastSlsh_srch+ 1, lastProd_srch)
+  let srch_path_extn = srch.slice(lastProd_srch+ 1, lastProd_srch- lastSlsh_srch)
+  if (srch_path_filename_extnless === 'index') {
+    prependAnchor(urlHome, '小説関連に戻る')
   } else {
-    prependAnchor('?/' + search_path_filenameless + '/index.md', search_path_filenameless + 'に戻る')
+    prependAnchor('?/' + srch_path_filenameless + '/index.md', srch_path_filenameless + 'に戻る')
   }
 }
 function prependAnchor(target, label) {

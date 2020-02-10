@@ -931,10 +931,10 @@ nav ul {
 .narou main .rt-none {
   display: none;
 }
-.selected-len {
+.narou .selected-len {
   display: none;
 }
-.selected-len.appear {
+.narou .selected-len.appear {
   display: initial;
   position: fixed;
   top: 0;
@@ -942,13 +942,13 @@ nav ul {
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.05)
 }
-#info {
+.narou #info {
   position: relative;
   height: 48px;
   text-align: center;
   border-bottom: 1px solid #aaaaaa;
 }
-#info::after {
+.narou #info::after {
   content: "";
   display: block;
   position: absolute;
@@ -957,14 +957,14 @@ nav ul {
   height: 1px;
   background-color: #ececec;
 }
-#info .number {
+.narou #info .number {
   height: 48px;
   line-height: 48px;
 }
-#info .name {
+.narou #info .name {
   margin-right: 20px;
 }
-#info .phrase {
+.narou #info .phrase {
   margin-right: 10px;
   margin-left:  10px;
 }
@@ -1022,6 +1022,19 @@ nav ul {
   box-sizing: border-box;
   line-height: 28.8px;
   font-size: 16px;
+}
+.narou main #novel_honbun p {
+  line-height: 2.4;
+}
+.narou ruby {
+  line-height: 1;
+}
+.narou tr {
+  line-height: 1;
+}
+.narou a.prev,
+.narou a.next {
+  display: none;
 }
 /*
 
