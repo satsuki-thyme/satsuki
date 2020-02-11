@@ -120,7 +120,7 @@ function loadCnt() {
   function writeContents(data) {
     if (extn === 'txt') {
     // Text
-      let word = keyWrdRpl(mdParse(rubyParse(data.replace(/^# .*?$/m, ''))))
+      let word = mdParse(rubyParse(keyWrdRpl(data.replace(/^# .*?$/m, '').replace(/\/\*[\s\S]*?(\*\/|$)/g, ''))))
       let wrdLen = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
       let insTxt = ''
       let elmArr = []
@@ -197,25 +197,29 @@ function loadCnt() {
   }
   function keyWrdRpl(data) {
     let wrdLstRpl = [
-                              ["\{", '<span style="font-size: 50%; color: #999;">{</span><span>'],
-                              ["\}", '</span><span style="font-size: 50%; color: #999;">}</span>'],
-                              ["(?<=\{)g(?=\})", '<span style="font-size: 50%; color: #00d;">いいところ</span>'],
-                              ["(?<=\{)b(?=\})", '<span style="font-size: 50%; color: #d00;">わるいところ</span>'],
-                              ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
-                            ]
-    let wrdLst_hide = ["_summary_", "_gist_"]
-    let wrdLstRpl_len = 0
-    let wrk1 = data
-    for (let i in wrdLstRpl) {
-      wrdLstRpl_len++
+      ["\{setup\}", "{セットアップ}"],
+      ["\{inciting incident\}", "{インサイティング・インシデント}"],
+      ["\{central question\}", "{セントラル・クエスチョン}"],
+      ["\{plot point 1\}", "{プロット・ポイント 1}"],
+      ["\{conflict\}", "{葛藤・対立}"],
+      ["\{plot point 2\}", "{プロット・ポイント 2}"],
+      ["\{resolution\}", "{解決}"],
+      ["\{ending\}", "{エンディング}"],
+      ["\{", '<span class="bracket">{</span><span class="bracket-contents">'],
+      ["\}", '</span><span class="bracket">}</span>'],
+      ["(?<=\{)g(?=\})", '<span style="font-size: 50%; color: #00d;">いいところ</span>'],
+      ["(?<=\{)b(?=\})", '<span style="font-size: 50%; color: #d00;">わるいところ</span>'],
+      ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
+    ]
+    let wrdLstHide = ["_summary_", "_gist_"]
+    let wrk = data
+    for (let i = 0; wrdLstRpl.length - 1 >= i; i++) {
+      wrk = wrk.replace(new RegExp(wrdLstRpl[i][0], 'g'), wrdLstRpl[i][1])
     }
-    for (let i = wrdLstRpl_len - 1; i >= 0; i--) {
-      wrk1 = wrk1.replace(new RegExp(wrdLstRpl[i][0], 'g'), wrdLstRpl[i][1])
+    for (let i = 0; wrdLstHide.length - 1 >= i; i++) {
+      wrk = wrk.replace(new RegExp(wrdLstHide[i], 'g'), '<span class="hide">' + wrdLstHide[i] + '</span>')
     }
-    for (let i = wrdLst_hide.length - 1; i >= 0; i--) {
-      wrk1 = wrk1.replace(new RegExp(wrdLst_hide[i], 'g'), '<span class="hide">' + wrdLst_hide[i] + '</span>')
-    }
-    return wrk1
+    return wrk
   }
 }
 function setUpLink() {

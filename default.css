@@ -851,6 +851,18 @@ nav ul {
   word-break: break-all;
   word-wrap: break-word;
 }
+.bracket,
+.bracket-contents {
+  font-size: 0.9rem;
+}
+.bracket {
+  font-weight: bold;
+  color: #22f;
+}
+.bracket-contents {
+  font-weight: normal;
+  color: #666;
+}
 /*
 
   Contents container
