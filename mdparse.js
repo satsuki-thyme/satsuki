@@ -38,18 +38,19 @@ function mdParse(src, opt) {
       let wrk2 = linArr[i + 1].slice()
       lstCrr = wrk1.replace(/^([ \t])*.*/, '$1').length
       if (i === 0 || linArr[i - 1].indexOf('<li>') < 0 || lstCrr > lstUpr) {
-        linArr[i] = wrk1.replace(/^.*?[*+-] /, '\n<ul>\n<li>')
-                        .replace(/^.*?\d+\. /, '\n<ol>\n<li>')
+        linArr[i] = wrk1.replace(/^[ \t]*[*+-] /, '\n<ul>\n<li>')
+                        .replace(/^[ \t]*\d+\. /, '\n<ol>\n<li>')
       } else {
         if (lstCrr > wrk2.replace(/^([ \t]*).*/, '$1').length || !wrk2.match(/^[ \t]*(\*|\+|-|\d+\.) /) || i === linArr.length - 1) {
-          linArr[i] = wrk1.replace(/^.*?[*+-] (.*?)$/, '<li>$1\n</ul>\n')
-                          .replace(/^.*?\d+\. (.*?)$/, '<li>$1\n</ol>\n')
+          console.log(0)
+          linArr[i] = wrk1.replace(/^[ \t]*[*+-] (.*)/, '<li>$1\n</ul>\n')
+                          .replace(/^[ \t]*\d+\. (.*)/, '<li>$1\n</ol>\n')
         } else {
-          linArr[i] = wrk1.replace(/^.*?[*+-] (.*?)$/, '<li>$1')
-                          .replace(/^.*?\d+\. (.*?)$/, '<li>$1')
+          linArr[i] = wrk1.replace(/^[ \t]*[*+-] (.*)/, '<li>$1')
+                          .replace(/^[ \t]*\d+\. (.*)/, '<li>$1')
         }
       }
-      linArr[i] = linArr[i].replace(/[ \t]*?(\*|\+|-|\d+)/, '')
+      linArr[i] = linArr[i].replace(/[ \t]*(\*|\+|-|\d+\.)/, '')
     }
     lstUpr = lstCrr
     txtMss = txtMss + linArr[i]
