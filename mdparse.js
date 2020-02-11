@@ -39,19 +39,19 @@ function mdParse(src, opt) {
       lstCrr = wrk1.replace(/^([ \t])*.*/, '$1').length
       if (i === 0 || linArr[i - 1].indexOf('<li>') < 0 || lstCrr > lstUpr) {
         linArr[i] = wrk1.replace(/^.*?[*+-] /, '\n<ul>\n<li>')
-                       .replace(/^.*?\d+\. /, '\n<ol>\n<li>')
+                        .replace(/^.*?\d+\. /, '\n<ol>\n<li>')
       } else {
-        if (lstCrr > wrk2.replace(/^([ \t]*)(\*|\+|-|\d+\.) /, '$1').length || !wrk2.match(/^[ \t]*(\*|\+|-|\d+\.) /) || i === linArr.length - 1) {
+        if (lstCrr > wrk2.replace(/^([ \t]*).*/, '$1').length || !wrk2.match(/^[ \t]*(\*|\+|-|\d+\.) /) || i === linArr.length - 1) {
           linArr[i] = wrk1.replace(/^.*?[*+-] (.*?)$/, '<li>$1\n</ul>\n')
-                         .replace(/^.*?\d+\. (.*?)$/, '<li>$1\n</ol>\n')
+                          .replace(/^.*?\d+\. (.*?)$/, '<li>$1\n</ol>\n')
         } else {
           linArr[i] = wrk1.replace(/^.*?[*+-] (.*?)$/, '<li>$1')
-                         .replace(/^.*?\d+\. (.*?)$/, '<li>$1')
+                          .replace(/^.*?\d+\. (.*?)$/, '<li>$1')
         }
       }
       linArr[i] = linArr[i].replace(/[ \t]*?(\*|\+|-|\d+)/, '')
-      lstUpr = lstCrr
     }
+    lstUpr = lstCrr
     txtMss = txtMss + linArr[i]
   }
   return txtMss

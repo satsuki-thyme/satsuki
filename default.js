@@ -143,7 +143,7 @@ function loadCnt() {
       $('.title').append(decodeURI(text))
     } else if (fileName === '/README.md') {
     // README.md
-      let word = keyWrdRpl(rubyParse(mdParse(data).replace(/href="(.*?)"/g, 'href="?' + ops + '/$1"')))
+      let word = keyWrdRpl(rubyParse(marked(data).replace(/href="(.*?)"/g, 'href="?' + ops + '/$1"')))
       $('html').addClass('markdown')
       $('.markdown.contents-container').append(word)
     } else if (extn === 'md') {
