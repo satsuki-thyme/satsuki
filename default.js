@@ -120,7 +120,7 @@ function loadCnt() {
   function writeContents(data) {
     if (extn === 'txt') {
     // Text
-      let word = keyWrdRpl(mdparse(rubyParser(data)))
+      let word = keyWrdRpl(mdParse(rubyParse(data.replace(/^# .*?$/m, ''))))
       let wrdLen = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
       let insTxt = ''
       let elmArr = []
@@ -143,15 +143,14 @@ function loadCnt() {
       $('.title').append(decodeURI(text))
     } else if (fileName === '/README.md') {
     // README.md
-    console.log('aa')
-      let word = keyWrdRpl(rubyParser(marked(data).replace(/href="(.*?)"/g, 'href="?' + ops + '/$1"')))
+      let word = keyWrdRpl(rubyParse(mdParse(data).replace(/href="(.*?)"/g, 'href="?' + ops + '/$1"')))
       $('html').addClass('markdown')
-      $('.markdown.contents-container').append(marked(word))
+      $('.markdown.contents-container').append(word)
     } else if (extn === 'md') {
     // Markdown
-      let word = keyWrdRpl(rubyParser(marked(data)))
+      let word = keyWrdRpl(rubyParse(mdParse(data)))
       $('html').addClass('markdown')
-      $('.markdown.contents-container').append(marked(word))
+      $('.markdown.contents-container').append(word)
     } else {
     // Another
       let word = data
@@ -191,15 +190,15 @@ function loadCnt() {
       })
     }
   }
-  function rubyParser(data) {
+  function rubyParse(data) {
                    /* | ------------ルビとは無関係------------| */
-    let word = data.replace(/(^[\s\t]*#.*|[\s\t]*\*.*)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
+    let word = data.replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
     return word
   }
   function keyWrdRpl(data) {
     let wrdLstRpl = [
-                              ["\\{", '<span style="font-size: 50%; color: #999;">{</span><span>'],
-                              ["\\}", '</span><span style="font-size: 50%; color: #999;">}</span>'],
+                              ["\{", '<span style="font-size: 50%; color: #999;">{</span><span>'],
+                              ["\}", '</span><span style="font-size: 50%; color: #999;">}</span>'],
                               ["(?<=\{)g(?=\})", '<span style="font-size: 50%; color: #00d;">いいところ</span>'],
                               ["(?<=\{)b(?=\})", '<span style="font-size: 50%; color: #d00;">わるいところ</span>'],
                               ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
@@ -211,8 +210,7 @@ function loadCnt() {
       wrdLstRpl_len++
     }
     for (let i = wrdLstRpl_len - 1; i >= 0; i--) {
-      let rgxp = new RegExp('wrdLstRpl[i][0]', 'g')
-      wrk1 = wrk1.replace(rgxp, wrdLstRpl[i][1])
+      wrk1 = wrk1.replace(new RegExp(wrdLstRpl[i][0], 'g'), wrdLstRpl[i][1])
     }
     for (let i = wrdLst_hide.length - 1; i >= 0; i--) {
       wrk1 = wrk1.replace(new RegExp(wrdLst_hide[i], 'g'), '<span class="hide">' + wrdLst_hide[i] + '</span>')

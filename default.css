@@ -585,7 +585,7 @@ main table + h5,
 main figure + h5,
 main details + h5,
 main hr + h5 {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 main p + h6,
 main ol + h6,
@@ -876,37 +876,6 @@ nav ul {
   Narou
 
 */
-.narou main div,
-.narou main pre,
-.narou main p,
-.narou main blockquote,
-.narou main form,
-.narou main fieldset,
-.narou main input,
-.narou main textarea,
-.narou main select,
-.narou main option,
-.narou main dl,
-.narou main dt,
-.narou main dd,
-.narou main ul,
-.narou main ol,
-.narou main li,
-.narou main h1,
-.narou main h2,
-.narou main h3,
-.narou main h4,
-.narou main h5,
-.narou main h6,
-.narou main table,
-.narou main th,
-.narou main td,
-.narou main embed,
-.narou main object {
-  margin: 0;
-  padding: 0;
-  vertical-align: baseline;
-}
 .narou main {
   font-family: 'Lucida Grande', sans-serif;
   font-size: 14px;
