@@ -191,7 +191,6 @@ function loadCnt() {
     }
   }
   function rubyParse(data) {
-                   /* | ------------ルビとは無関係------------| */
     let word = data.replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
     return word
   }
@@ -206,10 +205,7 @@ function loadCnt() {
       ["\{resolution\}", "{解決}"],
       ["\{ending\}", "{エンディング}"],
       ["\{", '<span class="bracket">{</span><span class="bracket-contents">'],
-      ["\}", '</span><span class="bracket">}</span>'],
-      ["(?<=\{)g(?=\})", '<span style="font-size: 50%; color: #00d;">いいところ</span>'],
-      ["(?<=\{)b(?=\})", '<span style="font-size: 50%; color: #d00;">わるいところ</span>'],
-      ["ｘ", '<span style="font-weight: bold; color: #cc0;">やめ</span>']
+      ["\}", '</span><span class="bracket">}</span>']
     ]
     let wrdLstHide = ["_summary_", "_gist_"]
     let wrk = data
