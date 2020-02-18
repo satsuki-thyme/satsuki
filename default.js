@@ -91,7 +91,6 @@ function setPrm() {
     ext = dfltDoc.replace(/.*([^\.]+)$/, '$1')
   } else {
     srchArr = srch.split('&')
-.log(srchArr)
     for (var i = 0; srchArr.length - 1 >= i; i++) {
       let workArr = srchArr[i].split('=')
       srchObj[workArr[0]] = workArr[1]
