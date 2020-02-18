@@ -1,63 +1,68 @@
-let srch= location.search.slice(1)
-let host = location.hostname
-let stgObj ={
+var srch = location.search.slice(1)
+var host = location.hostname
+var stngObj = {
   "loadCnt": {
     "yayoi-thyme.com": {
       "backHost": "raw.githubusercontent.com",
-      "usrName": "yayoi-thyme",
-      "siteRepo": "yayoi-thyme.github.io",
+      "userName": "yayoi-thyme",
+      "repoSite": "yayoi-thyme.github.io",
       "brch": "master",
-      "defDoc": "novel.md",
+      "dfltDoc": "README.md",
       "urlHome": "/novel.html",
       "urlBase": "/view-opus.html"
     },
     "yayoi-thyme.c": {
       "backHost": "novel.c",
-      "usrName": "",
-      "siteRepo": "",
+      "userName": "",
+      "repoSite": "",
       "brch": "",
-      "defDoc": "novel.md",
+      "dfltDoc": "README.md",
       "urlHome": "/novel.html",
       "urlBase": "/view-opus.html"
     },
     "novel.c": {
       "backHost": "novel.c",
-      "usrName": "",
-      "siteRepo": "",
+      "userName": "",
+      "repoSite": "",
       "brch": "",
-      "defDoc": "novel.md",
-      "urlHome": "?index.md",
+      "dfltDoc": "README.md",
+      "urlHome": "?README.md",
       "urlBase": "/view-opus.html"
     }
   }
 }
-let backHost = stgObj['loadCnt'][host]['backHost']
-let usrName = stgObj['loadCnt'][host]['usrName']
-let siteRepo = stgObj['loadCnt'][host]['siteRepo']
-let brch = stgObj['loadCnt'][host]['brch']
-let defDoc = stgObj['loadCnt'][host]['defDoc']
-let urlHome = stgObj['loadCnt'][host]['urlHome']
-let urlBase = stgObj['loadCnt'][host]['urlBase']
+var backHost = stngObj['loadCnt'][host]['backHost']
+var userName = stngObj['loadCnt'][host]['userName']
+var repoSite = stngObj['loadCnt'][host]['repoSite']
+var brch = stngObj['loadCnt'][host]['brch']
+var dfltDoc = stngObj['loadCnt'][host]['dfltDoc']
+var urlHome = stngObj['loadCnt'][host]['urlHome']
+var urlBase = stngObj['loadCnt'][host]['urlBase']
 if (backHost != '') {
-  backHost = '//' + backHost
+  backHost = '//' + backHost.replace(/\//g, '')
 }
-if (usrName != '') {
-  usrName = '/' + usrName
+if (userName != '') {
+  userName = '/' + userName.replace(/\//g, '')
 }
-if (siteRepo != '') {
-  siteRepo = '/' + siteRepo
+if (repoSite != '') {
+  repoSite = '/' + repoSite.replace(/\//g, '')
 }
 if (brch != '') {
-  brch = '/' + brch
+  brch = '/' + brch.replace(/\//g, '')
 }
-if (defDoc != '') {
-  defDoc = '/' + defDoc
-}
-$(document).ready(function() {
+var srchArr = []
+var srchObj = {}
+var url = ''
+var q = ''
+var dir = ''
+var ext = ''
+var file = ''
+var type = ''
+$(function() {
   setUpLink()
-  if ($('html').attr('class').match(/load-contents/g)) {
-    loadCnt()
-    setReturnLink()
+  if ($('html').attr('class').indexOf('load-contents') >= 0) {
+    setPrm()
+    setRtnLink()
   }
 })
 $(window).scroll(function() {
@@ -76,164 +81,208 @@ $(function() {
     $('html, body').animate({scrollTop: 0}, 'fast')
   })
 })
-function loadCnt() {
-  let dfr = $.Deferred()
-  let lastProd = 0
-  let fistSlsh = 0
-  let lastSlsh = 0
-  let ops = ''
-  let url = ''
-  let extn = ''
-  let fileName = ''
-  let now = $.now()
-  setUrl(srch)
-  .then(
-    $.ajax({
-      url: url + '?' + now,
-      cache: false,
-    })
-    .done(function(data) {
-      writeContents(data)
-    })
-    .fail(function() {
-      
-    })
-  )
-  function setUrl() {
-    let dfr = $.Deferred()
-    lastProd = srch.lastIndexOf('.')
-    fistSlsh = srch.indexOf('/')
-    lastSlsh = srch.lastIndexOf('/')
-    ops = '/' + srch.slice(fistSlsh + 1, lastSlsh - fistSlsh)
-    fileName = '/' + srch.slice(lastSlsh + 1)
-    if (srch.length === 0) {
-      extn = 'md'
-      url = backHost + usrName + siteRepo + brch + defDoc
-      dfr.resolve(url)
+/*
+  1st run
+*/
+function setPrm() {
+  // ex. srch = ?q=http://novel.c/op.18/001.txt&type=novel
+  if (srch === '') {
+    url = backHost + userName + repoSite + brch + dfltDoc
+    ext = dfltDoc.replace(/.*([^\.]+)$/, '$1')
+  } else {
+    srchArr = srch.split('&')
+.log(srchArr)
+    for (var i = 0; srchArr.length - 1 >= i; i++) {
+      let workArr = srchArr[i].split('=')
+      srchObj[workArr[0]] = workArr[1]
+    }
+    q = srchObj['q']
+    type = srchObj['type']
+    if (!q.match(/^.*?[^\/]+$/)) {
+      dir = '/' + q.replace(/^\/?([^\/].*)\/$/, '$1')
+      file = '/' + dfltDoc
     } else {
-      extn = srch.slice(lastProd + 1)
-      url = backHost + usrName + ops + brch + fileName
-      dfr.resolve(url)
+      dir  = '/' + q.replace(/^\/?([^\/].*)\/([^\/]+)$/, '$1')
+      file = '/' + q.replace(/^\/?([^\/].*)\/([^\/]+)$/, '$2')
     }
-    return dfr.promise()
+    ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
+    url = backHost + userName + dir + brch + file
   }
-  function writeContents(data) {
-    if (extn === 'txt') {
-    // Text
-      let word = mdParse(rubyParse(keyWrdRpl(data.replace(/^# .*?$/m, '').replace(/\/\*[\s\S]*?(\*\/|$)/g, ''))))
-      let wrdLen = data.replace(/([\s\t]*#.*?\r?\n|[\s\t]*\*.*|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
-      let insTxt = ''
-      let elmArr = []
-      let stoNmb = Number(srch.slice(lastSlsh + 1, lastProd))
-      $('html').addClass('narou')
-      $('div#novel_no').append(stoNmb + '/???')
-      $('div#novel_honbun').append(word)
-      if (data.indexOf('# ') > -1) {
-        let subtitle = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
-        $('p.novel_subtitle').append(subtitle)
-      }
-      $('#info').append('<p class="number">文字数：' + wrdLen + '文字</p>')
-      prvNextLink(stoNmb)
-    } else if (extn === 'html') {
-    // HTML
-      let word = keyWrdRpl(data)
-      $('html').addClass('html')
-      $('.html.contents-container').append(word)
-      $('title').empty().append(decodeURI(text))
-      $('.title').append(decodeURI(text))
-    } else if (fileName === '/README.md') {
-    // README.md
-      let word = keyWrdRpl(rubyParse(marked(data).replace(/href="(.*?)"/g, 'href="?' + ops + '/$1"')))
-      $('html').addClass('markdown')
-      $('.markdown.contents-container').append(word)
-    } else if (extn === 'md') {
-    // Markdown
-      let word = keyWrdRpl(rubyParse(mdParse(data)))
-      $('html').addClass('markdown')
-      $('.markdown.contents-container').append(word)
+  loadCnt(url)
+}
+/*
+  2nd run
+*/
+function loadCnt(url) {
+  let now = new Date()
+  $.ajax({
+    url: url + '?' + now,
+    cache: false,
+  })
+  .done(function(data) {
+    wrtCnt(data)
+  })
+  .fail(function() {
+  })
+}
+/*
+  3rd run
+*/
+function wrtCnt(data) {
+  if (type === 'novel' || type === 'nvl') {
+    wrtCnt_nvl(data, 'novel')
+  } else if (type === 'plot' || type === 'plt') {
+    wrtCnt_nvl(data, 'plot')
+  } else if (type === 'both') {
+    wrtCnt_nvl(data, 'both')
+  } else if (file === '/README.md') {
+    wrtCnt_indx(data)
+  } else {
+    if (ext === 'txt') {
+      wrtCnt_txt(data)
+    } else if (ext === 'html') {
+      wrtCnt_html(data)
+    } else if (ext === 'md') {
+      wrtCnt_md(data)
     } else {
-    // Another
-      let word = data
-      $('.another.contents-container').append(word)
-    }
-    dfr.resolve()
-    function prvNextLink(stoNmb) {
-      $.ajax({
-        url: backHost + usrName + ops + brch + '/README.md',
-        dataType: 'text',
-      })
-      .done(function(data) {
-        let epsArr = data.replace(/#{1,6}[\s\S]*?#{1,6} 本文\n([\s\S]*?)(\n\n|#|$)/g, '$1')
-                          .replace(/^[\s]*[*+-] .*?\(\s*?([^\s].*?)\)$/gm, '$1')
-                          .replace(/\n$/g, '')
-                          .split('\n')
-        let epsObj = {}
-        for (var i = epsArr.length - 1; i >= 0; i--) {
-          epsObj[Number(epsArr[i].match(/\d+/)[0])] = [ epsArr[i].match(/^[^\d]*/)[0], epsArr[i].match(/[^\d]*$/)[0]]
-        }
-        let crrEps = Number(fileName.match(/\d+/)[0])
-        let prvLnk = ''
-        let nxtLnk = ''
-        if (epsObj[crrEps - 1]) {
-          $('a.prev').attr('href', '?' + ops + '/' + epsObj[crrEps - 1][0] + ('000' + (crrEps - 1)).slice(-3) + epsObj[crrEps - 1][1])
-          $('a.prev').css('display', 'initial')
-        }
-        if (epsObj[crrEps + 1]) {
-          $('a.next').attr('href', '?' + ops + '/' + epsObj[crrEps + 1][0] + ('000' + (crrEps + 1)).slice(-3) + epsObj[crrEps + 1][1])
-          $('a.next').css('display', 'initial')
-        }
-      })
-      .fail(function() {
-        console.log("error")
-      })
-      .always(function() {
-      })
+      wrtCnt_indx(data)
     }
   }
-  function rubyParse(data) {
-    let word = data.replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1')
-    return word
+}
+function wrtCnt_nvl(data, type) {
+  let word = ''
+  if (type === 'novel') {
+    word = mdParse(rubyParse(keywdRpl(procNvl(data))))
+  } else if (type === 'plot') {
+    word = mdParse(rubyParse(keywdRpl(procPlot(data))))
+  } else if (type === 'both') {
+    word = mdParse(rubyParse(keywdRpl(procBoth(data))))
   }
-  function keyWrdRpl(data) {
-    let wrdLstRpl = [
-      ["\{setup\}", "{セットアップ}"],
-      ["\{inciting incident\}", "{インサイティング・インシデント}"],
-      ["\{central question\}", "{セントラル・クエスチョン}"],
-      ["\{plot point 1\}", "{プロット・ポイント 1}"],
-      ["\{conflict\}", "{葛藤・対立}"],
-      ["\{plot point 2\}", "{プロット・ポイント 2}"],
-      ["\{resolution\}", "{解決}"],
-      ["\{ending\}", "{エンディング}"],
-      ["\{", '<span class="bracket">{</span><span class="bracket-contents">'],
-      ["\}", '</span><span class="bracket">}</span>']
-    ]
-    let wrdLstHide = ["_summary_", "_gist_"]
-    let wrk = data
-    for (let i = 0; wrdLstRpl.length - 1 >= i; i++) {
-      wrk = wrk.replace(new RegExp(wrdLstRpl[i][0], 'g'), wrdLstRpl[i][1])
-    }
-    for (let i = 0; wrdLstHide.length - 1 >= i; i++) {
-      wrk = wrk.replace(new RegExp(wrdLstHide[i], 'g'), '<span class="hide">' + wrdLstHide[i] + '</span>')
-    }
-    return wrk
+  let wordLen = data.replace(/\/\*[\s\S]*?(\*\/|$)/g, '')
+                    .replace(/^# .*?\n/m, '')
+                    .replace(/｜(.*?)《.*?》/g, '$1')
+                    .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
+                    .replace(/｜(（.*?）)/g, '$1')
+                    .replace(/( |　|\n)/g, '')
+                    .length
+  $('html').addClass('novel')
+  $('div#novel_honbun').append(word)
+  if (!data.match(/^# /) === false) {
+    let subtitle = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
+    $('p.novel_subtitle').append(subtitle)
   }
+  $('#info').append('<p class="number">文字数：' + wordLen + '文字</p>')
+  function procNvl(data) {
+    return data.replace(/\/\*[\s\S]*?(\*\/|$)/g, '')
+               .replace(/^# .*?$/m, '')
+               .replace(/\n/gm, '  \n')
+  }
+  function procPlot(data) {
+    return data.replace(/\/\*.*$([\s\S]*?)(\*\/|$)/gm, '$2')
+               .replace(/^# .*?$/m, '')
+  }
+  function procBoth(data) {
+    return data.replace(/(^\/\*.*$|^.*\*\/$)/gm, '')
+               .replace(/^# .*?$/m, '')
+  }
+  epsNmb()
+}
+function wrtCnt_indx(data) {
+  let word = keywdRpl(rubyParse(mdParse(data).replace(/href="(.*?)"/g, 'href="?q=' + dir + '/$1&type=novel"')))
+  $('html').addClass('markdown')
+  $('.markdown.contents-container').append(word)
+}
+function wrtCnt_txt(data) {
+  let word = data
+  $('body').append(word)
+}
+function wrtCnt_html(data) {
+  let word = keywdRpl(data)
+  let title = file.slice(1)
+  $('html').addClass('html')
+  $('.html.contents-container').append(word)
+  $('title').empty().append(decodeURI(title))
+  $('.title').append(decodeURI(title))
+}
+function wrtCnt_md(data) {
+  let word = keywdRpl(rubyParse(mdParse(data)))
+  $('html').addClass('markdown')
+  $('.markdown.contents-container').append(word)
+}
+function wrtCnt_another(data) {
+  $('.another.contents-container').append(data)
+}
+function rubyParse(data) {
+  let word = data.replace(/｜(.*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
+                 .replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>')
+                 .replace(/｜(（.*?）)/g, '$1')
+  return word
+}
+function keywdRpl(data) {
+  let wordListRpl = [
+    ["\{setup\}", "{セットアップ}"],
+    ["\{inciting incident\}", "{インサイティング・インシデント}"],
+    ["\{central question\}", "{セントラル・クエスチョン}"],
+    ["\{plot point 1\}", "{プロット・ポイント 1}"],
+    ["\{conflict\}", "{葛藤・対立}"],
+    ["\{plot point 2\}", "{プロット・ポイント 2}"],
+    ["\{resolution\}", "{解決}"],
+    ["\{ending\}", "{エンディング}"],
+    ["\{", '<span class="bracket">{</span><span class="bracket-contents">'],
+    ["\}", '</span><span class="bracket">}</span>']
+  ]
+  let wordListHide = ["_summary_", "_gist_"]
+  let work = data
+  for (var i = 0; wordListRpl.length - 1 >= i; i++) {
+    work = work.replace(new RegExp(wordListRpl[i][0], 'g'), wordListRpl[i][1])
+  }
+  for (var i = 0; wordListHide.length - 1 >= i; i++) {
+    work = work.replace(new RegExp(wordListHide[i], 'g'), '<span class="hide">' + wordListHide[i] + '</span>')
+  }
+  return work
 }
 function setUpLink() {
   $('.up button').css('right', ($(window).width() - $('.up').width()) / 2 + 5)
 }
-function setReturnLink() {
-  let lastProd_srch= srch.lastIndexOf('.')
-  let fistSlsh_srch= srch.indexOf('/')
-  let lastSlsh_srch= srch.lastIndexOf('/')
-  let srch_path_filenameless = srch.slice(1, lastSlsh_srch)
-  let srch_path_filename_extnless = srch.slice(lastSlsh_srch+ 1, lastProd_srch)
-  let srch_path_extn = srch.slice(lastProd_srch+ 1, lastProd_srch- lastSlsh_srch)
-  if (srch_path_filename_extnless === 'README') {
-    prependAnchor(urlHome, '小説関連に戻る')
+function setRtnLink() {
+  if (file === '/README.md') {
+    ppndAnch(urlHome, '小説関連に戻る')
   } else {
-    prependAnchor('?/' + srch_path_filenameless + '/README.md', srch_path_filenameless + 'に戻る')
+    ppndAnch('?q=' + dir + '/README.md&type=index', '目次ページに戻る')
   }
 }
-function prependAnchor(target, label) {
+function ppndAnch(target, label) {
   $('.page-footer').prepend('<a class="return-link" href="' + target + '">' + label + '</a>')
+}
+function epsNmb(epsNmb) {
+  let epsArrLen = 0
+  $.ajax({
+    url: backHost + userName + dir + brch + '/README.md',
+    dataType: 'text',
+  })
+  .done(function(data) {
+    let epsArr = data.replace(/^[\s\S]*?# 本文[\s\S]*?((\*|\+|-|\d+\.) [\s\S]*?)(\n\n|\n$|$)/g, '$1')
+                     .replace(/^[ \t]*(\*|\+|-|\d+\.) .*?\[.*?\]\([ \t]*?(.*?)[ \t]*\).*$/gm, '$2')
+                     .split('\n')
+    let epsObj = {}
+    epsArrLen = epsArr.length 
+    for (var i = epsArrLen - 1; i >= 0; i--) {
+      epsObj[Number(epsArr[i].replace(/^.*?(\d{3}).*?$/m, '$1'))] = [epsArr[i].replace(/^(.*?)\d{3}.*?$/m, '$1'), epsArr[i].replace(/^.*?\d{3}(.*?)$/m, '$1')]
+    }
+    let epsCrr = Number(file.replace(/^.*?(\d{3}).*?$/m, '$1'))
+    if (epsObj[epsCrr - 1]) {
+      $('a.prev').attr('href', '?q=' + dir + '/' + epsObj[epsCrr - 1][0] + ('000' + (epsCrr - 1)).slice(-3) + epsObj[epsCrr - 1][1] + '&type=' + type)
+      $('a.prev').css('display', 'initial')
+    }
+    if (epsObj[epsCrr + 1]) {
+      $('a.next').attr('href', '?q=' + dir + '/' + epsObj[epsCrr + 1][0] + ('000' + (epsCrr + 1)).slice(-3) + epsObj[epsCrr + 1][1] + '&type=' + type)
+      $('a.next').css('display', 'initial')
+    }
+    $('div#novel_no').append(epsCrr + '/' + epsArrLen)
+  })
+  .fail(function() {
+    console.log("error")
+  })
+  .always(function() {
+  })
 }

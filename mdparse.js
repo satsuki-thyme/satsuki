@@ -23,81 +23,93 @@ function mdParse(src, opt) {
                    //.replace(//gm, '')
                    //.replace(//gm, '')
                    //.replace(//gm, '')
-  let linArr = intmedi.split('\n')
-  let linObj = {}
-  let linLen = linArr.length
+  let lineArr = intmedi.split('\n')
+  let lineObj = {}
+  let lineLen = lineArr.length
   let txtMss = ''
-  let lstTypeArr = []
+  let listTypeArr = []
   /*
     各行を連想配列に入れ、タグ名ごとに必要な情報を追加する
   */
-  for (let i = 0; linLen - 1 >= i; i++) {
-    linWrk0 = linArr[i]
-    linObj[i] = {}
-    linObj[i]['txt'] = linWrk0
-    if (!linWrk0.match(/^[ \t]*(\*|\+|-|\d+\.) /)) {
-      linObj[i]['lst'] = 0
+  for (let i = 0; lineLen - 1 >= i; i++) {
+    lineWork0 = lineArr[i]
+    lineObj[i] = {}
+    lineObj[i]['txt'] = lineWork0
+    if (!lineWork0.match(/^[ \t]*(\*|\+|-|\d+\.) /)) {
+      lineObj[i]['list'] = 0
     } else {
-      linObj[i]['lst'] = 1
-      linObj[i]['lstLv'] = linWrk0.replace(/^([ \t]*).*/, '$1').length
-      if (!linWrk0.match(/^[ \t]*(\*|\+|-) /) === false) {
-        linObj[i]['lstType'] = 'm'
-      } else if (!linWrk0.match(/^[ \t]*\d+\. /) === false) {
-        linObj[i]['lstType'] = 'd'
+      lineObj[i]['list'] = 1
+      lineObj[i]['listLv'] = lineWork0.replace(/^([ \t]*).*/, '$1').length
+      if (!lineWork0.match(/^[ \t]*(\*|\+|-) /) === false) {
+        lineObj[i]['listType'] = 'm'
+      } else if (!lineWork0.match(/^[ \t]*\d+\. /) === false) {
+        lineObj[i]['listType'] = 'd'
       }
     }
   }
   /*
     連想配列の各行について処理をする
   */
-  for (let i = 0; linLen - 1 >= i; i++) {
+  for (let i = 0; lineLen - 1 >= i; i++) {
     /*
       ul, ol, li
     */
-    if (linObj[i]['lst'] === 1) {
-      linWrk1 = linObj[i]['txt']
-      if ((i === 0 || linObj[i - 1]['lst'] === 0 || (linObj[i]['lstLv'] > linObj[i - 1]['lstLv'] && linObj[i]['lstLv'] <= linObj[i + 1]['lstLv'])) && i != linLen - 1) {
+    if (lineObj[i]['list'] === 1) {
+      lineWork1 = lineObj[i]['txt']
+      if (i === 0 || lineObj[i - 1]['list'] === 0 || (lineObj[i]['listLv'] > lineObj[i - 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i + 1]['listLv'] && i != lineLen - 1)) {
       // リストが始まる
-        if (linObj[i]['lstType'] === 'm') {
-          lstTypeArr.push('m')
-          linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<ul><li>$2')
-        } else if (linObj[i]['lstType'] === 'd') {
-          lstTypeArr.push('d')
-          linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\d+\.) (.*)$/, '<ol><li>$2')
+        if (lineObj[i]['listType'] === 'm') {
+          listTypeArr.push('m')
+          lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<ul><li>$2')
+        } else if (lineObj[i]['listType'] === 'd') {
+          listTypeArr.push('d')
+          lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\d+\.) (.*)$/, '<ol><li>$2')
         }
-      } else if (linObj[i]['lstLv'] <= linObj[i - 1]['lstLv'] && linObj[i]['lstLv'] <= linObj[i + 1]['lstLv'] && i != linLen - 1 && i != 0) {
+      } else if (lineObj[i]['listLv'] <= lineObj[i - 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i + 1]['listLv'] && i != lineLen - 1 && i != 0) {
       // リストが続く
-        linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
-      } else if (i != 0 && (i === linLen - 1 || linObj[i]['lstLv'] > linObj[i + 1]['lstLv'])) {
-      // 入れ子になったリストが終わる
-        lstTypeArr.pop()
-        if (linObj[i]['lstType'] === 'm') {
-          linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<li>$2</ul>')
-        } else if (linObj[i]['lstType'] === 'd') {
-          linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\d+\.) (.*)$/, '<li>$2</ol>')
+        lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
+      } else if ((i != 0 && lineObj[i]['listLv'] > lineObj[i + 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i - 1]['listLv']) || lineObj[i + 1]['list'] === 0) {
+      // 一つ～複数のリストが終わる
+        let lineWork2 = lineWork1.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
+        let listLvDiff = 0
+        if (!lineObj[i + 1]['list'] === false && lineObj[i + 1]['list'] != 0) {
+          listLvDiff = lineObj[i]['listLv'] - lineObj[i + 1]['listLv']
+        } else {
+          listLvDiff = lineObj[i]['listLv'] + 1
         }
-      } else if (linObj[i + 1]['lst'] === 0) {
-      // 入れ子も含めてリストが終わる（途切れる）
-        let liNWrk2 = linWrk1.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
-        let lstTypeArrLen = 0
-        for (let j in lstTypeArr) {
-          lstTypeArrLen++
-        }
-        for (let k = 0; lstTypeArrLen - 1 >= k; k++) {
-          lstTypeArrWrk = lstTypeArr.pop()
-          if (lstTypeArrWrk === 'm') {
-            liNWrk2 = liNWrk2.replace(/^(.*)$/, '$1</ul>')
-          } else if (lstTypeArrWrk === 'd') {
-            liNWrk2 = liNWrk2.replace(/^(.*)$/, '$1</ol>')
+        for (let j = 0; listLvDiff - 1 >= j; j++) {
+          listTypeArrWork = listTypeArr.pop()
+          if (listTypeArrWork === 'm') {
+            lineWork2 = lineWork2.replace(/^(.*)$/, '$1</ul>')
+          } else if (listTypeArrWork === 'd') {
+            lineWork2 = lineWork2.replace(/^(.*)$/, '$1</ol>')
           }
         }
-        linObj[i]['txt'] = liNWrk2
-      } else if ((linObj[i - 1]['lst'] === 0 && linObj[i + 1]['lst'] === 0) || (linObj[i]['lstLv'] > linObj[i - 1]['lstLv'] && linObj[i]['lstLv'] > linObj[i + 1]['lstLv']) || linLen - 1 === 0) {
+        lineObj[i]['txt'] = lineWork2
+      } else if (
+        (
+          lineObj[i - 1]['list'] === 0
+          &&
+          lineObj[i + 1]['list'] === 0
+        )
+        ||
+        (
+          lineObj[i]['listLv'] > lineObj[i - 1]['listLv']
+          &&
+          (
+            lineObj[i]['listLv'] > lineObj[i + 1]['listLv']
+            ||
+            lineObj[i + 1]['list'] === '0'
+          )
+        )
+        ||
+        lineLen === 1
+      ) {
       // リストの始まりであり終わりである、1行だけのリスト
-        if (linObj[i]['lstType'] === 'm') {
-          linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<ul><li>$2</ul>')
-        } else if (linObj[i]['lstType'] === 'd') {
-          linObj[i]['txt'] = linWrk1.replace(/^[ \t]*(\d+\.) (.*)$/, '<ol><li>$2</ol>')
+        if (lineObj[i]['listType'] === 'm') {
+          lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<ul><li>$2</ul>===============')
+        } else if (lineObj[i]['listType'] === 'd') {
+          lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\d+\.) (.*)$/, '<ol><li>$2</ol>')
         }
       }
     }
@@ -107,7 +119,7 @@ function mdParse(src, opt) {
     /*
       連想配列に入っている各行をつなげる
     */
-    txtMss = txtMss + linObj[i]['txt']
+    txtMss = txtMss + lineObj[i]['txt']
   }
   return txtMss
 }

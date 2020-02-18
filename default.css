@@ -871,7 +871,7 @@ nav ul {
 .contents-container {
   display: none;
 }
-.narou .narou.contents-container {
+.novel .novel.contents-container {
   display: block;
 }
 .markdown .markdown.contents-container {
@@ -888,7 +888,7 @@ nav ul {
   Narou
 
 */
-.narou main {
+.novel main {
   font-family: 'Lucida Grande', sans-serif;
   font-size: 14px;
   background: #ffffff;
@@ -898,24 +898,24 @@ nav ul {
   direction: ltr;
   unicode-bidi: bidi-override;
 }
-.narou main a {
+.novel main a {
   text-decoration: none;
   color: #0033cc;
   outline: none;
 }
-.narou main a:visited {
+.novel main a:visited {
   color: #885577;
 }
-.narou main ruby {
+.novel main ruby {
   line-height: 39px;
 }
-.narou main .rt-none {
+.novel main .rt-none {
   display: none;
 }
-.narou .selected-len {
+.novel .selected-len {
   display: none;
 }
-.narou .selected-len.appear {
+.novel .selected-len.appear {
   display: initial;
   position: fixed;
   top: 0;
@@ -923,13 +923,13 @@ nav ul {
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.05)
 }
-.narou #info {
+.novel #info {
   position: relative;
   height: 48px;
   text-align: center;
   border-bottom: 1px solid #aaaaaa;
 }
-.narou #info::after {
+.novel #info::after {
   content: "";
   display: block;
   position: absolute;
@@ -938,18 +938,18 @@ nav ul {
   height: 1px;
   background-color: #ececec;
 }
-.narou #info .number {
+.novel #info .number {
   height: 48px;
   line-height: 48px;
 }
-.narou #info .name {
+.novel #info .name {
   margin-right: 20px;
 }
-.narou #info .phrase {
+.novel #info .phrase {
   margin-right: 10px;
   margin-left:  10px;
 }
-.narou main #novel_contents {
+.novel main #novel_contents {
   margin: 0;
   width: 100%;
   padding: 0 0 50px 0;
@@ -960,7 +960,7 @@ nav ul {
   top: 10px;
   left: 0;
 }
-.narou main #novel_color {
+.novel main #novel_color {
   color: #444444;
   font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
   font-size: 16px;
@@ -968,34 +968,34 @@ nav ul {
   width: 730px;
   max-width: 100%;
 }
-.narou main .novel_bn {
+.novel main .novel_bn {
   text-align: center;
 }
-.narou main .novel_bn a {
+.novel main .novel_bn a {
   font-size: 90%;
   margin: 0 10px;
 }
-.narou main #novel_no {
+.novel main #novel_no {
   margin: 0 10px 10px 0;
   text-align: right;
   color: #999999;
   font-size: 90%;
 }
-.narou main .novel_title,
-.narou main .novel_subtitle {
+.novel main .novel_title,
+.novel main .novel_subtitle {
   font-size: 170%;
   line-height: 150%;
 }
 
-.narou main .novel_title,
-.narou main .novel_subtitle {
+.novel main .novel_title,
+.novel main .novel_subtitle {
   margin: 0 auto 10px;
   text-align: center;
   font-size: 170%;
   font-weight: bold;
   line-height: 150%;
 }
-.narou main #novel_honbun {
+.novel main #novel_honbun {
   margin: 30px auto 50px;
   padding: 0 20px 0 20px;
   width: 600px;
@@ -1004,17 +1004,17 @@ nav ul {
   line-height: 28.8px;
   font-size: 16px;
 }
-.narou main #novel_honbun p {
+.novel main #novel_honbun p {
   line-height: 2.4;
 }
-.narou ruby {
+.novel ruby {
   line-height: 1;
 }
-.narou tr {
+.novel tr {
   line-height: 1;
 }
-.narou a.prev,
-.narou a.next {
+.novel a.prev,
+.novel a.next {
   display: none;
 }
 /*
