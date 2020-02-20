@@ -923,13 +923,13 @@ nav ul {
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.05)
 }
-.novel #info {
+.novel .info {
   position: relative;
   height: 48px;
   text-align: center;
   border-bottom: 1px solid #aaaaaa;
 }
-.novel #info::after {
+.novel .info::after {
   content: "";
   display: block;
   position: absolute;
@@ -938,14 +938,14 @@ nav ul {
   height: 1px;
   background-color: #ececec;
 }
-.novel #info .number {
-  height: 48px;
-  line-height: 48px;
+.novel .info .title,
+.novel .info .number {
+  line-height: 1.15;
 }
-.novel #info .name {
+.novel .info .name {
   margin-right: 20px;
 }
-.novel #info .phrase {
+.novel .info .phrase {
   margin-right: 10px;
   margin-left:  10px;
 }

@@ -13,7 +13,7 @@ function mdParse(src, opt) {
                    .replace(/[~]{2}([\s\S]*?)[~]{2}/gm, '<s>$1</s>')
                    .replace(/[']{1}([\s\S]*?)[']{1}/gm, '<code>$1</code>')
                    .replace(/\[(.*?)\]\((.*?)\)/gm, '<a href="$2">$1</a>')
-                   .replace(/!\[(.*?)\]\((.*?) ?"(.*?)"\)/gm, '<img src="$2" alt="$1" name="$3">')
+                   .replace(/!\[(.*?)\]\((.*?)( "(.*?)")?\)/gm, '<img src="$2" alt="$1" name="$4">')
                    //.replace(//gm, '')
                    //.replace(//gm, '')
                    //.replace(//gm, '')
@@ -107,7 +107,7 @@ function mdParse(src, opt) {
       ) {
       // リストの始まりであり終わりである、1行だけのリスト
         if (lineObj[i]['listType'] === 'm') {
-          lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<ul><li>$2</ul>===============')
+          lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\*|\+|-) (.*)$/, '<ul><li>$2</ul>')
         } else if (lineObj[i]['listType'] === 'd') {
           lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\d+\.) (.*)$/, '<ol><li>$2</ol>')
         }
