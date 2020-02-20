@@ -205,7 +205,7 @@ function wrtCnt_nvl(data, type) {
   } else if (type === 'both') {
     word = mdParse(rubyParse(keywdRpl(procBoth(data))))
   }
-  let wordLen = data.replace(/\/\*[\s\S]*?(\*\/|$)/g, '')
+  let wordLen = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
                     .replace(/｜(.*?)《.*?》/g, '$1')
                     .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
