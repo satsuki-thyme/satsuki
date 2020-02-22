@@ -731,6 +731,7 @@ main h6 ~ hr {
 .page-header,
 main,
 .page-footer,
+.down,
 .up {
   width: 95%;
   max-width: 600px;
@@ -824,17 +825,23 @@ nav ul {
 .up {
   display: none;
 }
+.down button,
 .up button {
   display: inline-block;
   position: fixed;
   right: 0;
-  bottom: 5px;
   padding: 2px;
   font-size: 20px;
   color: #62a433;
   background-color: #fff;
   border: 1px solid #62a433;
   outline: none;
+}
+.down button {
+  top: 5px;
+}
+.up button {
+  bottom: 5px;
 }
 .deactive {
   text-decoration: none;
