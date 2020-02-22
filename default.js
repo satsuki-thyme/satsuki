@@ -1,9 +1,9 @@
-let windHeit = 0
+let scrlHeit = 0
 $(document).ready(function() {
   setUpLink()
   setHeit()
   $('.down button').on('click',function (e) {
-    $('html, body').animate({scrollTop: windHeit}, 'fast')
+    $('html, body').animate({scrollTop: scrlHeit + 100}, 'fast')
   })
   $('.up button').on('click',function (e) {
     $('html, body').animate({scrollTop: 0}, 'fast')
@@ -11,9 +11,9 @@ $(document).ready(function() {
 })
 $(window).scroll(function() {
   let scrlAmnt = $(window).scrollTop()
-  if (scrlAmnt < windHeit) {
+  if (scrlAmnt < scrlHeit) {
     $('.down').fadeIn()
-  } else if (scrlAmnt <= windHeit) {
+  } else if (scrlAmnt >= scrlHeit) {
     $('.down').fadeOut()
   }
 })
@@ -33,5 +33,5 @@ function setUpLink() {
   $('.down button, .up button').css('right', ($(window).width() - $('.up').width()) / 2 + 5)
 }
 function setHeit() {
-  windHeit = $('body').outerHeight()
+  scrlHeit = $('header').outerHeight(true) + $('main').outerHeight(true) + $('footer').outerHeight(true) - window.outerHeight - 2
 }
