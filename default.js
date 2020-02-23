@@ -1,4 +1,5 @@
-let scrlHeit = 0
+scrlHeit = 0
+scrlAmnt = 0
 $(document).ready(function() {
   setUpLink()
   setHeit()
@@ -10,7 +11,7 @@ $(document).ready(function() {
   })
 })
 $(window).scroll(function() {
-  let scrlAmnt = $(window).scrollTop()
+  scrlAmnt = $(window).scrollTop()
   if (scrlAmnt < scrlHeit) {
     $('.down').fadeIn()
   } else if (scrlAmnt >= scrlHeit) {
@@ -18,7 +19,7 @@ $(window).scroll(function() {
   }
 })
 $(window).scroll(function() {
-  let scrlAmnt = $(window).scrollTop()
+  scrlAmnt = $(window).scrollTop()
   if (scrlAmnt > 0) {
     $('.up').fadeIn()
   } else if (scrlAmnt <= 0) {

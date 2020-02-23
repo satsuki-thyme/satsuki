@@ -29,7 +29,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://yayoi-thyme.com/thyme-fg-white-bg-green-180s.png">
 <link href="/default.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.8.0/marked.min.js"></script>
 <script src="/mdparse.js"></script>
 <script src="/default.js"></script>
 <script>
@@ -137,12 +136,22 @@ function setPrm() {
     }
     q = srchObj['q']
     type = srchObj['type']
-    if (!q.match(/^.*?[^\/]+$/)) {
-      dir = '/' + q.replace(/^\/?([^\/].*)\/$/, '$1')
+    if (q === undefined || q === '' || q === '/') {
+    // ルートディレクトリ
+      dir = '/'
+      file = dfltDoc
+    } else if (!q.match(/^.+\/$/) === false) {
+    // ディレクトリ終わり
+      dir  = '/' + q.replace(/^\/?([^\/].*)\/$/, '$1')
       file = '/' + dfltDoc
-    } else {
-      dir  = '/' + q.replace(/^\/?([^\/].*)\/([^\/]+)$/, '$1')
-      file = '/' + q.replace(/^\/?([^\/].*)\/([^\/]+)$/, '$2')
+    } else if (!q.match(/^\/?[^\/]+$/) === false) {
+    // ルートディレクトリのファイル終わり
+      dir = ''
+      file = '/' + q.replace(/^\/?([^\/]+)$/, '$1')
+    } else if (!q.match(/^.+?\/[^\/]+$/) === false) {
+    // ディレクトリとファイル終わり
+      dir = '/' + q.replace(/^\/?([^\/].*?)\/[^\/]+$/, '$1')
+      file = '/' + q.replace(/^.*?\/([^\/]+)$/, '$1')
     }
     ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
     url = backHost + userName + dir + brch + file
