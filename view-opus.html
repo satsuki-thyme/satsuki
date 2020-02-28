@@ -92,7 +92,8 @@ let dir = ''
 let ext = ''
 let file = ''
 let type = ''
-let preView = ''
+let preview = ''
+let endSwch = 0
 let mainCnt_nvl = `
 <main class="novel contents-container">
   <div class="info"></div>
@@ -137,7 +138,7 @@ function setPrm() {
     }
     q = srchObj['q']
     type = srchObj['type']
-    preView = srchObj['preview']
+    preview = srchObj['preview']
     if (q === undefined || q === '' || q === '/') {
     // ルートディレクトリ
       dir = '/'
@@ -182,49 +183,40 @@ function wrtCnt(data) {
   if (type === 'novel' || type === 'nvl') {
     $('header').after(mainCnt_nvl)
     wrtCnt_nvl(data, 'novel')
-    .done(scrlDown())
   } else if (type === 'plot' || type === 'plt') {
     $('header').after(mainCnt_nvl)
     wrtCnt_nvl(data, 'plot')
-    .done(scrlDown())
   } else if (type === 'both') {
     $('header').after(mainCnt_nvl)
     wrtCnt_nvl(data, 'both')
-    .done(scrlDown())
   } else if (file === '/README.md') {
     $('header').after(mainCnt_etc)
     wrtCnt_indx(data)
-    .done(scrlDown())
   } else {
     if (ext === 'txt') {
       $('header').after(mainCnt_etc)
       wrtCnt_txt(data)
-      .done(scrlDown())
     } else if (ext === 'html') {
       $('header').after(mainCnt_etc)
       wrtCnt_html(data)
-      .done(scrlDown())
     } else if (ext === 'md') {
       $('header').after(mainCnt_etc)
       wrtCnt_md(data)
-      .done(scrlDown())
     } else {
       $('header').after(mainCnt_etc)
       wrtCnt_indx(data)
-      .done(scrlDown())
     }
   }
   $('html, body').animate({scrollTop: scrlHeit + 100}, 'fast')
 }
 function wrtCnt_nvl(data, type) {
-  let dfr = $.Deferred()
   let word = ''
   if (type === 'novel') {
-    word = mdParse(rubyParse(keywdRpl(procNvl(data))))
+    word = procEnd(1, mdParse(rubyParse(keywdRpl(procNvl(data)))))
   } else if (type === 'plot') {
-    word = mdParse(rubyParse(keywdRpl(procPlot(data))))
+    word = procEnd(1, mdParse(rubyParse(keywdRpl(procPlot(data)))))
   } else if (type === 'both') {
-    word = mdParse(rubyParse(keywdRpl(procBoth(data))))
+    word = procEnd(1, mdParse(rubyParse(keywdRpl(procBoth(data)))))
   }
   let wordLen = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
@@ -254,48 +246,36 @@ function wrtCnt_nvl(data, type) {
                .replace(/# .*/, '')
   }
   epsNmb()
-  dfr.resolve()
-  return dfr.promise()
 }
 function wrtCnt_indx(data) {
-  let dfr = $.Deferred()
   let word = keywdRpl(rubyParse(mdParse(data).replace(/href="(.*?)"/g, 'href="?q=' + dir + '/$1&type=novel"')))
   $('html').addClass('markdown')
   $('.markdown.contents-container').append(word)
-  dfr.resolve()
-  return dfr.promise()
+  procEnd(1, '')
 }
 function wrtCnt_txt(data) {
-  let dfr = $.Deferred()
   let word = data
   $('body').append(word)
-  dfr.resolve()
-  return dfr.promise()
+  procEnd(1, '')
 }
 function wrtCnt_html(data) {
-  let dfr = $.Deferred()
   let word = keywdRpl(data)
   let titl = file.slice(1)
   $('html').addClass('html')
   $('.html.contents-container').append(word)
   $('title').empty().append(decodeURI(titl))
   $('.title').append(decodeURI(titl))
-  dfr.resolve()
-  return dfr.promise()
+  procEnd(1, '')
 }
 function wrtCnt_md(data) {
-  let dfr = $.Deferred()
   let word = keywdRpl(rubyParse(mdParse(data)))
   $('html').addClass('markdown')
   $('.markdown.contents-container').append(word)
-  dfr.resolve()
-  return dfr.promise()
+  procEnd(1, '')
 }
 function wrtCnt_another(data) {
-  let dfr = $.Deferred()
   $('.another.contents-container').append(data)
-  dfr.resolve()
-  return dfr.promise()
+  procEnd(1, '')
 }
 function rubyParse(data) {
   let word = data.replace(/｜(.*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
@@ -373,12 +353,16 @@ function epsNmb(epsNmb) {
     setHeit()
   })
 }
-function scrlDown() {
-  setTimeout(function() {
-    if (preView === '1') {
-      $('html, body').animate({scrollTop: scrlHeit + 100}, 'fast')
-    }
-  }, 1000)
+function procEnd(incr, data) {
+  endSwch = endSwch + incr
+  if (endSwch >= 1) {
+    setTimeout(function() {
+      if (preview === '1') {
+        scrollTo(0, scrlHeit + 100)
+      }
+    }, 600)
+  }
+  return data
 }
 </script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
