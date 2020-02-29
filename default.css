@@ -732,7 +732,8 @@ main h6 ~ hr {
 main,
 .page-footer,
 .down,
-.up {
+.up,
+.reload {
   width: 95%;
   max-width: 600px;
   margin-left: auto;
@@ -826,12 +827,15 @@ nav ul {
   display: none;
 }
 .down button,
-.up button {
+.up button,
+.reload button {
   display: inline-block;
   position: fixed;
   right: 0;
   padding: 2px;
   font-size: 20px;
+  line-height: 1;
+  vertical-align: middle;
   color: #62a433;
   background-color: #fff;
   border: 1px solid #62a433;
@@ -842,6 +846,21 @@ nav ul {
 }
 .up button {
   bottom: 5px;
+}
+.reload {
+  display: none;
+}
+.reload button {
+  top: 50%;
+  margin-top: -16px;
+}
+.reload button::before {
+  content: "";
+  display: block;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background-color: #62a433
 }
 .deactive {
   text-decoration: none;

@@ -337,11 +337,11 @@ function epsNmb(epsNmb) {
     }
     let epsCrr = Number(file.replace(/^.*?(\d{3}).*?$/m, '$1'))
     if (epsObj[epsCrr - 1]) {
-      $('a.prev').attr('href', '?q=' + dir + '/' + epsObj[epsCrr - 1][0] + ('000' + (epsCrr - 1)).slice(-3) + epsObj[epsCrr - 1][1] + '&type=' + type)
+      $('a.prev').attr('href', '?q=' + dir + '/' + epsObj[epsCrr - 1][0] + ('000' + (epsCrr - 1)).slice(-3) + epsObj[epsCrr - 1][1] + '&type=' + type + '&preview=' + preview)
       $('a.prev').css('display', 'initial')
     }
     if (epsObj[epsCrr + 1]) {
-      $('a.next').attr('href', '?q=' + dir + '/' + epsObj[epsCrr + 1][0] + ('000' + (epsCrr + 1)).slice(-3) + epsObj[epsCrr + 1][1] + '&type=' + type)
+      $('a.next').attr('href', '?q=' + dir + '/' + epsObj[epsCrr + 1][0] + ('000' + (epsCrr + 1)).slice(-3) + epsObj[epsCrr + 1][1] + '&type=' + type + '&preview=' + preview)
       $('a.next').css('display', 'initial')
     }
     $('div#novel_no').append(epsCrr + '/' + epsArrLen)
@@ -360,7 +360,7 @@ function procEnd(incr, data) {
       if (preview === '1') {
         scrollTo(0, scrlHeit + 100)
       }
-    }, 600)
+    }, 800)
   }
   return data
 }
@@ -404,5 +404,8 @@ function procEnd(incr, data) {
 </div>
 <div class="up">
   <button>▲</button>
+</div>
+<div class="reload">
+  <button></button>
 </div>
 </html>
