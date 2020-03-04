@@ -951,7 +951,7 @@ nav ul {
 }
 .novel .info {
   position: relative;
-  height: 48px;
+  padding-bottom: 10px;
   text-align: center;
   border-bottom: 1px solid #aaaaaa;
 }
