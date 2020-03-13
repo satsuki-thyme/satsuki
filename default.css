@@ -70,7 +70,7 @@ main footer + aside,
 .markdown main h4,
 .markdown main h5,
 .markdown main h6 {
-  padding-top: 40px;
+  margin-top: 40px;
 }
 main footer,
 main aside {
@@ -911,7 +911,7 @@ nav ul {
 }
 /*
 
-  Narou
+  novel
 
 */
 .novel main {

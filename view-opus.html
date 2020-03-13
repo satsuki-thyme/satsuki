@@ -230,7 +230,7 @@ function wrtCnt_nvl(data, type) {
     $('title').empty().append(subTitl)
     $('p.novel_subtitle').append(subTitl)
   }
-  $('html').addClass('novel')
+  $('html').addClass('novel markdown')
   $('div#novel_honbun').append(word)
   $('.info').append('<p class="number">文字数：' + wordLen + '文字</p>')
   function procNvl(data) {
@@ -285,14 +285,17 @@ function rubyParse(data) {
 }
 function keywdRpl(data) {
   let wordListRpl = [
-    ["\{setup\}", "{セットアップ}"],
-    ["\{inciting incident\}", "{インサイティング・インシデント}"],
-    ["\{central question\}", "{セントラル・クエスチョン}"],
-    ["\{plot point 1\}", "{プロット・ポイント 1}"],
-    ["\{conflict\}", "{葛藤・対立}"],
-    ["\{plot point 2\}", "{プロット・ポイント 2}"],
+    ["\{setup\}", "{設定}"],
+    ["\{inciting incident\}", "{切掛}"],
+    ["\{central question\}", "{命題}"],
+    ["\{plot point 1\}", "{転換点 1}"],
+    ["\{plot point 2\}", "{転換点 2}"],
+    ["\{conflict\}", "{対立}"],
+    ["\{favorable\}", "{好調}"],
+    ["\{unfavorable\}", "{苦境}"],
+    ["\{midd point\}", "{中間}"],
     ["\{resolution\}", "{解決}"],
-    ["\{ending\}", "{エンディング}"],
+    ["\{ending\}", "{終演}"],
     ["\{", '<span class="bracket">{</span><span class="bracket-contents">'],
     ["\}", '</span><span class="bracket">}</span>']
   ]

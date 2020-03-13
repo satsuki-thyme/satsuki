@@ -60,7 +60,7 @@ function mdParse(src, opt) {
     */
     if (lineObj[i]['list'] === 1) {
       lineWork1 = lineObj[i]['txt']
-      if (i === 0 || lineObj[i - 1]['list'] === 0 || (lineObj[i]['listLv'] > lineObj[i - 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i + 1]['listLv'] && i != lineLen - 1)) {
+      if (i === 0 || (lineObj[i - 1]['list'] === 0 && lineObj[i + 1]['list'] != 0) || (lineObj[i]['listLv'] > lineObj[i - 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i + 1]['listLv'] && i != lineLen - 1)) {
       // リストが始まる
         if (lineObj[i]['listType'] === 'm') {
           listTypeArr.push('m')
@@ -72,7 +72,7 @@ function mdParse(src, opt) {
       } else if (lineObj[i]['listLv'] <= lineObj[i - 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i + 1]['listLv'] && i != lineLen - 1 && i != 0) {
       // リストが続く
         lineObj[i]['txt'] = lineWork1.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
-      } else if ((i != 0 && lineObj[i]['listLv'] > lineObj[i + 1]['listLv'] && lineObj[i]['listLv'] <= lineObj[i - 1]['listLv']) || lineObj[i + 1]['list'] === 0) {
+      } else if ((i != 0 && lineObj[i]['listLv'] > lineObj[i + 1]['listLv']) || lineObj[i + 1]['list'] === 0) {
       // 一つ～複数のリストが終わる
         let lineWork2 = lineWork1.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
         let listLvDiff = 0
