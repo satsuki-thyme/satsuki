@@ -212,11 +212,11 @@ function wrtCnt(data) {
 function wrtCnt_nvl(data, type) {
   let word = ''
   if (type === 'novel') {
-    word = procEnd(1, mdParse(rubyParse(keywdRpl(procNvl(data)))))
+    word = procEnd(1, procNvl(data))
   } else if (type === 'plot') {
-    word = procEnd(1, mdParse(rubyParse(keywdRpl(procPlot(data)))))
+    word = procEnd(1, procPlot(data))
   } else if (type === 'both') {
-    word = procEnd(1, mdParse(rubyParse(keywdRpl(procBoth(data)))))
+    word = procEnd(1, procBoth(data))
   }
   let wordLen = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
@@ -234,16 +234,30 @@ function wrtCnt_nvl(data, type) {
   $('div#novel_honbun').append(word)
   $('.info').append('<p class="number">文字数：' + wordLen + '文字</p>')
   function procNvl(data) {
-    return data.replace(/\{plot\}[\s\S]*/g, '')
-               .replace(/^# .*?$/m, '')
-               .replace(/\n/gm, '  \n')
+    let work = data.replace(/\{plot\}[\s\S]*/g, '')
+                   .replace(/^# .*$/m, '')
+                   .replace(/^(.*)$/gm, '<p>$1<\/p>')
+    work = rubyParse(keywdRpl(work))
+    return work
   }
   function procPlot(data) {
-    return data.replace(/[\s\S]*\{plot\}.*\n([\s\S]*)/g, '$1')
+    let work = data.replace(/[\s\S]*\{plot\}.*\n([\s\S]*)/g, '$1')
+    work = rubyParse(keywdRpl(mdParse(work)))
+    return work
   }
   function procBoth(data) {
-    return data.replace(/\{plot\}/, '<h1>プロット</h1>')
-               .replace(/# .*/, '')
+    let dataNvl = procNvl(data)
+    let dataPlot = procPlot(data)
+    let hdngNvl = ''
+    let hdngPlot = ''
+    if (dataNvl.replace(/\s|　|<p>[\s　]*(<\/p>)?/g, '').length != 0) {
+console.log(dataNvl.replace(/\s|　|<p>[\s　]*(<\/p>)?/g, ''))
+      hdngNvl = '<h1>本文<\/h1>\n'
+    }
+    if (dataPlot.replace(/[\s　]/g, '').length != 0) {
+      hdngPlot = '\n<h1>プロット<\/h1>'
+    }
+    return hdngNvl + dataNvl + hdngPlot + dataPlot
   }
   epsNmb()
 }
@@ -285,19 +299,19 @@ function rubyParse(data) {
 }
 function keywdRpl(data) {
   let wordListRpl = [
-    ["\{setup\}", "{設定}"],
-    ["\{inciting incident\}", "{切掛}"],
-    ["\{central question\}", "{命題}"],
+    ["\{setup\}", "{設定パート}"],
+    ["\{inciting incident\}", "{切っ掛け}"],
+    ["\{central question\}", "{命題提起}"],
     ["\{plot point 1\}", "{転換点 1}"],
     ["\{plot point 2\}", "{転換点 2}"],
-    ["\{conflict\}", "{対立}"],
-    ["\{favorable\}", "{好調}"],
-    ["\{unfavorable\}", "{苦境}"],
-    ["\{midd point\}", "{中間}"],
-    ["\{resolution\}", "{解決}"],
-    ["\{ending\}", "{終演}"],
-    ["\{", '<span class="bracket">{</span><span class="bracket-contents">'],
-    ["\}", '</span><span class="bracket">}</span>']
+    ["\{conflict\}", "{対立パート}"],
+    ["\{favorable\}", "{好調パート}"],
+    ["\{unfavorable\}", "{苦境パート}"],
+    ["\{midd point\}", "{中間点}"],
+    ["\{resolution\}", "{解決パート}"],
+    ["\{ending\}", "{エンディングシーン}"],
+    ["\{", '<span class="bracket">｛</span><span class="bracket-contents">'],
+    ["\}", '</span><span class="bracket">｝</span>']
   ]
   let wordListHide = ["_summary_", "_gist_"]
   let work = data

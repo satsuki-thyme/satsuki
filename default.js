@@ -11,31 +11,15 @@ $(document).ready(function() {
     $('html, body').animate({scrollTop: 0}, 'fast')
   })
   $('.reload button').on('click', function(e) {
-    location.reload()
+    window.location.reload(true)
   })
-})
-$(window).scroll(function() {
-  scrlAmnt = $(window).scrollTop()
-  if (scrlAmnt < scrlHeit) {
-    $('.down').fadeIn()
-  } else if (scrlAmnt >= scrlHeit) {
-    $('.down').fadeOut()
-  }
-})
-$(window).scroll(function() {
-  scrlAmnt = $(window).scrollTop()
-  if (scrlAmnt > 0) {
-    $('.up').fadeIn()
-  } else if (scrlAmnt <= 0) {
-    $('.up').fadeOut()
-  }
 })
 $(window).resize(function() {
   setUpLink()
   setHeit()
 })
 function setUpLink() {
-  $('.down button, .up button, .reload button').css('right', ($(window).width() - $('.up').width()) / 2 + 5)
+  $('.down button, .up button, .reload button').css('right', ($(window).width() - $('.up').width()) / 2)
 }
 function setHeit() {
   scrlHeit = $('header').outerHeight(true) + $('main').outerHeight(true) + $('footer').outerHeight(true) - window.outerHeight - 2

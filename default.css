@@ -155,6 +155,24 @@ main ol ol ol ol ol {
 main ol ol ol ol ol ol {
   list-style-type: hiragana;
 }
+main ul {
+  list-style-type: '■';
+}
+main ul ul {
+  list-style-type: '▶';
+}
+main ul ul ul {
+  list-style-type: '●';
+}
+main ul ul ul ul {
+  list-style-type: 'lower-greek';
+}
+main ul ul ul ul ul {
+  list-style-type: 'hiragana-iroha';
+}
+main ul ul ul ul ul ul {
+  list-style-type: 'hiragana';
+}
 main li + li {
   margin-top: 0.5rem;
 }
@@ -823,17 +841,15 @@ nav ul {
   margin-top: 20px;
   padding-left: 10px;
 }
-.up {
-  display: none;
-}
 .down button,
 .up button,
 .reload button {
   display: inline-block;
   position: fixed;
   right: 0;
-  padding: 2px;
-  font-size: 20px;
+  margin-left: 20px;
+  padding: 0;
+  font-size: 12px;
   line-height: 1;
   vertical-align: middle;
   color: #62a433;
@@ -841,11 +857,26 @@ nav ul {
   border: 1px solid #62a433;
   outline: none;
 }
+.down button,
+.up button {
+  height: 25%;
+  box-sizing: border-box;
+}
+.down button::before,
+.up button::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -15px;
+  width: 100px;
+  height: 100%;
+}
 .down button {
-  top: 5px;
+  bottom: 5px;
 }
 .up button {
-  bottom: 5px;
+  bottom: 25%;
 }
 .reload {
   display: none;
@@ -854,7 +885,7 @@ nav ul {
   top: 50%;
   margin-top: -16px;
 }
-.reload button::before {
+.reload button::after {
   content: "";
   display: block;
   width: 17px;
@@ -879,15 +910,14 @@ nav ul {
 }
 .bracket,
 .bracket-contents {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 .bracket {
   font-weight: bold;
-  color: #22f;
+  color: #e00;
 }
 .bracket-contents {
   font-weight: normal;
-  color: #666;
 }
 /*
 
