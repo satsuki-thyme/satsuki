@@ -156,22 +156,22 @@ main ol ol ol ol ol ol {
   list-style-type: hiragana;
 }
 main ul {
-  list-style-type: '■';
+  list-style-type: disc;
 }
 main ul ul {
-  list-style-type: '▶';
+  list-style-type: circle;
 }
 main ul ul ul {
-  list-style-type: '●';
+  list-style-type: '*';
 }
 main ul ul ul ul {
-  list-style-type: 'lower-greek';
+  list-style-type: '+';
 }
 main ul ul ul ul ul {
-  list-style-type: 'hiragana-iroha';
+  list-style-type: '-';
 }
 main ul ul ul ul ul ul {
-  list-style-type: 'hiragana';
+  list-style-type: '･';
 }
 main li + li {
   margin-top: 0.5rem;
@@ -918,6 +918,29 @@ nav ul {
 }
 .bracket-contents {
   font-weight: normal;
+}
+.capsule,
+.capsule-part {
+  display: inline-block;
+  padding: 3px 4px 1px;
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1;
+  word-break: keep-all;
+  vertical-align: middle;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.capsule {
+  color: #55d;
+  border-color: #55d;
+}
+.capsule-part {
+  color: #d55;
+  border-color: #d55;
 }
 /*
 

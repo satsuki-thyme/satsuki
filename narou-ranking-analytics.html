@@ -197,8 +197,8 @@ let nmbOfNcodeInGrp = 100 // なろう小説API から一度に取得する NCOD
 let nmbOfNcodePool = 0    // なろう小説API から一度に取得する NCODE の数を数える
 let frqQ = 0              // なろう小説API から GET する回数
 let nmbOfNcodePce = 0     // なろう小説API から nmbOfNcodeInGrp * frqQ で取得しきれない余りの NCODE の数
-let asyNvlArr = []     // なろう小説API から取得した小説情報のアレイ。作者退会で消滅した作品情報を除く
-let asyNvlKeyObj = {}  // なろう小説API から取得して作った asyNvlArr をゴニョゴニョして NCODE をキーにしたオブジェクト
+let asyNvlArr = []        // なろう小説API から取得した小説情報のアレイ。作者退会で消滅した作品情報を除く
+let asyNvlKeyObj = {}     // なろう小説API から取得して作った asyNvlArr をゴニョゴニョして NCODE をキーにしたオブジェクト
 let ofPrmSlcArr = []      // なろう小説API から取得するようユーザが選択した小説情報のアレイ
 let ofPrmProcArr = []     // なろう小説API から取得するようユーザが選択した小説情報から global_point を抜いたアレイ
 let ofPrmQTxt = 'n'       // なろう小説API から取得する際のクエリに使用する文字列。規定値はこの JS の必須項目
@@ -385,24 +385,19 @@ console.log('1 start') // milestone
       dateSrc = $('[name="date-source"]').val()
       dateRng = Number($('[name="date-range"]').val())
       dateUnt = $('[name="date-unit"]').val()
-      for (i = 1; $('#of-parameter input').length >= i; i++) {
+        let j = 0
+        let k = 0
+      for (let i = 0; $('#of-parameter input').length - 1 >= i; i++) {
         let thisElm = $('#of-parameter label:nth-child(' + i + ') input')
-//console.log(thisElm)
         if (thisElm.prop('checked')) {
-          ofPrmSlcArr.push(thisElm.attr('name'))
-          if (thisElm.attr('name') !== 'ncode' && thisElm.attr('name') !== 'ranking-date' || thisElm.attr('name') === 'global_point') {
-            ofPrmProcArr.push(thisElm.attr('name'))
+          let thisElmName = thisElm.attr('name')
+          ofPrmSlcArr[j] = thisElmName
+          j++
+          if (thisElmName !== 'ncode') {
+            ofPrmProcArr[k] = thisElmName
+            ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisElmName][0]
+            k++
           }
-        }
-      }
-      let fltSlcLng = $('#filter select').length
-      for (i = 1; fltSlcLng >= i; i++) {
-        let thisElm = $('#filter section:nth-child(' + i + ') select')
-console.log($('#filter section:nth-child(' + i + ') select'))
-console.log(thisElm)
-        if (thisElm.val() !== '') {
-          ofPrmQTxt = ofPrmQTxt + '-' + ofPrmTblObj[thisElm.val()][0]
-          thisElm = null
         }
       }
     }
@@ -549,11 +544,12 @@ console.log('6 writRnkTbl') // milestone
     ランキングを書き出す
   */
   prgGrw++
-  let ofPrmNvlArr = ofPrmSlcArr.splice(ofPrmSlcArr.indexOf('ncode') - 1, 1).splice(ofPrmSlcArr.indexOf('ranking-date') - 1, 1).splice(ofPrmSlcArr.indexOf('global_point') - 1, 1)
   let ofPrmRnkArr = []
+  let j = 0
   for (i = 0; ofPrmRnkTblArr.length - 1 >= i; i++) {
-    if (ofPrmSlcArr.indexOf(ofPrmRnkTblArr[i])) {
-      ofPrmRnkArr.push(ofPrmRnkTblArr[i])
+    if (ofPrmSlcArr.indexOf(ofPrmRnkTblArr[i]) >= 0) {
+      ofPrmRnkArr[j] = ofPrmRnkTblArr[i]
+      j++
     }
   }
   $('#output-area').append(`
@@ -569,31 +565,10 @@ console.log('6 writRnkTbl') // milestone
     $('#ranking-table thead tr').append('<th>' + ofPrmTblObj[ofPrmSlcArr[i]][2] + '</th>')
   }
   let tblItmAllArr = []
-  for (let i = 0; dateArr.length - 1 >= i; i++) {
-    for (let j = 0; Object.keys(rnkObj[dateArr[i]]).length - 1 >= j; j++) {
-      let tblItmTr = ''
-      let tblItmTrCls = ''
-      let tblItmTdSet = ''
-      for (let k = 0; ofPrmSlcArr.length - 1 >= k; k++) {
-        let thisOfPrm = ofPrmSlcArr[k]
-        if (ofPrmRnkArr.indexOf(thisOfPrm) >= 0) {
-          tblItmTdSet = tblItmTdSet + '<td>' + rnkObj[dateArr[i]][j][thisOfPrm] + '</td>'
-        } else {
-          if (asyNvlKeyObj[rnkObj[dateArr[i]][j]['ncode']]) {
-            tblItmTdSet = tblItmTdSet + '<td>' + asyNvlKeyObj[rnkObj[dateArr[i]][j]['ncode']][thisOfPrm] + '</td>'
-          } else {
-            tblItmTdSet = tblItmTdSet + '<td>情報なし</td>'
-            tblItmTrCls = 'information-not-found'
-          }
-        }
-      }
-      if (tblItmTrCls === '') {
-        tblItmAllArr.push('<tr>' + tblItmTdSet + '</tr>')
-      }
-      tblItmAllArr.push('<tr class="' + tblItmTrCls + '">' + tblItmTdSet + '</tr>')
-    }
+  for (let i = 0; Object.keys(asyNvlKeyObj).length - 1 >= i; i++) {
+    Object.keys(asyNvlKeyObj)[i]
   }
-  for (i = 0; tblItmAllArr.length - 1 >= i; i++) {
+  for (let i = 0; tblItmAllArr.length - 1 >= i; i++) {
     $('#ranking-table tbody').append(tblItmAllArr[i])
   }
 }

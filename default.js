@@ -1,7 +1,7 @@
 scrlHeit = 0
 scrlAmnt = 0
 $(document).ready(function() {
-  setUpLink()
+  setCtrlBtn()
   setHeit()
   setReldBtn()
   $('.down button').on('click',function (e) {
@@ -15,10 +15,10 @@ $(document).ready(function() {
   })
 })
 $(window).resize(function() {
-  setUpLink()
+  setCtrlBtn()
   setHeit()
 })
-function setUpLink() {
+function setCtrlBtn() {
   $('.down button, .up button, .reload button').css('right', ($(window).width() - $('.up').width()) / 2)
 }
 function setHeit() {

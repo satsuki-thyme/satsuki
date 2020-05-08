@@ -6166,7 +6166,7 @@ $(function() {
         array_unicode = Encoding.convert(array_source, 'UNICODE', 'AUTO'),
         data = Encoding.codeToString(array_unicode),
         word = data.replace(/#+.*?\r?\n/g, '').replace(/\r?\n/g, '</p><p>').replace(/<p><\/p>/g, '<p><br></p>').replace(/(^<\/p>|<p>$)/g, '').replace(/｜([^（]+?)《(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/([\u4E00-\u9FFF]+?)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>').replace(/｜(（.*?）)/g, '$1'),
-        char_num = data.replace(/(#+.*?\r?\n|\r?\n|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
+        char_num = data.replace(/(#+.*?\r?\n|\r?\n|\t|　)/g, '').replace(/｜(.*?)《.*?》/g, '$1').length
         novel_honbun.append(word)
         if (data.indexOf('#') > -1) {
           var subtitle = data.match(/#.*/)[0].replace(/#/, '')

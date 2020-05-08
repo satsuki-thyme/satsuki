@@ -299,19 +299,19 @@ function rubyParse(data) {
 }
 function keywdRpl(data) {
   let wordListRpl = [
-    ["\{setup\}", "{設定パート}"],
+    ["\{setup\}", '<span class="capsule-part">設定パート</span>'],
     ["\{inciting incident\}", "{切っ掛け}"],
-    ["\{central question\}", "{命題提起}"],
+    ["\{central question\}", "{ストーリーの問い掛け}"],
     ["\{plot point 1\}", "{転換点 1}"],
     ["\{plot point 2\}", "{転換点 2}"],
-    ["\{conflict\}", "{対立パート}"],
-    ["\{favorable\}", "{好調パート}"],
-    ["\{unfavorable\}", "{苦境パート}"],
+    ["\{conflict\}", '<span class="capsule-part">対立パート</span>'],
+    ["\{favorable\}", '<span class="capsule-part">好調パート</span>'],
+    ["\{unfavorable\}", '<span class="capsule-part">苦境パート</span>'],
     ["\{midd point\}", "{中間点}"],
-    ["\{resolution\}", "{解決パート}"],
+    ["\{resolution\}", '<span class="capsule-part">解決パート</span>'],
     ["\{ending\}", "{エンディングシーン}"],
-    ["\{", '<span class="bracket">｛</span><span class="bracket-contents">'],
-    ["\}", '</span><span class="bracket">｝</span>']
+    ["\{", '<span class="capsule">'],
+    ["\}", '</span>']
   ]
   let wordListHide = ["_summary_", "_gist_"]
   let work = data
