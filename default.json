@@ -1,15 +1,15 @@
 {
   "loadContent": {
-    "yayoi-thyme.com": {
+    "satsuki-thyme.com": {
       "back_host": "raw.githubusercontent.com",
-      "user_name": "yayoi-thyme",
-      "site_repository": "yayoi-thyme.github.io",
+      "user_name": "satsuki-thyme",
+      "site_repository": "satsuki-thyme.github.io",
       "branch": "master",
       "default_document": "novel.md",
       "url_home": "/novel.html",
       "url_base": "/view-opus.html"
     },
-    "yayoi-thyme.c": {
+    "satsuki-thyme.c": {
       "back_host": "novel.c",
       "user_name": "",
       "site_repository": "",
