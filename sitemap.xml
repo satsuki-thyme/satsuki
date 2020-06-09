@@ -2,50 +2,50 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://yayoi-thyme.com</loc>
-    <lastmod>2019-08-29T22:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://yayoi-thyme.com/distributioin.html</loc>
-    <lastmod>2019-08-29T22:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com/distributioin.html</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://yayoi-thyme.com/favorite.html</loc>
-    <lastmod>2019-08-29T22:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com/favorite.html</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://yayoi-thyme.com/novel.html</loc>
-    <lastmod>2020-01-13T06:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com/novel.html</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://yayoi-thyme.com/privacy-policy.html</loc>
-    <lastmod>2019-08-29T22:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com/privacy-policy.html</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.1</priority>
   </url>
 
   <url>
-    <loc>https://yayoi-thyme.com/profile.html</loc>
-    <lastmod>2019-08-29T22:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com/profile.html</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://yayoi-thyme.com/view-opus.html</loc>
-    <lastmod>2019-09-03T17:00:00+09:00</lastmod>
+    <loc>https://satsuki-thyme.com/view-opus.html</loc>
+    <lastmod>2020-06-09T15:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
