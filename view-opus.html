@@ -209,7 +209,8 @@ function wrtCnt(data) {
   }
   $('html, body').animate({scrollTop: scrlHeit + 100}, 'fast')
 }
-function wrtCnt_nvl(data, type) {
+function wrtCnt_nvl(dataSrc, type) {
+  let data = dataSrc
   let word = ''
   if (type === 'novel') {
     word = procEnd(1, procNvl(data))
