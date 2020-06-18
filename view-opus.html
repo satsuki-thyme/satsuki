@@ -242,7 +242,6 @@ function wrtCnt_nvl(dataSrc, type) {
     return work
   }
   function procPlot(data) {
-console.log('a')
     let work = data.replace(/[\s\S]*\{plot\}.*\n([\s\S]*)/g, '$1')
     work = 'aaaaa' + rubyParse(keywdRpl(mdParse(work)))
     return work
@@ -339,14 +338,18 @@ function epsNmb(epsNmb) {
     dataType: 'text',
   })
   .done(function(data) {
+    let work = data
     let titl = ''
-    if (!data.match(/# .*/) === false) {
-      titl = data.match(/# .*/)[0].replace(/^# (.*)$/, '$1')
+    if (!work.match(/# .*/) === false) {
+      titl = work.match(/# .*/)[0].replace(/^# (.*)$/, '$1')
       $('.info').prepend('<p class="title">' + titl + '</p>')
     }
-    let epsArr = data.replace(/^[\s\S]*?# 本文[\s\S]*?((\*|\+|-|\d+\.) [\s\S]*?)(\n\n|\n$|$)/g, '$1')
-                     .replace(/^[ \t]*(\*|\+|-|\d+\.) .*?\[.*?\]\([ \t]*?(.*?)[ \t]*\).*$/gm, '$2')
-                     .split('\n')
+    let epsArr = []
+    epsArr = work.replace(/[\s\S]*?(## 本文.*?\n)((.*?\n)*?)\n[\s\S]*/g, '$2')
+                 .replace(/[ \t]*(\*|\+|-|\d+\.) .*?\[.*?\]\([ \t]*(.*?)[ \t]*\).*/g, '$2')
+                 .split('\n')
+                 .slice(0, -1)
+console.log(epsArr)
     let epsObj = {}
     let epsArrLen = epsArr.length 
     for (let i = epsArrLen - 1; i >= 0; i--) {
