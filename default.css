@@ -1084,7 +1084,10 @@ nav ul {
   font-size: 16px;
 }
 .novel main #novel_honbun p {
-  line-height: 2.4;
+  line-height: 28.8px;
+}
+.novel main #novel_honbun p + p {
+  margin-top: 0;
 }
 .novel ruby {
   line-height: 1;
