@@ -215,14 +215,12 @@ function wrtCnt(data) {
 function wrtCnt_nvl(dataSrc, type) {
   let data = dataSrc
   let word = ''
-  if (type === 'novel') {
+  if (type === 'novel' || type === 'to-plain') {
     word = procEnd(1, procNvl(data))
   } else if (type === 'plot') {
     word = procEnd(1, procPlot(data))
   } else if (type === 'both') {
     word = procEnd(1, procBoth(data))
-  } else if (type === 'to-plain') {
-    word = procEnd(1, procPlain(data))
   }
   let wordLen = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
@@ -240,11 +238,84 @@ function wrtCnt_nvl(dataSrc, type) {
   $('div#novel_honbun').append(word)
   $('.info').append('<p class="number">文字数：' + wordLen + '文字</p>')
   function procNvl(data) {
-    let work = data.replace(/\{plot\}[\s\S]*/g, '')
-                   .replace(/^# .*$/m, '')
-                   .replace(/^(.*)$/gm, '<p>$1<\/p>')
-    work = rubyParse(keywdRpl(work))
-    return work
+    let work = ''
+    let wordArr = data.replace(/^# .*\n/m, '').split('\n')
+    let wordObj = {}
+    let wordArrLen = wordArr.length - 1
+    for (var i = 0; wordArrLen >= i; i++) {
+      wordObj[i] = {}
+      if (
+        (
+          i === 0
+          &&
+          wordArr[i + 1] !== ''
+        )
+        ||
+        (
+          wordArr[i - 1] === ''
+          &&
+          wordArr[i] !== ''
+          &&
+          wordArr[i + 1] !== ''
+        )
+      ) {
+        wordObj[i]['word'] = '<p>' + wordArr[i] + '<br>'
+      } else if (
+        (
+          (
+            i === 0
+            ||
+            wordArr[i - 1] === ''
+          )
+          &&
+          wordArr[i + 1] === ''
+        )
+        ||
+        (
+          i === wordArrLen - 1
+          &&
+          wordArr[i - 1] === ''
+        )
+      ) {
+        wordObj[i]['word'] = '<p>' + wordArr[i] + '<\/p>'
+      } else if (
+        wordArr[i] === ''
+      ) {
+        wordObj[i]['word'] = '<p><br><\/p>'
+      } else if (
+        (
+          wordArr[i - 1] !== ''
+          &&
+          wordArr[i] !== ''
+          &&
+          wordArr[i + 1] === ''
+        )
+        ||
+        (
+          i === wordArrLen - 1
+          &&
+          wordArr[i - 1] !== ''
+        )
+      ) {
+        wordObj[i]['word'] = wordArr[i] + '<\/p>'
+      } else if (
+        wordArr[i - 1] !== ''
+        &&
+        wordArr[i] !== ''
+        &&
+        wordArr[i + 1] !== ''
+      ) {
+        wordObj[i]['word'] = wordArr[i] + '<br>'
+      }
+      work = work + wordObj[i]['word']
+    }
+    if (type === 'novel') {
+      work = rubyParse(keywdRpl(work))
+      return work
+    } else if (type === 'to-plain') {
+      work = rubyRmv(keywdRpl(work))
+      return work
+    }
   }
   function procPlot(data) {
     let work = data.replace(/[\s\S]*\{plot\}.*\n([\s\S]*)/g, '$1')
@@ -263,13 +334,6 @@ function wrtCnt_nvl(dataSrc, type) {
       hdngPlot = '\n<h1>プロット<\/h1>'
     }
     return hdngNvl + dataNvl + hdngPlot + dataPlot
-  }
-  function procPlain(data) {
-    let work = data.replace(/\{plot\}[\s\S]*/g, '')
-                   .replace(/^# .*$/m, '')
-                   .replace(/^(.*)$/gm, '<p>$1<\/p>')
-    work = rubyRmv(keywdRpl(work))
-    return work
   }
   epsNmb()
 }
