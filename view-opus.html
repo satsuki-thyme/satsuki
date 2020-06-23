@@ -28,6 +28,19 @@
 <link rel="icon" href="https://satsuki-thyme.com/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="https://satsuki-thyme.com/images/thyme-fg-white-bg-green-180s.png">
 <link href="/default.css" rel="stylesheet">
+<style>
+#area-counter-slctd {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  padding: 7px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+#area-counter-slctd.selected {
+  display: block;
+}
+</style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="/mdparse.js"></script>
 <script src="/default.js"></script>
@@ -35,7 +48,7 @@
 let srch = location.search.slice(1)
 let host = location.hostname
 let stngObj = {
-  "loadCnt": {
+  "loadCntnt": {
     "satsuki-thyme.com": {
       "backHost": "raw.githubusercontent.com",
       "userName": "satsuki-thyme",
@@ -65,13 +78,13 @@ let stngObj = {
     }
   }
 }
-let backHost = stngObj['loadCnt'][host]['backHost']
-let userName = stngObj['loadCnt'][host]['userName']
-let repoSite = stngObj['loadCnt'][host]['repoSite']
-let brch = stngObj['loadCnt'][host]['brch']
-let dfltDoc = stngObj['loadCnt'][host]['dfltDoc']
-let urlHome = stngObj['loadCnt'][host]['urlHome']
-let urlBase = stngObj['loadCnt'][host]['urlBase']
+let backHost = stngObj['loadCntnt'][host]['backHost']
+let userName = stngObj['loadCntnt'][host]['userName']
+let repoSite = stngObj['loadCntnt'][host]['repoSite']
+let brch = stngObj['loadCntnt'][host]['brch']
+let dfltDoc = stngObj['loadCntnt'][host]['dfltDoc']
+let urlHome = stngObj['loadCntnt'][host]['urlHome']
+let urlBase = stngObj['loadCntnt'][host]['urlBase']
 if (backHost != '') {
   backHost = '//' + backHost.replace(/\//g, '')
 }
@@ -92,11 +105,13 @@ let dir = ''
 let ext = ''
 let file = ''
 let type = ''
-let preview = ''
+let preview = '0'
 let endSwch = 0
-let mainCnt_nvl = `
+let mainCntnt_novel = `
 <main class="novel contents-container">
-  <div class="info"></div>
+  <div class="info">
+    <p id="area-counter-top">全文：<span id="counter-top"></span>文字</p>
+  </div>
   <div id="novel_contents">
     <div id="novel_color">
       <div class="novel_bn">
@@ -112,12 +127,19 @@ let mainCnt_nvl = `
       </div>
     </div>
   </div>
-  <div class="selected-len"></div>
+  <div class="info">
+    <p id="area-counter-bottom">全文：<span id="counter-bottom"></span>文字</p>
+  </div>
+  <div id="area-counter-slctd">
+    選択範囲：<span id="counter-slctd"></span>文字
+  </div>
 </main>
 `
-let mainCnt_etc = `
+let mainCntnt_etc = `
 <main class="markdown html another contents-container"></main>
 `
+let elm_counterSlctd = 0
+let elm_areaCounterSlctd = 0
 window.onload = function() {
   setPrm()
   setRtnLink()
@@ -159,19 +181,19 @@ function setPrm() {
     ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
     url = backHost + userName + dir + brch + file
   }
-  loadCnt(url)
+  loadCntnt(url)
 }
 /*
   2nd run
 */
-function loadCnt(url) {
+function loadCntnt(url) {
   let now = new Date()
   $.ajax({
     url: url + '?' + now,
     cache: false,
   })
   .done(function(data) {
-    wrtCnt(data)
+    writeCntnt(data)
   })
   .fail(function() {
   })
@@ -179,56 +201,59 @@ function loadCnt(url) {
 /*
   3rd run
 */
-function wrtCnt(data) {
-  if (type === 'novel' || type === 'nvl') {
-    $('header').after(mainCnt_nvl)
-    wrtCnt_nvl(data, 'novel')
+function writeCntnt(data) {
+  let pageHeader = document.getElementById('page-header')
+  if (type === 'novel' || type === 'novel') {
+    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
+    writeCntnt_novel(data, 'novel')
   } else if (type === 'plot' || type === 'plt') {
-    $('header').after(mainCnt_nvl)
-    wrtCnt_nvl(data, 'plot')
+    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
+    writeCntnt_novel(data, 'plot')
   } else if (type === 'both') {
-    $('header').after(mainCnt_nvl)
-    wrtCnt_nvl(data, 'both')
-  } else if (type === 'to-plain') {
-    $('header').after(mainCnt_nvl)
-    wrtCnt_nvl(data, 'to-plain')
+    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
+    writeCntnt_novel(data, 'both')
+  } else if (type === 'no-ruby') {
+    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
+    writeCntnt_novel(data, 'no-ruby')
   } else if (file === '/README.md') {
-    $('header').after(mainCnt_etc)
-    wrtCnt_indx(data)
+    pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
+    writeCntnt_index(data)
   } else {
     if (ext === 'txt') {
-      $('header').after(mainCnt_etc)
-      wrtCnt_txt(data)
+      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
+      writeCntnt_txt(data)
     } else if (ext === 'html') {
-      $('header').after(mainCnt_etc)
-      wrtCnt_html(data)
+      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
+      writeCntnt_html(data)
     } else if (ext === 'md') {
-      $('header').after(mainCnt_etc)
-      wrtCnt_md(data)
+      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
+      writeCntnt_md(data)
     } else {
-      $('header').after(mainCnt_etc)
-      wrtCnt_indx(data)
+      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
+      writeCntnt_index(data)
     }
   }
-  $('html, body').animate({scrollTop: scrlHeit + 100}, 'fast')
+  elm_counterSlctd = document.getElementById('counter-slctd')
+  elm_areaCounterSlctd = document.getElementById('area-counter-slctd')
 }
-function wrtCnt_nvl(dataSrc, type) {
+function writeCntnt_novel(dataSrc, type) {
   let data = dataSrc
   let word = ''
-  if (type === 'novel' || type === 'to-plain') {
-    word = procEnd(1, procNvl(data))
+  if (type === 'novel' || type === 'no-ruby') {
+    word = procEnd(1, procNovel(data))
   } else if (type === 'plot') {
     word = procEnd(1, procPlot(data))
   } else if (type === 'both') {
     word = procEnd(1, procBoth(data))
   }
-  let wordLen = data.replace(/\{plot\}[\s\S]*/g, '')
+  let counter = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
                     .replace(/｜(.*?)《.*?》/g, '$1')
                     .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
                     .replace(/｜(（.*?）)/g, '$1')
                     .replace(/( |　|\n)/g, '')
                     .length
+                    .toString()
   if (!data.match(/^# /) === false) {
     let subTitl = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
     $('title').empty().append(subTitl)
@@ -236,8 +261,11 @@ function wrtCnt_nvl(dataSrc, type) {
   }
   $('html').addClass('novel markdown')
   $('div#novel_honbun').append(word)
-  $('.info').append('<p class="number">文字数：' + wordLen + '文字</p>')
-  function procNvl(data) {
+  let elm_counterTop = document.getElementById('counter-top')
+  let elm_counterBottom = document.getElementById('counter-bottom')
+  elm_counterTop.textContent = counter
+  elm_counterBottom.textContent = counter
+  function procNovel(data) {
     let work = ''
     let wordArr = data.replace(/^# .*\n/m, '').split('\n')
     let wordObj = {}
@@ -312,8 +340,8 @@ function wrtCnt_nvl(dataSrc, type) {
     if (type === 'novel') {
       work = rubyParse(keywdRpl(work))
       return work
-    } else if (type === 'to-plain') {
-      work = rubyRmv(keywdRpl(work))
+    } else if (type === 'no-ruby') {
+      work = rubyRm(keywdRpl(work))
       return work
     }
   }
@@ -323,31 +351,31 @@ function wrtCnt_nvl(dataSrc, type) {
     return work
   }
   function procBoth(data) {
-    let dataNvl = procNvl(data)
+    let dataNovel = procNovel(data)
     let dataPlot = procPlot(data)
-    let hdngNvl = ''
+    let hdngNovel = ''
     let hdngPlot = ''
-    if (dataNvl.replace(/\s|　|<p>[\s　]*(<\/p>)?/g, '').length != 0) {
-      hdngNvl = '<h1>本文<\/h1>\n'
+    if (dataNovel.replace(/\s|　|<p>[\s　]*(<\/p>)?/g, '').length != 0) {
+      hdngNovel = '<h1>本文<\/h1>\n'
     }
     if (dataPlot.replace(/[\s　]/g, '').length != 0) {
       hdngPlot = '\n<h1>プロット<\/h1>'
     }
-    return hdngNvl + dataNvl + hdngPlot + dataPlot
+    return hdngNovel + dataNovel + hdngPlot + dataPlot
   }
-  epsNmb()
+  epsdNumber()
 }
-function wrtCnt_indx(data) {
+function writeCntnt_index(data) {
   let word = keywdRpl(rubyParse(mdParse(data).replace(/href="(.*?)"/g, 'href="?q=' + dir + '/$1&type=novel"')))
   $('html').addClass('markdown')
   $('.markdown.contents-container').append(word)
   procEnd(1, '')
 }
-function wrtCnt_txt(data) {
+function writeCntnt_txt(data) {
   $('body').append(data)
   procEnd(1, '')
 }
-function wrtCnt_html(data) {
+function writeCntnt_html(data) {
   let word = keywdRpl(data)
   let titl = file.slice(1)
   $('html').addClass('html')
@@ -356,13 +384,13 @@ function wrtCnt_html(data) {
   $('.title').append(decodeURI(titl))
   procEnd(1, '')
 }
-function wrtCnt_md(data) {
+function writeCntnt_md(data) {
   let word = keywdRpl(rubyParse(mdParse(data)))
   $('html').addClass('markdown')
   $('.markdown.contents-container').append(word)
   procEnd(1, '')
 }
-function wrtCnt_another(data) {
+function writeCntnt_another(data) {
   $('.another.contents-container').append(data)
   procEnd(1, '')
 }
@@ -372,7 +400,7 @@ function rubyParse(data) {
                  .replace(/｜(（.*?）)/g, '$1')
   return word
 }
-function rubyRmv(data) {
+function rubyRm(data) {
   let word = data.replace(/｜(.*?)《(.*?)》/g, '$1')
                  .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '$1')
                  .replace(/｜(（.*?）)/g, '$1')
@@ -414,7 +442,7 @@ function setRtnLink() {
 function ppndAnch(target, label) {
   $('.page-footer').prepend('<a class="return-link" href="' + target + '">' + label + '</a>')
 }
-function epsNmb(epsNmb) {
+function epsdNumber(epsdNumber) {
   $.ajax({
     url: backHost + userName + dir + brch + '/README.md',
     dataType: 'text',
@@ -426,26 +454,26 @@ function epsNmb(epsNmb) {
       titl = work.match(/# .*/)[0].replace(/^# (.*)$/, '$1')
       $('.info').prepend('<p class="title">' + titl + '</p>')
     }
-    let epsArr = []
-    epsArr = work.replace(/[\s\S]*?(## 本文.*?\n)((.*?\n)*?)\n[\s\S]*/g, '$2')
+    let epsdArr = []
+    epsdArr = work.replace(/[\s\S]*?(## 本文.*?\n)((.*?\n)*?)\n[\s\S]*/g, '$2')
                  .replace(/[ \t]*(\*|\+|-|\d+\.) .*?\[.*?\]\([ \t]*(.*?)[ \t]*\).*/g, '$2')
                  .split('\n')
                  .slice(0, -1)
-    let epsObj = {}
-    let epsArrLen = epsArr.length 
-    for (let i = epsArrLen - 1; i >= 0; i--) {
-      epsObj[Number(epsArr[i].replace(/^.*?(\d{3}).*?$/m, '$1'))] = [epsArr[i].replace(/^(.*?)\d{3}.*?$/m, '$1'), epsArr[i].replace(/^.*?\d{3}(.*?)$/m, '$1')]
+    let epsdObj = {}
+    let epsdArrLen = epsdArr.length 
+    for (let i = epsdArrLen - 1; i >= 0; i--) {
+      epsdObj[Number(epsdArr[i].replace(/^.*?(\d{3}).*?$/m, '$1'))] = [epsdArr[i].replace(/^(.*?)\d{3}.*?$/m, '$1'), epsdArr[i].replace(/^.*?\d{3}(.*?)$/m, '$1')]
     }
-    let epsCrr = Number(file.replace(/^.*?(\d{3}).*?$/m, '$1'))
-    if (epsObj[epsCrr - 1]) {
-      $('a.prev').attr('href', '?q=' + dir + '/' + epsObj[epsCrr - 1][0] + ('000' + (epsCrr - 1)).slice(-3) + epsObj[epsCrr - 1][1] + '&type=' + type + '&preview=' + preview)
+    let epsdCrr = Number(file.replace(/^.*?(\d{3}).*?$/m, '$1'))
+    if (epsdObj[epsdCrr - 1]) {
+      $('a.prev').attr('href', '?q=' + dir + '/' + epsdObj[epsdCrr - 1][0] + ('000' + (epsdCrr - 1)).slice(-3) + epsdObj[epsdCrr - 1][1] + '&type=' + type + '&preview=' + preview)
       $('a.prev').css('display', 'initial')
     }
-    if (epsObj[epsCrr + 1]) {
-      $('a.next').attr('href', '?q=' + dir + '/' + epsObj[epsCrr + 1][0] + ('000' + (epsCrr + 1)).slice(-3) + epsObj[epsCrr + 1][1] + '&type=' + type + '&preview=' + preview)
+    if (epsdObj[epsdCrr + 1]) {
+      $('a.next').attr('href', '?q=' + dir + '/' + epsdObj[epsdCrr + 1][0] + ('000' + (epsdCrr + 1)).slice(-3) + epsdObj[epsdCrr + 1][1] + '&type=' + type + '&preview=' + preview)
       $('a.next').css('display', 'initial')
     }
-    $('div#novel_no').append(epsCrr + '/' + epsArrLen)
+    $('div#novel_no').append(epsdCrr + '/' + epsdArrLen)
   })
   .fail(function() {
     console.log("error")
@@ -465,6 +493,33 @@ function procEnd(incr, data) {
   }
   return data
 }
+{
+  let slctdLen = 0
+  let status = 0
+  function procCounter(e) {
+    slctdLen = document.getSelection().getRangeAt(0).toString()
+               .replace(/｜(.*?)《.*?》/g, '$1')
+               .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
+               .replace(/｜(（.*?）)/g, '$1')
+               .replace(/( |　|\n)/g, '')
+               .length
+    if (slctdLen !== 0) {
+      elm_counterSlctd.textContent = slctdLen
+      elm_areaCounterSlctd.classList.add('selected')
+    } else {
+      elm_areaCounterSlctd.classList.remove('selected')
+    }
+  }
+  window.addEventListener('click', function(e) {
+    procCounter(e)
+  })
+  window.addEventListener('dbclick', function(e) {
+    procCounter(e)
+  })
+  window.addEventListener('touchend', function(e) {
+    procCounter(e)
+  })
+}
 </script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-168979993-1"></script>
@@ -475,7 +530,7 @@ function procEnd(incr, data) {
 
   gtag('config', 'UA-168979993-1');
 </script>
-<header class="page-header">
+<header id="page-header" class="page-header">
   <a href="/">
     <img src="/images/satsuki-thyme-fg-green-bg-trn.svg" alt="Satsuki Thyme">
     <h1>作品閲覧ページ</h1>
