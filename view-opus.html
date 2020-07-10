@@ -29,7 +29,144 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://satsuki-thyme.com/images/thyme-fg-white-bg-green-180s.png">
 <link href="/default.css" rel="stylesheet">
 <style>
-#area-counter-slctd {
+/*
+
+  novel
+
+*/
+.novel main {
+  font-family: 'Lucida Grande', sans-serif;
+  font-size: 14px;
+  background: #ffffff;
+  color: #444444;
+  word-break: normal !important;
+  word-wrap: break-word;
+  direction: ltr;
+  unicode-bidi: bidi-override;
+}
+.novel main a {
+  text-decoration: none;
+  color: #0033cc;
+  outline: none;
+}
+.novel main a:visited {
+  color: #885577;
+}
+.novel main ruby {
+  line-height: 39px;
+}
+.novel main .rt-none {
+  display: none;
+}
+.novel .selected-len {
+  display: none;
+}
+.novel .selected-len.appear {
+  display: initial;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05)
+}
+.novel .info {
+  position: relative;
+  padding-bottom: 10px;
+  text-align: center;
+  border-bottom: 1px solid #aaaaaa;
+}
+.novel .info::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #ececec;
+}
+.novel .info .title,
+.novel .info .number {
+  line-height: 1.15;
+}
+.novel .info .name {
+  margin-right: 20px;
+}
+.novel .info .phrase {
+  margin-right: 10px;
+  margin-left:  10px;
+}
+.novel main #novel_contents {
+  margin: 0;
+  width: 100%;
+  padding: 0 0 50px 0;
+  text-align: left;
+  line-height: 180%;
+  clear: both;
+  position: relative;
+  top: 10px;
+  left: 0;
+}
+.novel main #novel_color {
+  color: #444444;
+  font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
+  font-size: 16px;
+  margin: 0 auto;
+  width: 730px;
+  max-width: 100%;
+}
+.novel main .novel_bn {
+  text-align: center;
+}
+.novel main .novel_bn a {
+  font-size: 90%;
+  margin: 0 10px;
+}
+.novel main #novel_no {
+  margin: 0 10px 10px 0;
+  text-align: right;
+  color: #999999;
+  font-size: 90%;
+}
+.novel main .novel_title,
+.novel main .novel_subtitle {
+  font-size: 170%;
+  line-height: 150%;
+}
+
+.novel main .novel_title,
+.novel main .novel_subtitle {
+  margin: 0 auto 10px;
+  text-align: center;
+  font-size: 170%;
+  font-weight: bold;
+  line-height: 150%;
+}
+.novel main #novel_honbun {
+  margin: 30px auto 50px;
+  padding: 0 20px 0 20px;
+  width: 600px;
+  max-width: 100%;
+  box-sizing: border-box;
+  line-height: 28.8px;
+  font-size: 16px;
+}
+.novel main #novel_honbun p {
+  line-height: 28.8px;
+}
+.novel main #novel_honbun p + p {
+  margin-top: 0;
+}
+.novel ruby {
+  line-height: 1;
+}
+.novel tr {
+  line-height: 1;
+}
+.novel a.prev,
+.novel a.next {
+  display: none;
+}
+.novel #area-cntr-slctd {
   position: fixed;
   display: none;
   top: 0;
@@ -37,7 +174,7 @@
   padding: 7px;
   background-color: rgba(0, 0, 0, 0.1);
 }
-#area-counter-slctd.selected {
+.novel #area-cntr-slctd.selected {
   display: block;
 }
 </style>
@@ -110,7 +247,7 @@ let endSwch = 0
 let mainCntnt_novel = `
 <main class="novel contents-container">
   <div class="info">
-    <p id="area-counter-top">全文：<span id="counter-top"></span>文字</p>
+    <p id="area-cntr-top">全文：<span id="cntr-top"></span>文字</p>
   </div>
   <div id="novel_contents">
     <div id="novel_color">
@@ -128,18 +265,18 @@ let mainCntnt_novel = `
     </div>
   </div>
   <div class="info">
-    <p id="area-counter-bottom">全文：<span id="counter-bottom"></span>文字</p>
+    <p id="area-cntr-bottom">全文：<span id="cntr-bottom"></span>文字</p>
   </div>
-  <div id="area-counter-slctd">
-    選択範囲：<span id="counter-slctd"></span>文字
+  <div id="area-cntr-slctd">
+    選択範囲：<span id="cntr-slctd"></span>文字
   </div>
 </main>
 `
 let mainCntnt_etc = `
 <main class="markdown html another contents-container"></main>
 `
-let elm_counterSlctd = 0
-let elm_areaCounterSlctd = 0
+let elm_cntrSlctd = 0
+let elm_areaCntrSlctd = 0
 window.onload = function() {
   setPrm()
   setRtnLink()
@@ -233,8 +370,8 @@ function writeCntnt(data) {
       writeCntnt_index(data)
     }
   }
-  elm_counterSlctd = document.getElementById('counter-slctd')
-  elm_areaCounterSlctd = document.getElementById('area-counter-slctd')
+  elm_cntrSlctd = document.getElementById('cntr-slctd')
+  elm_areaCntrSlctd = document.getElementById('area-cntr-slctd')
 }
 function writeCntnt_novel(dataSrc, type) {
   let data = dataSrc
@@ -246,7 +383,7 @@ function writeCntnt_novel(dataSrc, type) {
   } else if (type === 'both') {
     word = procEnd(1, procBoth(data))
   }
-  let counter = data.replace(/\{plot\}[\s\S]*/g, '')
+  let cntr = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
                     .replace(/｜(.*?)《.*?》/g, '$1')
                     .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
@@ -261,10 +398,10 @@ function writeCntnt_novel(dataSrc, type) {
   }
   $('html').addClass('novel markdown')
   $('div#novel_honbun').append(word)
-  let elm_counterTop = document.getElementById('counter-top')
-  let elm_counterBottom = document.getElementById('counter-bottom')
-  elm_counterTop.textContent = counter
-  elm_counterBottom.textContent = counter
+  let elm_cntrTop = document.getElementById('cntr-top')
+  let elm_cntrBottom = document.getElementById('cntr-bottom')
+  elm_cntrTop.textContent = cntr
+  elm_cntrBottom.textContent = cntr
   function procNovel(data) {
     let work = ''
     let wordArr = data.replace(/^# .*\n/m, '').split('\n')
@@ -496,7 +633,7 @@ function procEnd(incr, data) {
 {
   let slctdLen = 0
   let status = 0
-  function procCounter(e) {
+  function procCntr(e) {
     slctdLen = document.getSelection().getRangeAt(0).toString()
                .replace(/｜(.*?)《.*?》/g, '$1')
                .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
@@ -504,20 +641,20 @@ function procEnd(incr, data) {
                .replace(/( |　|\n)/g, '')
                .length
     if (slctdLen !== 0) {
-      elm_counterSlctd.textContent = slctdLen
-      elm_areaCounterSlctd.classList.add('selected')
+      elm_cntrSlctd.textContent = slctdLen
+      elm_areaCntrSlctd.classList.add('selected')
     } else {
-      elm_areaCounterSlctd.classList.remove('selected')
+      elm_areaCntrSlctd.classList.remove('selected')
     }
   }
   window.addEventListener('click', function(e) {
-    procCounter(e)
+    procCntr(e)
   })
   window.addEventListener('dbclick', function(e) {
-    procCounter(e)
+    procCntr(e)
   })
   window.addEventListener('touchend', function(e) {
-    procCounter(e)
+    procCntr(e)
   })
 }
 </script>

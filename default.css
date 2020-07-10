@@ -853,7 +853,7 @@ nav ul {
   line-height: 1;
   vertical-align: middle;
   color: #62a433;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.3);
   border: 1px solid #62a433;
   outline: none;
 }
@@ -873,7 +873,7 @@ nav ul {
   height: 100%;
 }
 .down button {
-  bottom: 5px;
+  bottom: 1px;
 }
 .up button {
   bottom: 25%;
@@ -922,8 +922,9 @@ nav ul {
 .capsule,
 .capsule-part {
   display: inline-block;
-  padding: 3px 4px 1px;
-  font-size: 1rem;
+  margin: -4px 2px 0;
+  padding: 3px 2px 0;
+  font-size: 85%;
   font-weight: normal;
   letter-spacing: 0;
   line-height: 1;
@@ -961,143 +962,6 @@ nav ul {
 }
 .another .another.contents-container {
   display: block;
-}
-/*
-
-  novel
-
-*/
-.novel main {
-  font-family: 'Lucida Grande', sans-serif;
-  font-size: 14px;
-  background: #ffffff;
-  color: #444444;
-  word-break: normal !important;
-  word-wrap: break-word;
-  direction: ltr;
-  unicode-bidi: bidi-override;
-}
-.novel main a {
-  text-decoration: none;
-  color: #0033cc;
-  outline: none;
-}
-.novel main a:visited {
-  color: #885577;
-}
-.novel main ruby {
-  line-height: 39px;
-}
-.novel main .rt-none {
-  display: none;
-}
-.novel .selected-len {
-  display: none;
-}
-.novel .selected-len.appear {
-  display: initial;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.05)
-}
-.novel .info {
-  position: relative;
-  padding-bottom: 10px;
-  text-align: center;
-  border-bottom: 1px solid #aaaaaa;
-}
-.novel .info::after {
-  content: "";
-  display: block;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #ececec;
-}
-.novel .info .title,
-.novel .info .number {
-  line-height: 1.15;
-}
-.novel .info .name {
-  margin-right: 20px;
-}
-.novel .info .phrase {
-  margin-right: 10px;
-  margin-left:  10px;
-}
-.novel main #novel_contents {
-  margin: 0;
-  width: 100%;
-  padding: 0 0 50px 0;
-  text-align: left;
-  line-height: 180%;
-  clear: both;
-  position: relative;
-  top: 10px;
-  left: 0;
-}
-.novel main #novel_color {
-  color: #444444;
-  font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
-  font-size: 16px;
-  margin: 0 auto;
-  width: 730px;
-  max-width: 100%;
-}
-.novel main .novel_bn {
-  text-align: center;
-}
-.novel main .novel_bn a {
-  font-size: 90%;
-  margin: 0 10px;
-}
-.novel main #novel_no {
-  margin: 0 10px 10px 0;
-  text-align: right;
-  color: #999999;
-  font-size: 90%;
-}
-.novel main .novel_title,
-.novel main .novel_subtitle {
-  font-size: 170%;
-  line-height: 150%;
-}
-
-.novel main .novel_title,
-.novel main .novel_subtitle {
-  margin: 0 auto 10px;
-  text-align: center;
-  font-size: 170%;
-  font-weight: bold;
-  line-height: 150%;
-}
-.novel main #novel_honbun {
-  margin: 30px auto 50px;
-  padding: 0 20px 0 20px;
-  width: 600px;
-  max-width: 100%;
-  box-sizing: border-box;
-  line-height: 28.8px;
-  font-size: 16px;
-}
-.novel main #novel_honbun p {
-  line-height: 28.8px;
-}
-.novel main #novel_honbun p + p {
-  margin-top: 0;
-}
-.novel ruby {
-  line-height: 1;
-}
-.novel tr {
-  line-height: 1;
-}
-.novel a.prev,
-.novel a.next {
-  display: none;
 }
 /*
 

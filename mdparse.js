@@ -1,5 +1,6 @@
 function mdParse(src, opt) {
-  let intmedi = src.replace(/^(?!#+ |[ \t]*\* |[ \t]*\+ |[ \t]*- |[ \t]*\d+\. |\|)([\s\S]*?\n{2})/gm, '<p>$1')
+  let intmedi = src.replace(/(\r?\n|\r)/g, '\n')
+                   .replace(/^(?!#+ |[ \t]*\* |[ \t]*\+ |[ \t]*- |[ \t]*\d+\. |\|)([\s\S]*?\n{2})/gm, '<p>$1')
                    .replace(/ {2}$/gm, '<br>')
                    .replace(/^#{1} (.*)$/gm, '<h1>$1</h1>')
                    .replace(/^#{2} (.*)$/gm, '<h2>$1</h2>')
@@ -11,9 +12,8 @@ function mdParse(src, opt) {
                    .replace(/_{3}([^_]+?)_{3}/gm, '<strong><em>$1</em></strong>')
                    .replace(/\*{2}([^*]+?)\*{2}/gm, '<strong>$1</strong>')
                    .replace(/_{2}([^_]+?)_{2}/gm, '<strong>$1</strong>')
-                   //.replace(/(?!^[ \t]*\*)\*{1}([^*]+?)\*{1}/gm, '<em>$1</em>')
-                   //.replace(/^\*{1}([^ *][^*]*?)\*{1}/gm, '<em>$1</em>')
-                   //.replace(/_{1}([^_]+?)_{1}/gm, '<em>$1</em>')
+                   .replace(/^\*{1}([^ *][^*]*?)\*{1}/gm, '<em>$1</em>')
+                   .replace(/(?<!_)_{1}([^_]+?)_{1}(?!_)/gm, '<em>$1</em>')
                    .replace(/~{2}([\s\S]*?)~{2}/gm, '<s>$1</s>')
                    .replace(/`{1}([\s\S]*?)`{1}/gm, '<code>$1</code>')
                    .replace(/\[(.*?)\]\((.*?)\)/gm, '<a href="$2">$1</a>')
@@ -41,9 +41,10 @@ function mdParse(src, opt) {
     lineObj[i]['txt'] = lineWork0
     if (!lineWork0.match(/^[ \t]*(\*|\+|-|\d+\.) /)) {
       lineObj[i]['list'] = 0
+      lineObj[i]['listLv'] = 0
     } else {
       lineObj[i]['list'] = 1
-      lineObj[i]['listLv'] = lineWork0.replace(/^([ \t]*).*$/, '$1').length + 1
+      lineObj[i]['listLv'] = lineWork0.replace(/^([ \t]*).*/, '$1').length + 1
       if (!lineWork0.match(/^[ \t]*(\*|\+|-) /) === false) {
         lineObj[i]['listType'] = 'm'
       } else if (!lineWork0.match(/^[ \t]*\d+\. /) === false) {
@@ -55,17 +56,6 @@ function mdParse(src, opt) {
     連想配列の各行について処理をする
   */
   for (let i = 0; lineLen - 1 >= i; i++) {
-let aaa = 0
-let bbb = 0
-if (i === 0) {
-  aaa ='-'
-} else if (i === lineLen - 1) {
-  bbb = '-'
-} else {
-  aaa = lineObj[i - 1]['list']
-  bbb = lineObj[i + 1]['list']
-}
-console.log(i + ' ' + aaa + ' ' + lineObj[i]['list'] + ' ' + bbb + ' ' + lineObj[i]['txt'].substring(0, 10))
     /*
       ul, ol, li
     */
@@ -76,15 +66,33 @@ console.log(i + ' ' + aaa + ' ' + lineObj[i]['list'] + ' ' + bbb + ' ' + lineObj
         リストが始まる
       */
         (
+          i === 0
+          &&
+          lineObj[i]['list'] === 1
+          &&
+          i !== lineLen - 1
+        )
+        ||
+        (
+          i !== 1
+          &&
+          i !== lineLen - 1
+          &&
           lineObj[i - 1]['list'] === 0
+          &&
+          lineObj[i]['list'] === 1
           &&
           lineObj[i + 1]['list'] === 1
         )
         ||
         (
+          i !== 0
+          &&
+          i !== lineLen - 1
+          &&
           lineObj[i]['listLv'] > lineObj[i - 1]['listLv']
           &&
-          lineObj[i + 1]['list'] === 1
+          lineObj[i]['listLv'] <= lineObj[i + 1]['listLv']
         )
       ) {
         lineObj[i]['txt'] = listStrt(i, lineWork1) // <= 処理部分
@@ -92,25 +100,43 @@ console.log(i + ' ' + aaa + ' ' + lineObj[i]['list'] + ' ' + bbb + ' ' + lineObj
       /*
         リストが続く
       */
+        i !== 0
+        &&
+        i !== lineLen - 1
+        &&
         lineObj[i]['listLv'] <= lineObj[i - 1]['listLv']
         &&
         lineObj[i]['listLv'] <= lineObj[i + 1]['listLv']
-        &&
-        i != 0
-        &&
-        i != lineLen - 1
       ) {
         lineObj[i]['txt'] = listCont(i, lineWork1) // <= 処理部分
       } else if (
       /*
         リストが終わる
       */
-        lineObj[i]['listLv'] <= lineObj[i - 1]['listLv']
-        &&
         (
-          lineObj[i]['listLv'] > lineObj[i + 1]['listLv']
-          ||
+          i !== 0
+          &&
+          lineObj[i]['list'] === 1
+          &&
+          i === lineLen - 1
+        )
+        ||
+        (
+          lineObj[i - 1]['list'] === 1
+          &&
+          lineObj[i]['list'] === 1
+          &&
           lineObj[i + 1]['list'] === 0
+        )
+        ||
+        (
+          i !== 0
+          &&
+          i !== lineLen - 1
+          &&
+          lineObj[i]['listLv'] <= lineObj[i - 1]['listLv']
+          &&
+          lineObj[i]['listLv'] > lineObj[i + 1]['listLv']
         )
       ) {
         lineObj[i]['txt'] = listEnd(i, lineWork1) // <= 処理部分
@@ -119,12 +145,24 @@ console.log(i + ' ' + aaa + ' ' + lineObj[i]['list'] + ' ' + bbb + ' ' + lineObj
         始まりかつ終わりの行
       */
         (
+          i !== 0
+          &&
+          i !== lineLen - 1
+          &&
           lineObj[i - 1]['list'] === 0
           &&
-          lineObj[i + 1]['list'] === 0
+          (
+            lineObj[i + 1]['list'] === 0
+            ||
+            lineObj[i]['listLv'] > lineObj[i - 1]['listLv']
+          )
         )
         ||
         (
+          i !== 0
+          &&
+          i !== lineLen - 1
+          &&
           lineObj[i]['listLv'] > lineObj[i - 1]['listLv']
           &&
           (
@@ -133,8 +171,6 @@ console.log(i + ' ' + aaa + ' ' + lineObj[i]['list'] + ' ' + bbb + ' ' + lineObj
             lineObj[i + 1]['list'] === 0
           )
         )
-        ||
-        lineLen === 1
       ) {
         lineObj[i]['txt'] = listEnd(i, listStrt(i, lineWork1)) // <= 処理部分
       }
@@ -169,11 +205,11 @@ console.log(i + ' ' + aaa + ' ' + lineObj[i]['list'] + ' ' + bbb + ' ' + lineObj
     let lineWork2 = txt.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
     let listLvDiff = 0
     if (lineObj[i + 1]['list'] === 1) {
-      listLvDiff = lineObj[i]['listLv'] - lineObj[i + 1]['listLv']
+      listLvDiff = lineObj[i]['listLv'] - lineObj[i + 1]['listLv'] - 1
     } else {
-      listLvDiff = lineObj[i]['listLv'] + 1
+      listLvDiff = lineObj[i]['listLv']
     }
-    for (let j = 0; listLvDiff - 1 >= j; j++) {
+    for (let j = 0; listLvDiff >= j; j++) {
       listTypeArrWork = listTypeArr.pop()
       if (listTypeArrWork === 'm') {
         lineWork2 = lineWork2 + '<\/ul>'
