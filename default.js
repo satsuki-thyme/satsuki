@@ -1,10 +1,10 @@
-scrlHeit = 0
-scrlAmnt = 0
+let scrlHeit = 0
+let scrlAmnt = 0
 $(document).ready(function() {
   setCtrlBtn()
-  setHeit()
   setReldBtn()
   $('.down button').on('click',function (e) {
+    setHeit()
     $('html, body').animate({scrollTop: scrlHeit + 100}, 'fast')
   })
   $('.up button').on('click',function (e) {

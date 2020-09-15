@@ -110,9 +110,10 @@
   color: #444444;
   font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
   font-size: 16px;
+  letter-spacing: 0.09em;
   margin: 0 auto;
-  width: 730px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 700px;
 }
 .novel main .novel_bn {
   text-align: center;
@@ -144,8 +145,7 @@
 .novel main #novel_honbun {
   margin: 30px auto 50px;
   padding: 0 20px 0 20px;
-  width: 600px;
-  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
   line-height: 28.8px;
   font-size: 16px;
@@ -166,7 +166,7 @@
 .novel a.next {
   display: none;
 }
-.novel #area-cntr-slctd {
+.novel #area-counter-slctd {
   position: fixed;
   display: none;
   top: 0;
@@ -174,7 +174,7 @@
   padding: 7px;
   background-color: rgba(0, 0, 0, 0.1);
 }
-.novel #area-cntr-slctd.selected {
+.novel #area-counter-slctd.selected {
   display: block;
 }
 </style>
@@ -182,15 +182,15 @@
 <script src="/mdparse.js"></script>
 <script src="/default.js"></script>
 <script>
-let srch = location.search.slice(1)
+let search = location.search.slice(1)
 let host = location.hostname
 let stngObj = {
   "loadCntnt": {
     "satsuki-thyme.com": {
       "backHost": "raw.githubusercontent.com",
       "userName": "satsuki-thyme",
-      "repoSite": "satsuki-thyme.github.io",
-      "brch": "master",
+      "repoSite": "novel",
+      "branch": "master",
       "dfltDoc": "README.md",
       "urlHome": "/novel.html",
       "urlBase": "/view-opus.html"
@@ -199,7 +199,7 @@ let stngObj = {
       "backHost": "novel.c",
       "userName": "",
       "repoSite": "",
-      "brch": "",
+      "branch": "",
       "dfltDoc": "README.md",
       "urlHome": "/novel.html",
       "urlBase": "/view-opus.html"
@@ -208,7 +208,7 @@ let stngObj = {
       "backHost": "novel.c",
       "userName": "",
       "repoSite": "",
-      "brch": "",
+      "branch": "",
       "dfltDoc": "README.md",
       "urlHome": "?README.md",
       "urlBase": "/view-opus.html"
@@ -218,7 +218,7 @@ let stngObj = {
 let backHost = stngObj['loadCntnt'][host]['backHost']
 let userName = stngObj['loadCntnt'][host]['userName']
 let repoSite = stngObj['loadCntnt'][host]['repoSite']
-let brch = stngObj['loadCntnt'][host]['brch']
+let branch = stngObj['loadCntnt'][host]['branch']
 let dfltDoc = stngObj['loadCntnt'][host]['dfltDoc']
 let urlHome = stngObj['loadCntnt'][host]['urlHome']
 let urlBase = stngObj['loadCntnt'][host]['urlBase']
@@ -231,11 +231,11 @@ if (userName != '') {
 if (repoSite != '') {
   repoSite = '/' + repoSite.replace(/\//g, '')
 }
-if (brch != '') {
-  brch = '/' + brch.replace(/\//g, '')
+if (branch != '') {
+  branch = '/' + branch.replace(/\//g, '')
 }
-let srchArr = []
-let srchObj = {}
+let searchArr = []
+let searchObj = {}
 let url = ''
 let q = ''
 let dir = ''
@@ -247,7 +247,7 @@ let endSwch = 0
 let mainCntnt_novel = `
 <main class="novel contents-container">
   <div class="info">
-    <p id="area-cntr-top">全文：<span id="cntr-top"></span>文字</p>
+    <p id="area-counter-top">全文：<span id="counter-top"></span>文字</p>
   </div>
   <div id="novel_contents">
     <div id="novel_color">
@@ -265,18 +265,21 @@ let mainCntnt_novel = `
     </div>
   </div>
   <div class="info">
-    <p id="area-cntr-bottom">全文：<span id="cntr-bottom"></span>文字</p>
+    <p id="area-counter-bottom">全文：<span id="counter-bottom"></span>文字</p>
   </div>
-  <div id="area-cntr-slctd">
-    選択範囲：<span id="cntr-slctd"></span>文字
+  <div id="area-counter-slctd">
+    選択範囲：<span id="counter-slctd"></span>文字
   </div>
 </main>
 `
 let mainCntnt_etc = `
 <main class="markdown html another contents-container"></main>
 `
-let elm_cntrSlctd = 0
-let elm_areaCntrSlctd = 0
+let slctd = 0
+let slctdLen = 0
+let status = 0
+let elm_counterSlctd = 0
+let elm_areaCounterSlctd = 0
 window.onload = function() {
   setPrm()
   setRtnLink()
@@ -285,19 +288,19 @@ window.onload = function() {
   1st run
 */
 function setPrm() {
-  // ex. srch = ?q=http://novel.c/op.18/001.txt&type=novel
-  if (srch === '') {
-    url = backHost + userName + repoSite + brch + dfltDoc
+  // ex. search = ?q=http://novel.c/op.18/001.txt&type=novel
+  if (search === '') {
+    url = backHost + userName + repoSite + branch + dfltDoc
     ext = dfltDoc.replace(/.*([^\.]+)$/, '$1')
   } else {
-    srchArr = srch.split('&')
-    for (let i = 0; srchArr.length - 1 >= i; i++) {
-      let workArr = srchArr[i].split('=')
-      srchObj[workArr[0]] = workArr[1]
+    searchArr = search.split('&')
+    for (let i = 0; searchArr.length - 1 >= i; i++) {
+      let workArr = searchArr[i].split('=')
+      searchObj[workArr[0]] = workArr[1]
     }
-    q = srchObj['q']
-    type = srchObj['type']
-    preview = srchObj['preview']
+    q = searchObj['q']
+    type = searchObj['type']
+    preview = searchObj['preview']
     if (q === undefined || q === '' || q === '/') {
     // ルートディレクトリ
       dir = '/'
@@ -316,7 +319,7 @@ function setPrm() {
       file = '/' + q.replace(/^.*?\/([^\/]+)$/, '$1')
     }
     ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
-    url = backHost + userName + dir + brch + file
+    url = backHost + userName + dir + branch + file
   }
   loadCntnt(url)
 }
@@ -370,8 +373,8 @@ function writeCntnt(data) {
       writeCntnt_index(data)
     }
   }
-  elm_cntrSlctd = document.getElementById('cntr-slctd')
-  elm_areaCntrSlctd = document.getElementById('area-cntr-slctd')
+  elm_counterSlctd = document.getElementById('counter-slctd')
+  elm_areaCounterSlctd = document.getElementById('area-counter-slctd')
 }
 function writeCntnt_novel(dataSrc, type) {
   let data = dataSrc
@@ -383,7 +386,7 @@ function writeCntnt_novel(dataSrc, type) {
   } else if (type === 'both') {
     word = procEnd(1, procBoth(data))
   }
-  let cntr = data.replace(/\{plot\}[\s\S]*/g, '')
+  let counter = data.replace(/\{plot\}[\s\S]*/g, '')
                     .replace(/^# .*?\n/m, '')
                     .replace(/｜(.*?)《.*?》/g, '$1')
                     .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
@@ -398,10 +401,10 @@ function writeCntnt_novel(dataSrc, type) {
   }
   $('html').addClass('novel markdown')
   $('div#novel_honbun').append(word)
-  let elm_cntrTop = document.getElementById('cntr-top')
-  let elm_cntrBottom = document.getElementById('cntr-bottom')
-  elm_cntrTop.textContent = cntr
-  elm_cntrBottom.textContent = cntr
+  let elm_counterTop = document.getElementById('counter-top')
+  let elm_counterBottom = document.getElementById('counter-bottom')
+  elm_counterTop.textContent = counter
+  elm_counterBottom.textContent = counter
   function procNovel(data) {
     let work = ''
     let wordArr = data.replace(/^# .*\n/m, '').split('\n')
@@ -484,6 +487,7 @@ function writeCntnt_novel(dataSrc, type) {
   }
   function procPlot(data) {
     let work = data.replace(/[\s\S]*\{plot\}.*\n([\s\S]*)/g, '$1')
+                   .replace(/^# .*?\n/m, '')
     work = rubyParse(keywdRpl(mdParse(work)))
     return work
   }
@@ -557,7 +561,25 @@ function keywdRpl(data) {
     ["\{resolution\}", '<span class="capsule-part">解決パート</span>'],
     ["\{ending\}", "{エンディングシーン}"],
     ["\{", '<span class="capsule">'],
-    ["\}", '</span>']
+    ["\}", '</span>'],
+    ["objective", "目的"],
+    ["story", "ストーリー"],
+    ["plot", "プロット"],
+    ["overview", "概要"],
+    ["detailes", "詳細"],
+    ["act", "幕"],
+    ["sequence", "シーケンス"],
+    ["scene", "シーン"],
+    ["unit", "ユニット"],
+    ["title", "タイトル"],
+    ["view of the world", "世界観"],
+    ["concept", "コンセプト"],
+    ["theme", "テーマ"],
+    ["medium", "提示方法"],
+    ["chapter", "章"],
+    ["design bullets", "設計"],
+    ["elements", "設計要素"],
+    ["bullets", "箇条書き"]
   ]
   let wordListHide = ["_summary_", "_gist_"]
   let work = data
@@ -581,7 +603,7 @@ function ppndAnch(target, label) {
 }
 function epsdNumber(epsdNumber) {
   $.ajax({
-    url: backHost + userName + dir + brch + '/README.md',
+    url: backHost + userName + dir + branch + '/README.md',
     dataType: 'text',
   })
   .done(function(data) {
@@ -631,41 +653,34 @@ function procEnd(incr, data) {
   return data
 }
 {
-  let slctdLen = 0
-  let status = 0
-  function procCntr(e) {
-    slctdLen = document.getSelection().getRangeAt(0).toString()
-               .replace(/｜(.*?)《.*?》/g, '$1')
-               .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
-               .replace(/｜(（.*?）)/g, '$1')
-               .replace(/( |　|\n)/g, '')
-               .length
-    if (slctdLen !== 0) {
-      elm_cntrSlctd.textContent = slctdLen
-      elm_areaCntrSlctd.classList.add('selected')
-    } else {
-      elm_areaCntrSlctd.classList.remove('selected')
+  function procCounter(e) {
+    let timeout = window.setTimeout(count, 100)
+    function count() {
+      slctd = document.getSelection()
+      if (slctd.isCollapsed === false) {
+        slctdLen = slctd
+                   .getRangeAt(0)
+                   .toString()
+                   .replace(/｜(.*?)《.*?》/g, '$1')
+                   .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
+                   .replace(/｜(（.*?）)/g, '$1')
+                   .replace(/( |　|\n)/g, '')
+                   .length
+        elm_counterSlctd.textContent = slctdLen
+        elm_areaCounterSlctd.classList.add('selected')
+      } else {
+        elm_areaCounterSlctd.classList.remove('selected')
+      }
+      clearTimeout(timeout)
     }
   }
-  window.addEventListener('click', function(e) {
-    procCntr(e)
+  window.addEventListener('mouseup', function(e) {
+    procCounter(e)
   })
-  window.addEventListener('dbclick', function(e) {
-    procCntr(e)
-  })
-  window.addEventListener('touchend', function(e) {
-    procCntr(e)
+  window.addEventListener('touched', function(e) {
+    procCounter(e)
   })
 }
-</script>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-168979993-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-168979993-1');
 </script>
 <header id="page-header" class="page-header">
   <a href="/">
