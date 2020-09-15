@@ -189,7 +189,7 @@ let stngObj = {
     "satsuki-thyme.com": {
       "backHost": "raw.githubusercontent.com",
       "userName": "satsuki-thyme",
-      "repoSite": "novel",
+      "repoSite": "satsuki-thyme.github.io",
       "branch": "master",
       "dfltDoc": "README.md",
       "urlHome": "/novel.html",
@@ -319,7 +319,8 @@ function setPrm() {
       file = '/' + q.replace(/^.*?\/([^\/]+)$/, '$1')
     }
     ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
-    url = backHost + userName + dir + branch + file
+    url = backHost + userName + repoSite + dir + branch + file
+    console.log(url)
   }
   loadCntnt(url)
 }
