@@ -319,7 +319,7 @@ function setPrm() {
       file = '/' + q.replace(/^.*?\/([^\/]+)$/, '$1')
     }
     ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
-    url = backHost + userName + repoSite + dir + branch + file
+    url = backHost + userName + repoSite + branch + dir + file
     console.log(url)
   }
   loadCntnt(url)
