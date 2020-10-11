@@ -1,0 +1,1036 @@
+@charset "utf-8";
+/*
+
+  Base element
+
+*/
+body {
+  font-family: Meiryo, "Hiragino Kaku Gothic", Helvetica, Arial;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  line-height: 1.7;
+  direction: ltr;
+  unicode-bidi: bidi-override;
+  background-color: #fff;
+  overflow-y: scroll;
+}
+a {
+  text-decoration: none;
+  color: #62a433;
+}
+a:hover {
+  text-decoration: underline;
+  color: #5ec63e;
+}
+body,
+div,
+dir,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+th,
+td,
+pre,
+code,
+figure,
+form,
+fieldset,
+legend,
+input,
+textarea,
+button {
+  margin: 0;
+  padding: 0;
+}
+main main,
+main section,
+main header,
+main footer,
+main aside {
+  display: flow-root;
+}
+main section,
+main footer,
+main section + aside,
+main footer + aside,
+.markdown main h1,
+.markdown main h2,
+.markdown main h3,
+.markdown main h4,
+.markdown main h5,
+.markdown main h6 {
+  margin-top: 40px;
+}
+main footer,
+main aside {
+  margin-right: 20px;
+  margin-left: 20px;
+  padding: 10px 20px;
+}
+main footer,
+main aside {
+  margin-top: 50px;
+}
+main p,
+main ol,
+main ul,
+main dl,
+main div,
+main pre,
+main blockquote,
+main table,
+main figure,
+main details,
+main hr {
+  margin-top: 10px;
+}
+main img {
+  max-width: 95%;
+  margin-top: 0.3rem;
+}
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
+  line-height: 1.5;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+main h3 {
+  margin-left: 1rem;
+}
+main h4 {
+  margin-left: 2rem;
+}
+main h5 {
+  margin-left: 3rem;
+}
+main h6 {
+  margin-left: 4rem;
+}
+main p,
+main ol,
+main ul,
+main blockquote,
+main dl,
+main table {
+  line-height: 1.7;
+}
+main ol,
+main ul {
+  margin-left: 1.5rem;
+}
+main li > ol,
+main li > ul {
+  margin-top: 0.8rem;
+}
+main ol {
+  list-style-type: decimal;
+}
+main ol ol {
+  list-style-type: lower-roman;
+}
+main ol ol ol {
+  list-style-type: lower-alpha;
+}
+main ol ol ol ol {
+  list-style-type: lower-greek;
+}
+main ol ol ol ol ol {
+  list-style-type: hiragana-iroha;
+}
+main ol ol ol ol ol ol {
+  list-style-type: hiragana;
+}
+main ul {
+  list-style-type: disc;
+}
+main ul ul {
+  list-style-type: circle;
+}
+main ul ul ul {
+  list-style-type: '*';
+}
+main ul ul ul ul {
+  list-style-type: '+';
+}
+main ul ul ul ul ul {
+  list-style-type: '-';
+}
+main ul ul ul ul ul ul {
+  list-style-type: '･';
+}
+main li + li {
+  margin-top: 0.5rem;
+}
+main dt {
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-bottom: 1px solid;
+}
+main dd {
+  margin-left: 1.5rem;
+}
+main dt + dd {
+  margin-top: 3px;
+}
+main dd + dt {
+  margin-top: 25px;
+}
+main dd ul,
+main dd ol {
+  margin-left: 1rem;
+}
+main blockquote {
+  width: 80%;
+  margin-right: auto;
+  margin-left:  auto;
+  padding: 10px 60px;
+}
+main blockquote::before {
+  content: '"';
+  font-size: 64px;
+}
+main figure {
+  text-align: center;
+}
+main figcaption {
+  margin-top: 5px;
+  letter-spacing: 0.05rem;
+}
+main pre,
+main code,
+main .path,
+main kbd,
+main pre,
+main samp {
+  font-family: Consolas, Courier, Monaco, monospace;
+}
+main pre {
+  display: block;
+  padding: 0;
+  word-break: keep-all;
+  word-wrap: normal;
+  white-space: pre;
+  background-color: transparent;
+  overflow-x: auto;
+}
+main code,
+main .path {
+  display: inline;
+  padding: 2px 7px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+main pre code {
+  display: inline-block;
+  padding: 1em 2em 1em 1rem;
+  min-width: 100%;
+  max-width: none;
+  line-height: 1.4;
+  word-break: keep-all;
+  word-wrap: normal;
+  white-space: pre;
+  overflow-x: visible;
+  scroll-behavior: inherit;
+}
+main pre code strong,
+main pre code strong *,
+main code strong,
+main code strong * {
+  font-weight: normal;
+}
+main table {
+  padding: 0;
+}
+main table,
+main td,
+main th,
+main .table,
+main .table-cell {
+  border-style: solid;
+}
+main table,
+main .table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-width: 1px;
+}
+main .table {
+  padding: 0;
+}
+main td,
+main th,
+main .table-cell {
+  padding: 5px 10px;
+  vertical-align: top;
+  border-width: 1px 0 0 1px;
+}
+main tr:first-child td,
+main tr:first-child th,
+main [colspan] + td,
+main [colspan] + td,
+main .table-row:first-child .table-cell {
+  border-top-width: 0;
+}
+main td:first-child,
+main th:first-child,
+main [rowspan] + td,
+main [rowspan] + td,
+main .table-cell:first-child {
+  border-left-width: 0;
+}
+main thead + tbody tr:first-child td,
+main thead + tbody tr:first-child th {
+  border-top-width: 1px;
+}
+main tfoot tr:first-child td,
+main tfoot tr:first-child th {
+  border-top-width: 1px;
+}
+main [rowspan] {
+  border-right-width: 1px;
+}
+main .table {
+  display: table;
+  list-style: none;
+}
+main .table-row {
+  display: table-row;
+  margin: 0;
+}
+main .table-cell {
+  display: table-cell;
+  margin: 0;
+}
+main strong {
+  font-weight: bold;
+}
+main em {
+  border-bottom: 1px dashed #666;
+}
+main q {
+  position: relative;
+  padding: 2px 2px;
+}
+main q::before,
+main q::after {
+  position: relative;
+  top: 0.2rem;
+  font-size: 32px;
+  line-height: 0;
+}
+main q::before {
+  content: '"';
+}
+main q::after {
+  content: '"';
+}
+main blockquote p:first-child {
+  margin-top: 0;
+}
+main ins {
+  text-decoration: underline;
+}
+main ins::before {
+  content: "[ins]";
+  margin-right: 0.1rem;
+}
+main mark {
+  padding: 0 3px;
+}
+main small {
+  font-size: 60%;
+  font-weight: normal;
+}
+main hr {
+  border-width: 1px 0 0;
+  border-style: dashed;
+  background-color: transparent;
+}
+main aside + footer,
+main aside + aside,
+main aside + h1,
+main aside + h2,
+main aside + h3,
+main aside + h4,
+main aside + h5,
+main aside + h6,
+main aside + p,
+main aside + ol,
+main aside + ul,
+main aside + dl,
+main aside + div,
+main aside + pre,
+main aside + blockquote,
+main aside + table,
+main aside + figure,
+main aside + details,
+main aside + hr {
+  margin-top: 40px;
+}
+main h1 + section,
+main h2 + section,
+main h3 + section,
+main h4 + section,
+main h5 + section,
+main h6 + section,
+.markdown main h1 ~ h2,
+.markdown main h1 ~ h3,
+.markdown main h1 ~ h4,
+.markdown main h1 ~ h5,
+.markdown main h1 ~ h6,
+.markdown main h2 ~ h3,
+.markdown main h2 ~ h4,
+.markdown main h2 ~ h5,
+.markdown main h2 ~ h6,
+.markdown main h3 ~ h4,
+.markdown main h3 ~ h5,
+.markdown main h3 ~ h6,
+.markdown main h4 ~ h5,
+.markdown main h4 ~ h6,
+.markdown main h5 ~ h6 {
+  margin-top: 20px;
+}
+main > p:first-child,
+main > ol:first-child,
+main > ul:first-child,
+main > dl:first-child,
+main > div:first-child,
+main > pre:first-child,
+main > blockquote:first-child,
+main > table:first-child,
+main > figure:first-child,
+main > details:first-child,
+main > hr:first-child,
+main section > p:first-child,
+main section > ol:first-child,
+main section > ul:first-child,
+main section > dl:first-child,
+main section > div:first-child,
+main section > pre:first-child,
+main section > blockquote:first-child,
+main section > table:first-child,
+main section > figure:first-child,
+main section > details:first-child,
+main section > hr:first-child,
+main div > p:first-child,
+main div > ol:first-child,
+main div > ul:first-child,
+main div > dl:first-child,
+main div > div:first-child,
+main div > pre:first-child,
+main div > blockquote:first-child,
+main div > table:first-child,
+main div > figure:first-child,
+main div > details:first-child,
+main div > hr:first-child {
+  margin-top: 0;
+}
+main section > :last-child:not(section) {
+  margin-bottom: 13px;
+}
+main p + footer,
+main ol + footer,
+main ul + footer,
+main dl + footer,
+main div + footer,
+main pre + footer,
+main blockquote + footer,
+main table + footer,
+main figure + footer,
+main details + footer,
+main hr + footer,
+main p + aside,
+main ol + aside,
+main ul + aside,
+main dl + aside,
+main div + aside,
+main pre + aside,
+main blockquote + aside,
+main table + aside,
+main figure + aside,
+main details + aside {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+main footer > p:first-child,
+main footer > ol:first-child,
+main footer > ul:first-child,
+main footer > dl:first-child,
+main footer > div:first-child,
+main footer > pre:first-child,
+main footer > blockquote:first-child,
+main footer > table:first-child,
+main footer > figure:first-child,
+main footer > details:first-child,
+main footer > hr:first-child,
+main aside > p:first-child,
+main aside > ol:first-child,
+main aside > ul:first-child,
+main aside > dl:first-child,
+main aside > div:first-child,
+main aside > pre:first-child,
+main aside > blockquote:first-child,
+main aside > table:first-child,
+main aside > figure:first-child,
+main aside > details:first-child,
+main aside > hr:first-child {
+  margin-top: 0.7rem;
+}
+main section + p,
+main section + ol,
+main section + ul,
+main section + dl,
+main section + div,
+main section + pre,
+main section + blockquote,
+main section + table,
+main section + figure,
+main section + details,
+main section + hr,
+main footer + p,
+main footer + ol,
+main footer + ul,
+main footer + dl,
+main footer + div,
+main footer + pre,
+main footer + blockquote,
+main footer + table,
+main footer + figure,
+main footer + details,
+main footer + hr,
+main aside + p,
+main aside + ol,
+main aside + ul,
+main aside + dl,
+main aside + div,
+main aside + pre,
+main aside + blockquote,
+main aside + table,
+main aside + figure,
+main aside + details,
+main aside + hr {
+  margin-top: 3rem;
+}
+main p + h1,
+main ol + h1,
+main ul + h1,
+main dl + h1,
+main div + h1,
+main pre + h1,
+main blockquote + h1,
+main table + h1,
+main figure + h1,
+main details + h1,
+main hr + h1 {
+  margin-top: 60px;
+}
+main p + h1,
+main ol + h1,
+main ul + h1,
+main dl + h1,
+main div + h1,
+main pre + h1,
+main blockquote + h1,
+main table + h1,
+main figure + h1,
+main details + h1,
+main hr + h1 {
+  margin-top: 50px;
+}
+main p + h2,
+main ol + h2,
+main ul + h2,
+main dl + h2,
+main div + h2,
+main pre + h2,
+main blockquote + h2,
+main table + h2,
+main figure + h2,
+main details + h2,
+main hr + h2 {
+  margin-top: 40px;
+}
+main p + h3,
+main ol + h3,
+main ul + h3,
+main dl + h3,
+main div + h3,
+main pre + h3,
+main blockquote + h3,
+main table + h3,
+main figure + h3,
+main details + h3,
+main hr + h3 {
+  margin-top: 30px;
+}
+main p + h4,
+main ol + h4,
+main ul + h4,
+main dl + h4,
+main div + h4,
+main pre + h4,
+main blockquote + h4,
+main table + h4,
+main figure + h4,
+main details + h4,
+main hr + h4 {
+  margin-top: 20px;
+}
+main p + h5,
+main ol + h5,
+main ul + h5,
+main dl + h5,
+main div + h5,
+main pre + h5,
+main blockquote + h5,
+main table + h5,
+main figure + h5,
+main details + h5,
+main hr + h5 {
+  margin-top: 20px;
+}
+main p + h6,
+main ol + h6,
+main ul + h6,
+main dl + h6,
+main div + h6,
+main pre + h6,
+main blockquote + h6,
+main table + h6,
+main figure + h6,
+main details + h6,
+main hr + h6 {
+  margin-top: 60px;
+}
+main h1 ~ p,
+main h1 ~ ol,
+main h1 ~ ul,
+main h1 ~ dl,
+main h1 ~ div,
+main h1 ~ pre,
+main h1 ~ blockquote,
+main h1 ~ table,
+main h1 ~ figure,
+main h1 ~ details,
+main h1 ~ hr,
+main h2 ~ p,
+main h2 ~ ol,
+main h2 ~ ul,
+main h2 ~ dl,
+main h2 ~ div,
+main h2 ~ pre,
+main h2 ~ blockquote,
+main h2 ~ table,
+main h2 ~ figure,
+main h2 ~ details,
+main h2 ~ hr {
+  padding-left: 1rem;
+}
+main h3 ~ p,
+main h3 ~ ol,
+main h3 ~ ul,
+main h3 ~ dl,
+main h3 ~ div,
+main h3 ~ pre,
+main h3 ~ blockquote,
+main h3 ~ table,
+main h3 ~ figure,
+main h3 ~ details,
+main h3 ~ hr {
+  padding-left: 2rem;
+}
+main h4 ~ p,
+main h4 ~ ol,
+main h4 ~ ul,
+main h4 ~ dl,
+main h4 ~ div,
+main h4 ~ pre,
+main h4 ~ blockquote,
+main h4 ~ table,
+main h4 ~ figure,
+main h4 ~ details,
+main h4 ~ hr {
+  padding-left: 3rem;
+}
+main h5 ~ p,
+main h5 ~ ol,
+main h5 ~ ul,
+main h5 ~ dl,
+main h5 ~ div,
+main h5 ~ pre,
+main h5 ~ blockquote,
+main h5 ~ table,
+main h5 ~ figure,
+main h5 ~ details,
+main h5 ~ hr {
+  padding-left: 4rem;
+}
+main h6 ~ p,
+main h6 ~ ol,
+main h6 ~ ul,
+main h6 ~ dl,
+main h6 ~ div,
+main h6 ~ pre,
+main h6 ~ blockquote,
+main h6 ~ table,
+main h6 ~ figure,
+main h6 ~ details,
+main h6 ~ hr {
+  padding-left: 5rem;
+}
+/*
+
+  Base structure
+
+*/
+.page-header {
+  text-align: center;
+}
+.top-page .page-header {
+  padding-top: 30px;
+}
+.sub-page .page-header {
+  padding-top: 5px;
+}
+.page-header,
+.page-header a,
+.page-header a h1,
+.page-header a img,
+.page-header:hover,
+.page-header:hover a,
+.page-header:hover a h1,
+.page-header:hover a img,
+.page-header a:hover,
+.page-header a:hover h1,
+.page-header a:hover img,
+.page-header a h1:hover,
+.page-header a img:hover {
+  text-decoration: none;
+}
+.sub-page .page-header h1,
+.sub-page .page-header img {
+  display: inline-block;
+  margin: 0;
+  vertical-align: middle;
+  border: none;
+}
+.page-header h1 {
+  font-weight: normal;
+  color: #62a433;
+}
+.top-page .page-header h1,
+.sub-page .page-header h1 {
+  font-size: 15px;
+}
+.top-page .page-header img {
+  width: 300px;
+  max-width: 95%;
+}
+.sub-page .page-header img {
+  width: 160px;
+  max-width: 95%;
+}
+.page-header,
+main,
+.page-footer,
+.down,
+.up,
+.reload {
+  width: 95%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+main {
+  padding-top: 50px;
+}
+.profile main .table,
+.profile main .table-row,
+.profile main .table-cell,
+.favorite main .table,
+.favorite main .table-row,
+.favorite main .table-cell,
+.distribution main .table,
+.distribution main .table-row,
+.distribution main .table-cell {
+  border: none;
+}
+.profile main .name,
+.favorite main .name,
+.distribution main .name {
+  padding-right: 4px;
+}
+.profile main .colon,
+.favorite main .colon,
+.distribution main .colon {
+  padding-right: 0;
+  padding-left: 0;
+}
+.profile main .content,
+.favorite main .content,
+.distribution main .content {
+  padding-left: 4px;
+}
+.sub-page nav {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: center;
+}
+nav ul {
+  list-style: none;
+}
+.top-page main nav ul {
+  margin-left: 0;
+  padding-left: calc(50% - 50px);
+}
+.sub-page .page-footer nav ul {
+  display: inline-block;
+  padding-left: 0;
+  line-height: 1.5;
+}
+.sub-page .page-footer nav li {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.top-page main nav li + li {
+  padding-top: 20px;
+}
+.sub-page .page-footer nav li {
+  display: inline-block;
+}
+.sub-page .page-footer nav a {
+  display: block;
+  height: 15px;
+  padding: 1px 5px 4px 5px;
+  font-size: 15px;
+}
+.page-footer nav .current {
+  border-bottom: 1px solid #62a433;
+  pointer-events: none;
+}
+.page-footer {
+  padding-top: 50px;
+  padding-bottom: 5px;
+  text-align: center;
+  background-color: #fff;
+}
+.page-footer p {
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+}
+.privacy-policy {
+  display: inline-block;
+  margin-top: 20px;
+  padding-left: 10px;
+}
+.down button,
+.up button,
+.reload button {
+  display: inline-block;
+  position: fixed;
+  right: 0;
+  margin-left: 20px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  vertical-align: middle;
+  color: #62a433;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid #62a433;
+  outline: none;
+}
+.down button,
+.up button {
+  height: 25%;
+  box-sizing: border-box;
+}
+.down button::before,
+.up button::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -15px;
+  width: 100px;
+  height: 100%;
+}
+.down button {
+  bottom: 1px;
+}
+.up button {
+  bottom: 25%;
+}
+.reload {
+  display: none;
+}
+.reload button {
+  top: 50%;
+  margin-top: -16px;
+}
+.reload button::after {
+  content: "";
+  display: block;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background-color: #62a433
+}
+.deactive {
+  text-decoration: none;
+  color: #999;
+  pointer-events: none;
+}
+.profile .name,
+.favorite .name {
+  word-break: keep-all;
+  word-wrap: normal;
+}
+.profile .content,
+.favorite .content {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+.bracket,
+.bracket-contents {
+  font-size: 1rem;
+}
+.bracket {
+  font-weight: bold;
+  color: #e00;
+}
+.bracket-contents {
+  font-weight: normal;
+}
+.capsule,
+.capsule-part {
+  display: inline-block;
+  margin: -4px 2px 0;
+  padding: 3px 2px 0;
+  font-size: 85%;
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1;
+  word-break: keep-all;
+  vertical-align: middle;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.capsule {
+  color: #55d;
+  border-color: #55d;
+}
+.capsule-part {
+  color: #d55;
+  border-color: #d55;
+}
+/*
+
+  Contents container
+
+*/
+.contents-container {
+  display: none;
+}
+.novel .novel.contents-container {
+  display: block;
+}
+.markdown .markdown.contents-container {
+  display: block;
+}
+.html .html.contents-container {
+  display: block;
+}
+.another .another.contents-container {
+  display: block;
+}
+/*
+
+  Monokai
+
+*/
+.monokai {
+  color: rgb(248, 248, 242);
+  background-color: rgb(39, 40, 34);
+}
+.monokai h1::before,
+.monokai h2::before,
+.monokai h3::before,
+.monokai h4::before,
+.monokai h5::before,
+.monokai h6::before {
+  content: "#";
+  color: rgb(230, 219, 116);
+}
+.monokai h1,
+.monokai h2,
+.monokai h3,
+.monokai h4,
+.monokai h5,
+.monokai h6,
+.monokai hr {
+  border-color: rgb(117, 113, 94);
+}
+.monokai a {
+  color: rgb(102, 217, 239);
+}
+.monokai em {
+  color: rgb(166, 226, 46);
+}
+.monokai i {
+  color: rgb(253, 151, 31);
+}
+.monokai strong {
+  color: rgb(249, 38, 114);
+}
+/*
+
+  Print
+
+*/
+@media print {
+  body {
+    color: #000;
+    background-color: #fff;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  hr {
+    border-color: #000;
+  }
+  a {
+    color: #00c4ea;
+  }
+  em {
+    color: #9eeb00;
+  }
+  i {
+    color: #ebb900;
+  }
+  strong {
+    color: #eb0054;
+  }
+}
