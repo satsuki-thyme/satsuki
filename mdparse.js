@@ -239,7 +239,7 @@ function mdParse(src, opt) {
     let lineWork2 = txt.replace(/^[ \t]*(\*|\+|-|\d+\.) (.*)$/, '<li>$2')
     let listLvDiff = 0
     if (listPst === 1) {
-      listLvDiff = listLvCrr - listLvPst - 1
+      listLvDiff = listLvCrr - listLvPst
     } else {
       listLvDiff = listLvCrr
     }
