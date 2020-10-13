@@ -185,7 +185,7 @@
 let search = location.search.slice(1)
 let host = location.hostname
 let stngObj = {
-  "loadCntnt": {
+  "loadContent": {
     "satsuki-thyme.com": {
       "backHost": "raw.githubusercontent.com",
       "userName": "satsuki-thyme",
@@ -215,13 +215,13 @@ let stngObj = {
     }
   }
 }
-let backHost = stngObj['loadCntnt'][host]['backHost']
-let userName = stngObj['loadCntnt'][host]['userName']
-let repoSite = stngObj['loadCntnt'][host]['repoSite']
-let branch = stngObj['loadCntnt'][host]['branch']
-let dfltDoc = stngObj['loadCntnt'][host]['dfltDoc']
-let urlHome = stngObj['loadCntnt'][host]['urlHome']
-let urlBase = stngObj['loadCntnt'][host]['urlBase']
+let backHost = stngObj['loadContent'][host]['backHost']
+let userName = stngObj['loadContent'][host]['userName']
+let repoSite = stngObj['loadContent'][host]['repoSite']
+let branch = stngObj['loadContent'][host]['branch']
+let dfltDoc = stngObj['loadContent'][host]['dfltDoc']
+let urlHome = stngObj['loadContent'][host]['urlHome']
+let urlBase = stngObj['loadContent'][host]['urlBase']
 if (backHost != '') {
   backHost = '//' + backHost.replace(/\//g, '')
 }
@@ -244,7 +244,7 @@ let file = ''
 let type = ''
 let preview = '0'
 let endSwch = 0
-let mainCntnt_novel = `
+let mainContent_novel = `
 <main class="novel contents-container">
   <div class="info">
     <p id="area-counter-top">全文：<span id="counter-top"></span>文字</p>
@@ -272,7 +272,7 @@ let mainCntnt_novel = `
   </div>
 </main>
 `
-let mainCntnt_etc = `
+let mainContent_etc = `
 <main class="markdown html another contents-container"></main>
 `
 let slctd = 0
@@ -322,19 +322,19 @@ function setPrm() {
     url = backHost + userName + repoSite + branch + dir + file
     console.log(url)
   }
-  loadCntnt(url)
+  loadContent(url)
 }
 /*
   2nd run
 */
-function loadCntnt(url) {
+function loadContent(url) {
   let now = new Date()
   $.ajax({
     url: url + '?' + now,
     cache: false,
   })
   .done(function(data) {
-    writeCntnt(data)
+    writeContent(data)
   })
   .fail(function() {
   })
@@ -342,42 +342,42 @@ function loadCntnt(url) {
 /*
   3rd run
 */
-function writeCntnt(data) {
+function writeContent(data) {
   let pageHeader = document.getElementById('page-header')
-  if (type === 'novel' || type === 'novel') {
-    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
-    writeCntnt_novel(data, 'novel')
+  if (type === 'novel' || type === 'nvl') {
+    pageHeader.insertAdjacentHTML('afterend', mainContent_novel)
+    writeContent_novel(data, 'novel')
   } else if (type === 'plot' || type === 'plt') {
-    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
-    writeCntnt_novel(data, 'plot')
+    pageHeader.insertAdjacentHTML('afterend', mainContent_novel)
+    writeContent_novel(data, 'plot')
   } else if (type === 'both') {
-    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
-    writeCntnt_novel(data, 'both')
+    pageHeader.insertAdjacentHTML('afterend', mainContent_novel)
+    writeContent_novel(data, 'both')
   } else if (type === 'no-ruby') {
-    pageHeader.insertAdjacentHTML('afterend', mainCntnt_novel)
-    writeCntnt_novel(data, 'no-ruby')
+    pageHeader.insertAdjacentHTML('afterend', mainContent_novel)
+    writeContent_novel(data, 'no-ruby')
   } else if (file === '/README.md') {
-    pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
-    writeCntnt_index(data)
+    pageHeader.insertAdjacentHTML('afterend', mainContent_etc)
+    writeContent_index(data)
   } else {
     if (ext === 'txt') {
-      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
-      writeCntnt_txt(data)
+      pageHeader.insertAdjacentHTML('afterend', mainContent_etc)
+      writeContent_txt(data)
     } else if (ext === 'html') {
-      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
-      writeCntnt_html(data)
+      pageHeader.insertAdjacentHTML('afterend', mainContent_etc)
+      writeContent_html(data)
     } else if (ext === 'md') {
-      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
-      writeCntnt_md(data)
+      pageHeader.insertAdjacentHTML('afterend', mainContent_etc)
+      writeContent_md(data)
     } else {
-      pageHeader.insertAdjacentHTML('afterend', mainCntnt_etc)
-      writeCntnt_index(data)
+      pageHeader.insertAdjacentHTML('afterend', mainContent_etc)
+      writeContent_index(data)
     }
   }
   elm_counterSlctd = document.getElementById('counter-slctd')
   elm_areaCounterSlctd = document.getElementById('area-counter-slctd')
 }
-function writeCntnt_novel(dataSrc, type) {
+function writeContent_novel(dataSrc, type) {
   let data = dataSrc
   let word = ''
   if (type === 'novel' || type === 'no-ruby') {
@@ -408,7 +408,7 @@ function writeCntnt_novel(dataSrc, type) {
   elm_counterBottom.textContent = counter
   function procNovel(data) {
     let work = ''
-    let wordArr = data.replace(/^# .*\n/m, '').split('\n')
+    let wordArr = data.replace(/^[#*].*\n/mg, '').split('\n')
     let wordObj = {}
     let wordArrLen = wordArr.length - 1
     for (var i = 0; wordArrLen >= i; i++) {
@@ -507,17 +507,17 @@ function writeCntnt_novel(dataSrc, type) {
   }
   epsdNumber()
 }
-function writeCntnt_index(data) {
+function writeContent_index(data) {
   let word = keywdRpl(rubyParse(mdParse(data).replace(/href="(.*?)"/g, 'href="?q=' + dir + '/$1&type=novel"')))
   $('html').addClass('markdown')
   $('.markdown.contents-container').append(word)
   procEnd(1, '')
 }
-function writeCntnt_txt(data) {
+function writeContent_txt(data) {
   $('body').append(data)
   procEnd(1, '')
 }
-function writeCntnt_html(data) {
+function writeContent_html(data) {
   let word = keywdRpl(data)
   let titl = file.slice(1)
   $('html').addClass('html')
@@ -526,18 +526,18 @@ function writeCntnt_html(data) {
   $('.title').append(decodeURI(titl))
   procEnd(1, '')
 }
-function writeCntnt_md(data) {
+function writeContent_md(data) {
   let word = keywdRpl(rubyParse(mdParse(data)))
   $('html').addClass('markdown')
   $('.markdown.contents-container').append(word)
   procEnd(1, '')
 }
-function writeCntnt_another(data) {
+function writeContent_another(data) {
   $('.another.contents-container').append(data)
   procEnd(1, '')
 }
 function rubyParse(data) {
-  let word = data.replace(/｜(.*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
+  let word = data.replace(/｜([^｜]*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
                  .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>')
                  .replace(/｜(（.*?）)/g, '$1')
   return word
