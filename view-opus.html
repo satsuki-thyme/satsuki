@@ -151,7 +151,7 @@
   font-size: 16px;
 }
 .novel main #novel_honbun p {
-  line-height: 28.8px;
+  line-height: 38.8px;
 }
 .novel main #novel_honbun p + p {
   margin-top: 0;
@@ -320,7 +320,6 @@ function setPrm() {
     }
     ext = file.replace(/[^\.]*\.+([^\.])+$/, '')
     url = backHost + userName + repoSite + branch + dir + file
-    console.log(url)
   }
   loadContent(url)
 }
@@ -344,10 +343,10 @@ function loadContent(url) {
 */
 function writeContent(data) {
   let pageHeader = document.getElementById('page-header')
-  if (type === 'novel' || type === 'nvl') {
+  if (type === 'novel') {
     pageHeader.insertAdjacentHTML('afterend', mainContent_novel)
     writeContent_novel(data, 'novel')
-  } else if (type === 'plot' || type === 'plt') {
+  } else if (type === 'plot') {
     pageHeader.insertAdjacentHTML('afterend', mainContent_novel)
     writeContent_novel(data, 'plot')
   } else if (type === 'both') {
@@ -387,14 +386,12 @@ function writeContent_novel(dataSrc, type) {
   } else if (type === 'both') {
     word = procEnd(1, procBoth(data))
   }
-  let counter = data.replace(/\{plot\}[\s\S]*/g, '')
-                    .replace(/^# .*?\n/m, '')
-                    .replace(/｜(.*?)《.*?》/g, '$1')
-                    .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
-                    .replace(/｜(（.*?）)/g, '$1')
-                    .replace(/( |　|\n)/g, '')
+  let counter = data.replace(/^[#*].*\n/gm, '')
+                    .replace(/｜([^｜]*?)《.*?》/g, '$1')
+                    .replace(/([\u4E00-\u9FFF]+)（.*?）/g, '$1')
+                    .replace(/｜?(（.*?）)/g, '$1')
+                    .replace(/[ 　\n]/gm, '')
                     .length
-                    .toString()
   if (!data.match(/^# /) === false) {
     let subTitl = data.match(/^#\s.*/)[0].replace(/#\s*/, '')
     $('title').empty().append(subTitl)
@@ -408,7 +405,7 @@ function writeContent_novel(dataSrc, type) {
   elm_counterBottom.textContent = counter
   function procNovel(data) {
     let work = ''
-    let wordArr = data.replace(/^[#*].*\n/mg, '').split('\n')
+    let wordArr = data.replace(/^[#*].*\n/gm, '').split('\n')
     let wordObj = {}
     let wordArrLen = wordArr.length - 1
     for (var i = 0; wordArrLen >= i; i++) {
@@ -543,7 +540,7 @@ function rubyParse(data) {
   return word
 }
 function rubyRm(data) {
-  let word = data.replace(/｜(.*?)《(.*?)》/g, '$1')
+  let word = data.replace(/｜([^｜]*?)《.*?》/g, '$1')
                  .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '$1')
                  .replace(/｜(（.*?）)/g, '$1')
   return word
@@ -662,10 +659,12 @@ function procEnd(incr, data) {
         slctdLen = slctd
                    .getRangeAt(0)
                    .toString()
-                   .replace(/｜(.*?)《.*?》/g, '$1')
-                   .replace(/([\u4E00-\u9FFF]+?)（.*?）/g, '$1')
-                   .replace(/｜(（.*?）)/g, '$1')
-                   .replace(/( |　|\n)/g, '')
+                   .replace(/\{plot\}[\s\S]*/g, '')
+                   .replace(/^[#*].*\n/gm, '')
+                   .replace(/｜([^｜]*?)《.*?》/g, '$1')
+                   .replace(/([\u4E00-\u9FFF]+)（.*?）/g, '$1')
+                   .replace(/｜?(（.*?）)/g, '$1')
+                   .replace(/[ 　\n]/gm, '')
                    .length
         elm_counterSlctd.textContent = slctdLen
         elm_areaCounterSlctd.classList.add('selected')
