@@ -527,18 +527,43 @@ main aside + details,
 main aside + hr {
   margin-top: 3rem;
 }
-main p + h1,
-main ol + h1,
-main ul + h1,
-main dl + h1,
-main div + h1,
-main pre + h1,
-main blockquote + h1,
-main table + h1,
-main figure + h1,
-main details + h1,
-main hr + h1 {
-  margin-top: 60px;
+main h1 + h1,
+main h1 + h2,
+main h1 + h3,
+main h1 + h4,
+main h1 + h5,
+main h1 + h6,
+main h2 + h1,
+main h2 + h2,
+main h2 + h3,
+main h2 + h4,
+main h2 + h5,
+main h2 + h6,
+main h3 + h1,
+main h3 + h2,
+main h3 + h3,
+main h3 + h4,
+main h3 + h5,
+main h3 + h6,
+main h4 + h1,
+main h4 + h2,
+main h4 + h3,
+main h4 + h4,
+main h4 + h5,
+main h4 + h6,
+main h5 + h1,
+main h5 + h2,
+main h5 + h3,
+main h5 + h4,
+main h5 + h5,
+main h5 + h6,
+main h6 + h1,
+main h6 + h2,
+main h6 + h3,
+main h6 + h4,
+main h6 + h5,
+main h6 + h6 {
+  margin-top: 15px;
 }
 main p + h1,
 main ol + h1,
@@ -753,7 +778,7 @@ main,
 .up,
 .reload {
   width: 95%;
-  max-width: 1000px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
@@ -942,26 +967,6 @@ nav ul {
 .capsule-part {
   color: #d55;
   border-color: #d55;
-}
-/*
-
-  Contents container
-
-*/
-.contents-container {
-  display: none;
-}
-.novel .novel.contents-container {
-  display: block;
-}
-.markdown .markdown.contents-container {
-  display: block;
-}
-.html .html.contents-container {
-  display: block;
-}
-.another .another.contents-container {
-  display: block;
 }
 /*
 
