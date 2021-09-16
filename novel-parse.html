@@ -344,9 +344,9 @@ html.dark #input-button {
   <a class="next"></a>
 </div>
 </body>
-<script src="/md-parse.js"></script>
-<script src="/3rd-party-lib/jszip.min.js"></script>
-<script src="/3rd-party-lib/FileSaver.min.js"></script>
+<script src="https://etc.satsuki.me/md-parse.js"></script>
+<script src="https://etc.satsuki.me/3rd-party-lib/jszip.min.js"></script>
+<script src="https://etc.satsuki.me/3rd-party-lib/FileSaver.min.js"></script>
 <script>
 /*
 
@@ -402,6 +402,12 @@ let urlObj = {
     "next": "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now
   },
   "https://etc.satsuki.me": {
+    "content": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
+    "readme": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
+    "prev": "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now,
+    "next": "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now
+  },
+  "https://satsuki.me": {
     "content": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
     "readme": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
     "prev": "https://satsuki.me/novel-parse.html?" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now,
