@@ -1,11 +1,6 @@
 <html class="h">
 <meta charset="utf-8">
-<title>五月タイムの小説</title>
-<meta name="twitter:title" content="五月タイムの小説">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@SatsukiThyme">
-<meta name="twitter:site" content="@satsuki_thyme">
-<meta name="twitter:image:src" content="https://satsuki.me/images/satsuki-thyme-fg-white-bg-green-1200x630.png">
+<title>小説をパースするやつ</title>
 <style>
 /*
 
@@ -333,6 +328,39 @@ html.dark #input-button {
         <dd>暗い配色です。</dd>
       </label>
     </dl>
+
+    <h2>URL オプション</h2>
+    <p>URL で ? に続けてオプションを指定することができます。</p>
+    <p>& でつなげて複数指定することができます。</p>
+    <p>例：<code>novel-parse?format=plot&theme=light&mode=c</code></p>
+
+    <h3>フォーマット</h3>
+    <dl>
+      <dt>format=reading</dt>
+      <dd>閲覧</dd>
+      <dt>format=plot</dt>
+      <dd>Markdown で書かれたプロットを特別な表示にする</dd>
+      <dt>format=post</dt>
+      <dd>投稿</dd>
+      <dt>format=odd</dt>
+      <dd>Odd</dd>
+    </dl>
+
+    <h3>テーマ</h3>
+    <dl>
+      <dt>theme=light</dt>
+      <dd>ライト</dd>
+      <dt>theme=dark</dt>
+      <dd>ダーク</dd>
+    </dl>
+
+    <h3>モード</h3>
+    <dl>
+      <dt>mode=normal</dt>
+      <dd>通常の改行モード</dd>
+      <dt>mode=c</dt>
+      <dd>データ上の改行を 1 個少なく数える</dd>
+    </dl>
   </div><!-- text -->
 </div><!-- frame -->
 <div id="count">
@@ -364,10 +392,6 @@ searchArr.forEach(function(mediator) {
   let w = mediator.split("=")
   searchObj[w[0]] = w[1]
 })
-// 改行の種類
-let EOS = "\n"
-// FileReader による読み込みファイル
-let trgFile = null
 // DOM
 let elm_title = document.querySelector("title")
 let elm_input = document.querySelector("#input")
@@ -385,6 +409,28 @@ let elm_countFull = document.querySelector("#count-full")
 let elm_countSelect = document.querySelector("#count-select")
 let elm_prev = document.querySelectorAll(".prev")
 let elm_next = document.querySelectorAll(".next")
+// 改行の種類
+let EOS = "\n"
+// モード = 同一行の処理と、改行の読み取り
+let modeMediator = "normal"
+let modeObj = {
+  "normal": {
+    lineManipulate: function(src) {
+      return src.replace(/^(?!#)(.+?)\r?\n/gm, '<p>$1</p>' + EOS)
+                .replace(/^\r?\n/gm, '<p><br></p>' + EOS)
+    },
+    "EOSReading": RegExp("\r?\n")
+  },
+  "c": {
+    lineManipulate: function(src) {
+      return src.replace(/((^(?!#).+?\r?\n)+)/gm, '<p>$1</p>' + EOS)
+                .replace(/^(\r?\n){2}/gm, '<p><br></p>' + EOS)
+    },
+    "EOSReading": RegExp("(\r?\n){2}")
+  }
+}
+// FileReader による読み込みファイル
+let trgFile = null
 // URL の search で作品が指定されていた場合の作品のホスト
 let now = Date.now()
 let repoFile = searchObj["op"].split("/")
@@ -418,14 +464,18 @@ let urlObj = {
 let formatObj = {
   reading: function(src) {
     countFull(src)
-    return lbParse(rubyParse(src))
+    return modeObj[modeMediator]["lineManipulate"](rubyParse(src))
   },
   plot: function(src) {
     countFull(src)
-    return rubyParse(plotParse(src))
+    return modeObj[modeMediator]["lineManipulate"](
+      rubyParse(src).replace(/^# (.*)$/m, '<h1>$1</h1>\n')
+                    .replace(/(^## .*\r?\n|^### .*\r?\n|^#### .*\r?\n|^[*+-_~=`>|] .*\r?\n)/gm, "")
+  )
+    .replace(/^##### (.*)$/gm, '<p class="plot-heading">$1</p>' + EOS)
   },
   post: function(src) {
-    return lbParse(mdRemove(src))
+    return modeObj[modeMediator]["lineManipulate"](mdRemove(src))
   },
   odt: function(src) {
     let zip = new JSZip()
@@ -495,6 +545,10 @@ elm_themeDark.addEventListener("change", function(e) {
   URL でオプションが指定されていた場合の処理
 
 */
+// モード
+if (searchObj["mode"] === "c") {
+  modeMediator = "c"
+}
 // フォーマット
 if (searchObj["format"] === "reading") {
   elm_formatReading.checked = true
@@ -607,10 +661,6 @@ function exec(src) {
   elm_text.innerHTML = formatObj[searchObj["format"]](src)
 }
 // 変換の実処理
-function lbParse(src) {
-  return src.replace(/^$/g, '<p><br></p>')
-            .replace(/^(.+?)$/gm, '<p>$1</p>')
-}
 function rubyParse(src) {
   return src.replace(/｜([^｜]*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>')
@@ -620,13 +670,6 @@ function rubyRemove(src) {
   return src.replace(/｜([^｜]*?)《.*?》/g, "$1")
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, "$1")
             .replace(/｜(（.*?）)/g, "$1")
-}
-function plotParse(src) {
-  return src.replace(/^# (.*)$/m, '<h1>$1</h1>\n')
-            .replace(/(^## .*\r?\n|^### .*\r?\n|^#### .*\r?\n|^[*+-_~=`>|] .*\r?\n)/gm, "")
-            .replace(/((^(?!#).+?(\r?\n))+)/gm, '<p>$1</p>' + EOS)
-            .replace(/^(\r?\n){2}/gm, '<p><br></p>' + EOS)
-            .replace(/^##### (.*)$/gm, '<p class="plot-heading">$1</p>' + EOS)
 }
 function mdRemove(src) {
   return src.replace(/^[ \t]*[#*+-_~=`>|].*\r?\n/gm, "")
