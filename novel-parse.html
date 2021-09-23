@@ -168,13 +168,13 @@ div {
 .op-link:last-of-type {
   padding-bottom: 20px;
 }
-.op-link a {
+a {
   display: inline-block;
   padding: 10px 5px 0 5px;
 }
-.op-link a,
-.op-link a:visited,
-.op-link a:hover {
+a,
+a:visited,
+a:hover {
   color: #62a433;
 }
 .prev + .next {
@@ -386,7 +386,9 @@ let currOrigin = location.origin
 let searchArr = location.search.slice(1).split("&")
 let searchObj = {
   "format": "reading",
-  "orient": "h"
+  "orient": "h",
+  "theme": "auto",
+  "mode": "normal"
 }
 searchArr.forEach(function(mediator) {
   let w = mediator.split("=")
@@ -442,40 +444,48 @@ function next() {
 }
 let urlObj = {
   "http://etc.satsuki.c": {
-    "content": "http://etc.satsuki.c/novel/" + searchObj["op"] + "?" + now,
-    "readme": "http://etc.satsuki.c/novel/" + repoFile[0] + "/README.md?" + now,
-    "prev": "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now,
-    "next": "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now
+    "backhost": "http://etc.satsuki.c/novel/" + repoFile[0] + "/",
+    "content":  "http://etc.satsuki.c/novel/" + searchObj["op"] + "?" + now,
+    "readme":   "http://etc.satsuki.c/novel/" + repoFile[0] + "/README.md?" + now,
+    "linkBase": "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/",
+    "prev":     "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"],
+    "next":     "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"]
   },
   "https://etc.satsuki.me": {
-    "content": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
-    "readme": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
-    "prev": "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now,
-    "next": "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now
+    "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/",
+    "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
+    "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
+    "linkBase": "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/",
+    "prev":     "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"],
+    "next":     "https://etc.satsuki.me/novel-parse.html?" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"]
   },
   "https://satsuki.me": {
-    "content": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
-    "readme": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
-    "prev": "https://satsuki.me/novel-parse.html?" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now,
-    "next": "https://satsuki.me/novel-parse.html?" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&" + now
+    "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/",
+    "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
+    "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
+    "linkBase": "https://satsuki.me/novel-parse.html?" + repoFile[0] + "/",
+    "prev":     "https://satsuki.me/novel-parse.html?" + repoFile[0] + "/" + prev() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"],
+    "next":     "https://satsuki.me/novel-parse.html?" + repoFile[0] + "/" + next() + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"]
   }
 }
+// 目次
+let tocArr = []
 // 変換先フォーマット毎の処理
 let formatObj = {
   reading: function(src) {
     countFull(src)
-    return modeObj[modeMediator]["lineManipulate"](rubyParse(src))
+    elm_text.innerHTML = modeObj[modeMediator]["lineManipulate"](rubyParse(src))
   },
   plot: function(src) {
     countFull(src)
-    return modeObj[modeMediator]["lineManipulate"](
+    elm_text.innerHTML = modeObj[modeMediator]["lineManipulate"](
       rubyParse(src).replace(/^# (.*)$/m, '<h1>$1</h1>\n')
                     .replace(/(^## .*\r?\n|^### .*\r?\n|^#### .*\r?\n|^[*+-_~=`>|] .*\r?\n)/gm, "")
   )
     .replace(/^##### (.*)$/gm, '<p class="plot-heading">$1</p>' + EOS)
   },
   post: function(src) {
-    return modeObj[modeMediator]["lineManipulate"](mdRemove(src))
+    elm_text.innerHTML = modeObj[modeMediator]["lineManipulate"](mdRemove(src))
   },
   odt: function(src) {
     let zip = new JSZip()
@@ -507,6 +517,31 @@ let formatObj = {
           w2 += w1[i] + "."
       }
       return w2 + "odt"
+    }
+  },
+  readme: function(src) {
+    let fullLength = 0
+    let toc = ""
+    tocArr = makeToc(src)
+    for (let i = 0; i < tocArr.length; i++) {
+      procToc(tocArr[i]).then((m1) => {
+        toc += m1
+        if (i === tocArr.length - 1) {
+          elm_countFull.innerHTML = "作品全体：" + fullLength + "文字"
+          elm_countFull.classList.add("loaded")
+          elm_countFull.classList.remove("unloaded")
+          elm_text.innerHTML = mdParse(src.replace(/((.*\r?\n)*)(#+ 目次.*\r?\n)((.*\r?\n)*)((#|$)(.*(\r?\n)*)*)/gm, "$1" + toc + "$6"))
+        }
+      })
+    }
+    function procToc(tocPartArr) {
+      return new Promise((resolve) => {
+        loadContent(urlObj[currOrigin]["backhost"] + tocPartArr[0]).then(individualSrc => {
+          let partLength = rubyRemove(mdRemove(individualSrc)).replace(/[\s　]/g, "").length
+          fullLength += partLength
+          resolve("* [" + tocPartArr[1] + "](" + urlObj[currOrigin]["linkBase"] + tocPartArr[0] + "&format=" + searchObj["format"] + "&theme=" + searchObj["theme"] + "&mode=" +  searchObj["mode"] + ") : " + partLength + "文字" + EOS)
+        })
+      })
     }
   }
 }
@@ -568,11 +603,10 @@ if (searchObj["orient"] === "h") {
   elm_orientV.checked = true
 }
 // テーマ
+toggleTheme(searchObj["theme"])
 if (searchObj["theme"] === "light") {
-  toggleTheme(searchObj["theme"])
   elm_themeLight.checked = true
 } else if (searchObj["theme"] === "dark") {
-  toggleTheme(searchObj["theme"])
   elm_themeDark.checked = true
 }
 /*
@@ -580,23 +614,20 @@ if (searchObj["theme"] === "light") {
   URL で作品が指定されていた場合の処理
 
 */
-if (searchObj["op"] !== undefined) {
-  let xhr_content = new XMLHttpRequest()
-  let xhr_readme = new XMLHttpRequest()
-  xhr_content.onreadystatechange = function() {
-    if (xhr_content.readyState === 4 && xhr_content.status === 200) {
-      exec(xhr_content.responseText)
+if (searchObj["op"] !== undefined && repoFile[1] !== "README.md") {
+  loadContent(urlObj[currOrigin]["content"]).then(src => {
+    console.log(urlObj[currOrigin]["content"])
+    exec(src)
+  })
+} else if (repoFile[1] === "README.md") {
+  searchObj["format"] = "plot"
+  searchObj["mode"] = "c"
+  loadContent(urlObj[currOrigin]["content"]).then(src => {
+    if (src.match(/^# .*$/m)) {
+      elm_title.innerHTML = src.replace(/^# (.*)\r?\n[\s\S]*/m, '$1')
     }
-  }
-  xhr_content.open("GET", urlObj[currOrigin]["content"])
-  xhr_content.send()
-  xhr_readme.onreadystatechange = function() {
-    if (xhr_readme.readyState === 4 && xhr_readme.status === 200) {
-      setLink(xhr_readme.responseText)
-    }
-  }
-  xhr_readme.open("GET", urlObj[currOrigin]["readme"])
-  xhr_readme.send()
+    formatObj["readme"](src)
+  })
 }
 /*
 
@@ -658,7 +689,20 @@ function exec(src) {
   if (src.match(/^# .*$/m)) {
     elm_title.innerHTML = src.replace(/^# (.*)\r?\n[\s\S]*/m, '$1')
   }
-  elm_text.innerHTML = formatObj[searchObj["format"]](src)
+  formatObj[searchObj["format"]](src)
+  loadContent(urlObj[currOrigin]["readme"]).then(m => {
+    setLink(m)
+  })
+}
+// ファイルの読み込み
+function loadContent(url) {
+  return new Promise((resolve, reject) => {
+    let xhr_content = new XMLHttpRequest()
+    xhr_content.open("GET", url)
+    xhr_content.onload = () => resolve(xhr_content.responseText)
+    xhr_content.onerror = () => reject(console.log(xhr_content.statusText))
+    xhr_content.send()
+  })
 }
 // 変換の実処理
 function rubyParse(src) {
@@ -703,7 +747,7 @@ function countSelect(src) {
 }
 // 前の・次の作品へのリンクを表示する
 function setLink(src) {
-  let tocArr = src.replace(/^[\s\S]*?(#+ 目次.*|#+ TOC.*)\r?\n([\s\S]*?)(#+ [\s\S]*|$)/gm, "$2").split(RegExp("\r?\n")).filter(w => w !== "").map(w => w.replace(/^[*+-]? ?(.*)/g, "$1").split(RegExp(" ?: ?")))
+  tocArr = makeToc(src)
   let currEpisode = 0
   let adjacentProcObj = {
     prev: function() {
@@ -749,6 +793,12 @@ function setLink(src) {
     adjacentProcObj["next"]()
   }
 }
+// 目次の作成
+function makeToc(src) {
+  return src.replace(/(.*\r?\n)*(#+ 目次.*\r?\n)((.*\r?\n)*)(#|$)/gm, "$3")
+            .split(RegExp("\r?\n")).filter(w => w !== "")
+            .map(w => w.replace(/^[*+-]? ?(.*)/g, "$1").split(RegExp(" ?: ?")))
+}
 // 書き方向の変更処理
 function toggleOrient(orient) {
   elm_html.classList.remove("h", "v")
@@ -756,7 +806,7 @@ function toggleOrient(orient) {
 }
 // 色テーマの変更処理
 function toggleTheme(theme) {
-  elm_html.classList.remove("light", "dark")
+  elm_html.classList.remove("light", "dark" ,"auto")
   elm_html.classList.add(theme)
 }
 // odt が包含するファイルの中身
