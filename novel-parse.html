@@ -90,8 +90,12 @@ label {
 dt {
   display: inline-block;
 }
+dd + dt,
 label + label {
   margin-top: 15px;
+}
+code {
+  font-family: Arial, Helvetica, sans-serif;
 }
 /*
 
@@ -138,7 +142,7 @@ div {
   font-size: 16px;
   line-height: 28.8px;
 }
-#text p:not(.plot-heading) {
+#text.loaded p:not(.plot-heading) {
   margin: 0;
   padding: 0;
 }
@@ -168,7 +172,7 @@ div {
 .op-link:last-of-type {
   padding-bottom: 20px;
 }
-a {
+.op-link a {
   display: inline-block;
   padding: 10px 5px 0 5px;
 }
@@ -177,6 +181,7 @@ a:visited,
 a:hover {
   color: #62a433;
 }
+
 .prev + .next {
   margin-left: 5px;
 }
@@ -198,9 +203,6 @@ a:hover {
   line-height: 1;
   border-width: 1px;
   border-style: solid;
-}
-rt {
-  user-select: none;
 }
 @media (prefers-color-scheme: dark) {
   body {
@@ -342,8 +344,10 @@ html.dark #input-button {
       <dd>Markdown で書かれたプロットを特別な表示にする</dd>
       <dt>format=post</dt>
       <dd>投稿</dd>
-      <dt>format=odd</dt>
-      <dd>Odd</dd>
+      <dt>format=odt</dt>
+      <dd>ODT</dd>
+      <dt>format=pickup</dt>
+      <dd><span id="bracket"></span> で囲った部分をピックアップして表示する</dd>
     </dl>
 
     <h3>テーマ</h3>
@@ -411,6 +415,7 @@ let elm_countFull = document.querySelector("#count-full")
 let elm_countSelect = document.querySelector("#count-select")
 let elm_prev = document.querySelectorAll(".prev")
 let elm_next = document.querySelectorAll(".next")
+let elm_bracket = document.querySelector("#bracket")
 // 改行の種類
 let EOS = "\n"
 // モード = 同一行の処理と、改行の読み取り
@@ -428,53 +433,56 @@ let obj_mode = {
 let trgFile = null
 // URL の search で作品が指定されていた場合の作品のホスト
 let now = Date.now()
-let repoFile = obj_search["op"].split("/")
-function prev() {
-  return repoFile[1].replace(/(\[\d+\]).+/, "$1") + ("00" + (Number(repoFile[1].replace(/\[\d+\](\d+)\..+/, "$1")) - 1)).slice(-3) + repoFile[1].replace(/\[\d+\]\d+(\..+)/, "$1")
-}
-function next() {
-  return repoFile[1].replace(/(\[\d+\]).+/, "$1") + ("00" + (Number(repoFile[1].replace(/\[\d+\](\d+)\..+/, "$1")) + 1)).slice(-3) + repoFile[1].replace(/\[\d+\]\d+(\..+)/, "$1")
+let arr_repoFile = []
+let prevFile = ""
+let nextFile = ""
+if (obj_search["op"] !== undefined) {
+  arr_repoFile = obj_search["op"].split("/")
+  prevFile = arr_repoFile[1].replace(/(\[\d+\]).+/, "$1") + ("00" + (Number(arr_repoFile[1].replace(/\[\d+\](\d+)\..+/, "$1")) - 1)).slice(-3) + arr_repoFile[1].replace(/\[\d+\]\d+(\..+)/, "$1")
+  nextFile = arr_repoFile[1].replace(/(\[\d+\]).+/, "$1") + ("00" + (Number(arr_repoFile[1].replace(/\[\d+\](\d+)\..+/, "$1")) + 1)).slice(-3) + arr_repoFile[1].replace(/\[\d+\]\d+(\..+)/, "$1")
 }
 let obj_url = {
   "http://etc.satsuki.c": {
-    "backhost": "http://etc.satsuki.c/novel/" + repoFile[0] + "/",
+    "backhost": "http://etc.satsuki.c/novel/" + arr_repoFile[0] + "/",
     "content":  "http://etc.satsuki.c/novel/" + obj_search["op"] + "?" + now,
-    "readme":   "http://etc.satsuki.c/novel/" + repoFile[0] + "/README.md?" + now,
-    "linkBase": "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/",
-    "prev":     "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + prev() + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
-    "next":     "http://etc.satsuki.c/novel-parse.html?op=" + repoFile[0] + "/" + next() + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+    "readme":   "http://etc.satsuki.c/novel/" + arr_repoFile[0] + "/README.md?" + now,
+    "linkBase": "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/",
+    "prev":     "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
+    "next":     "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
   },
   "https://etc.satsuki.me": {
-    "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/",
-    "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
-    "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
-    "linkBase": "https://etc.satsuki.me/novel-parse.html?op=" + repoFile[0] + "/",
-    "prev":     "https://etc.satsuki.me/novel-parse.html?op=" + repoFile[0] + "/" + prev() + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
-    "next":     "https://etc.satsuki.me/novel-parse.html?op=" + repoFile[0] + "/" + next() + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+    "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/",
+    "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/" + arr_repoFile[1] + "?" + now,
+    "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/README.md?" + now,
+    "linkBase": "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/",
+    "prev":     "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
+    "next":     "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
   },
   "https://satsuki.me": {
-    "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/",
-    "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/" + repoFile[1] + "?" + now,
-    "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + repoFile[0] + "/master/README.md?" + now,
-    "linkBase": "https://satsuki.me/novel-parse.html?op=" + repoFile[0] + "/",
-    "prev":     "https://satsuki.me/novel-parse.html?op=" + repoFile[0] + "/" + prev() + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
-    "next":     "https://satsuki.me/novel-parse.html?op=" + repoFile[0] + "/" + next() + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+    "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/",
+    "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/" + arr_repoFile[1] + "?" + now,
+    "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/README.md?" + now,
+    "linkBase": "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/",
+    "prev":     "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
+    "next":     "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
   }
 }
 // タグの定義（タグ自身を処理の対象にする）
-let arr_itself = [
+let arr_bracketItself = [
   {
-    "before": "\{",
-    "after": "\}",
+    "before": "{",
+    "after": "}",
     "replaceBefore": '<span style="color: #d00">',
     "replaceAfter": '</span>'
   }
 ]
 // タグの定義（タグと中身を処理の対象にする）
-let arr_include = [
+let arr_bracketInclude = [
   {
-    "before": "<",
-    "after": ">"
+    "before": "＜",
+    "after": "＞",
+    "replaceBefore": '<span style="color: #44d">',
+    "replaceAfter": '</span>'
   }
 ]
 // 目次
@@ -483,23 +491,27 @@ let arr_toc = []
 let obj_format = {
   reading: function(src) {
     countFull(src)
-    elm_text.innerHTML = obj_mode[obj_search["mode"]](rubyParse(procTag(src, 0)))
+    elm_text.innerHTML = obj_mode[obj_search["mode"]](parseRuby(procTag(src, 0)))
   },
   plot: function(src) {
     countFull(src)
     elm_text.innerHTML = obj_mode[obj_search["mode"]](
-      rubyParse(procTag(src, 1)).replace(/^# (.*)$/m, '<h1>$1</h1>\n')
-                        　   .replace(/(^## .*\r?\n|^### .*\r?\n|^#### .*\r?\n|^[*+-_~=`>|] .*\r?\n)/gm, "")
+      parseRuby(procTag(src, 1))
+        // タイトル
+        .replace(/^# (.*)$/m, '<h1>$1</h1>\n')
+        // #####(<h5>) を除く Markdown の削除
+        .replace(/(^## .*\r?\n|^### .*\r?\n|^#### .*\r?\n|^[*+-_~=`>|] .*\r?\n)/gm, "")
   )
+    // #####(<h5>) の処理
     .replace(/^##### (.*)$/gm, '<p class="plot-heading">$1</p>' + EOS)
   },
   post: function(src) {
-    elm_text.innerHTML = obj_mode[obj_search["mode"]](mdRemove(procTag(src, 0)))
+    elm_text.innerHTML = obj_mode[obj_search["mode"]](removeMd(procTag(src, 0)))
   },
   odt: function(src) {
     let zip = new JSZip()
     let folder = null
-    zip.file("content.xml", odtParse(mdRemove(procTag(src, 0))))
+    zip.file("content.xml", parseOdt(removeMd(procTag(src, 0))))
     for (let i = 0; i < obj_odt["files"].length; i++) {
       let odtFileName = obj_odt["files"][i][0]
       let odtDirName = obj_odt["files"][i][1]
@@ -533,13 +545,13 @@ let obj_format = {
     pick("")
     function pick(w0) {
       let w1 = w0
-      let RE_w = RegExp(".{0,30}" + arr_itself[h]["before"] + ".*?" + arr_itself[h]["after"] + ".{0,30}", "gm")
+      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "gm")
       let match = src.match(RE_w)
       if (match) {
-        w1 += mdParse(rubyParse(procTag(match.join(EOS).replace(/^/gm, "* "),1)))
+        w1 += mdParse(parseRuby(procTag(match.join(EOS).replace(/^/gm, "* "),1)))
       }
       h++
-      if (h < arr_itself) {
+      if (h < arr_bracketItself) {
         pick(w1)
       } else {
         elm_text.innerHTML = w1
@@ -555,7 +567,7 @@ let obj_format = {
     function writeReadme() {
       loadContent(obj_url[currOrigin]["backhost"] + arr_toc[h][0])
       .then(m0 => {
-        let partLength = rubyRemove(mdRemove(m0)).replace(/[\s　]/g, "").length
+        let partLength = removeRuby(removeMd(m0)).replace(/[\s　]/g, "").length
         fullLength += partLength
         return "* [" + arr_toc[h][1] + "](" + obj_url[currOrigin]["linkBase"] + arr_toc[h][0] + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"] + ") : " + partLength + "文字" + EOS
       })
@@ -572,6 +584,18 @@ let obj_format = {
         }
       })
     }
+  }
+}
+/*
+
+  括弧を書き出す
+
+*/
+let arr_bracket = []
+for (let i = 0; i < arr_bracketItself.length; i++) {
+  arr_bracket.push(arr_bracketItself[i]["before"] + arr_bracketItself[i]["after"])
+  if (i === arr_bracketItself.length - 1) {
+    elm_bracket.innerHTML = arr_bracket.join(", ")
   }
 }
 /*
@@ -639,11 +663,11 @@ if (obj_search["theme"] === "light") {
   URL で作品が指定されていた場合の処理
 
 */
-if (obj_search["op"] !== undefined && repoFile[1] !== "README.md") {
+if (obj_search["op"] !== undefined && arr_repoFile[1] !== "README.md") {
   loadContent(obj_url[currOrigin]["content"]).then(src => {
     exec(src)
   })
-} else if (repoFile[1] === "README.md") {
+} else if (arr_repoFile[1] === "README.md") {
   obj_search["format"] = "plot"
   obj_search["mode"] = "c"
   loadContent(obj_url[currOrigin]["content"]).then(src => {
@@ -717,42 +741,43 @@ function exec(src) {
   loadContent(obj_url[currOrigin]["readme"]).then(m => {
     setLink(m)
   })
+  elm_text.classList.add("loaded")
 }
 // ファイルの読み込み
 async function loadContent(url) {
   let w = await fetch(url)
-    return w.text()
+  return w.text()
 }
 // 変換の実処理
-function rubyParse(src) {
+function parseRuby(src) {
   return src.replace(/｜([^｜]*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>')
             .replace(/｜(（.*?）)/g, "$1")
 }
-function rubyRemove(src) {
+function removeRuby(src) {
   return src.replace(/｜([^｜]*?)《.*?》/g, "$1")
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, "$1")
             .replace(/｜(（.*?）)/g, "$1")
 }
-function mdRemove(src) {
+function removeMd(src) {
   return src.replace(/^[ \t]*[#*+-_~=`>|].*\r?\n/gm, "")
 }
-function odtParse(src) {
+function parseOdt(src) {
   return src.replace(/^(.*)$/gm, '<text:p>$1</text:p>')
             .replace(/｜([^｜]*?)《(.*?)》/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
             .replace(/｜(（.*?）)/g, "$1")
             .replace(/([\s\S]*)/m, obj_odt["content"]["start"] + "$1" + obj_odt["content"]["end"])
 }
-// タグを消去する
+// タグを処理する type=0 消去、tyep=1 色づけ
 function procTag(src, type) {
   function RE_deleteItself() {
     let w = ""
     let h = 0
-    for (let i = 0; i < arr_itself.length; i++) {
-      w += arr_itself[i]["before"] + arr_itself[i]["after"]
+    for (let i = 0; i < arr_bracketItself.length; i++) {
+      w += arr_bracketItself[i]["before"] + arr_bracketItself[i]["after"]
       h++
-      if (h === arr_itself.length) {
+      if (h === arr_bracketItself.length) {
         return RegExp("[" + w + "]", "g")
       }
     }
@@ -760,35 +785,46 @@ function procTag(src, type) {
   function RE_deleteInclude() {
     let w = ""
     let h = 0
-    for (let i = 0; i < arr_include.length; i++) {
-      w += arr_include[i]["before"] + ".*?" + arr_include[i]["after"] + "|"
+    for (let i = 0; i < arr_bracketInclude.length; i++) {
+      w += arr_bracketInclude[i]["before"] + ".*?" + arr_bracketInclude[i]["after"] + "|"
       h++
-      if (h === arr_include.length) {
+      if (h === arr_bracketInclude.length) {
         return RegExp("(" + w + ")", "g")
       }
     }
   }
   let g = 0
-  function markup(m) {
-    let rb = RegExp(arr_itself[g]["before"], "g")
-    let ra = RegExp(arr_itself[g]["after"], "g")
-    let w = m.replace(rb, arr_itself[g]["replaceBefore"] + arr_itself[g]["before"] + arr_itself[g]["replaceAfter"]).replace(ra, arr_itself[g]["replaceBefore"] + arr_itself[g]["after"] + arr_itself[g]["replaceAfter"])
+  function markupItself(m) {
+    let RE_bracketBefore = RegExp(arr_bracketItself[g]["before"], "g")
+    let RE_bracketAfter = RegExp(arr_bracketItself[g]["after"], "g")
+    let w = m.replace(RE_bracketBefore, arr_bracketItself[g]["replaceBefore"] + arr_bracketItself[g]["before"] + arr_bracketItself[g]["replaceAfter"]).replace(RE_bracketAfter, arr_bracketItself[g]["replaceBefore"] + arr_bracketItself[g]["after"] + arr_bracketItself[g]["replaceAfter"])
     g++
-    if (g < arr_itself.length) {
-      markup(w)
+    if (g < arr_bracketItself.length) {
+      markupItself(w)
+    } else {
+      return w
+    }
+  }
+  let f = 0
+  function markupInclude(m) {
+    let RE_bracket = RegExp(arr_bracketInclude[f]["before"] + "(.*?)" + arr_bracketInclude[f]["after"], "g")
+    let w = m.replace(RE_bracket, arr_bracketInclude[f]["replaceBefore"] + arr_bracketInclude[f]["before"] + "$1" + arr_bracketInclude[f]["after"] + arr_bracketInclude[f]["replaceAfter"])
+    f++
+    if (f < arr_bracketInclude.length) {
+      markupInclude(w)
     } else {
       return w
     }
   }
   if (type === 0) {
-    return src.replace(RE_deleteItself(), "").replace(RE_deleteInclude(), "")
+    return src.replace(RE_deleteinclude(), "").replace(RE_deleteInclude(), "")
   } else if (type === 1) {
-    return markup(src)
+    return markupInclude(markupItself(src))
   }
 }
 // 全体の文字数を数える処理
 function countFull(src) {
-  elm_countFull.innerHTML = "全文：" + rubyRemove(mdRemove(src)).replace(/[\s　]/g, "").length + "文字"
+  elm_countFull.innerHTML = "全文：" + removeRuby(removeMd(src)).replace(/[\s　]/g, "").length + "文字"
   elm_countFull.classList.add("loaded")
   elm_countFull.classList.remove("unloaded")
 }
@@ -797,7 +833,7 @@ function countSelect(src) {
   setTimeout(() => {
     let selected = document.getSelection()
     if (selected.isCollapsed === false) {
-      elm_countSelect.innerHTML = "選択：" + rubyRemove(mdRemove(selected.getRangeAt(0).toString())).replace(/[\s　]/g, "").length + "文字"
+      elm_countSelect.innerHTML = "選択：" + removeRuby(removeMd(selected.getRangeAt(0).toString())).replace(/[\s　]/g, "").length + "文字"
       elm_countSelect.classList.add("selected")
       elm_countSelect.classList.remove("unselected")
     } else {
@@ -809,7 +845,7 @@ function countSelect(src) {
 // 前の・次の作品へのリンクを表示する
 function setLink(src) {
   arr_toc = makeToc(src)
-  let currEpisode = 0
+  let currrEEpisode = 0
   let obj_adjacentProc = {
     prev: function() {
       elm_prev.forEach(function(mediator) {
@@ -829,7 +865,7 @@ function setLink(src) {
     }
   }
   for (let i = 0; i < arr_toc.length; i++) {
-    if (arr_toc[i][0] === repoFile[1]) {
+    if (arr_toc[i][0] === arr_repoFile[1]) {
       currEpisode = i
     }
   }
