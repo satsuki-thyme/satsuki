@@ -84,6 +84,9 @@ h6 ~ ul,
 h6 ~ dl {
   margin-left: 15px;
 }
+li + li {
+  margin-top: 30px;
+}
 label {
   display: block;
 }
@@ -253,15 +256,14 @@ html.dark #input-button {
 }
 </style>
 <body>
-  <div class="op-link">
-    <a class="prev"></a>
-    <a class="next"></a>
-  </div>
-  <div id="frame">
-  <div id="text">
+<div class="op-link">
+  <a class="prev"></a>
+  <a class="next"></a>
+</div>
+<div id="frame">
+  <main id="text">
     <h1>使い方</h1>
     <p>表示するテキストファイルを<label id="input-button">ここ<input type="file" id="input"></label>から読み込むか、ドラッグ & ドロップしてください。</p>
-
     <h2>全文の文字数</h2>
     <p>表示される文字数は以下の文字を含みません。</p>
     <ul>
@@ -271,7 +273,6 @@ html.dark #input-button {
       <li>改行記号</li>
       <li>ルビ</li>
     </ul>
-
     <h2>選択範囲の文字数</h2>
     <p>表示される文字数は以下の文字を含みません。ルビは数えられます。</p>
     <ul>
@@ -280,7 +281,6 @@ html.dark #input-button {
       <li>タブ</li>
       <li>改行記号</li>
     </ul>
-
     <h2>オプション</h2>
     <h3>フォーマット</h3>
     <dl>
@@ -300,7 +300,6 @@ html.dark #input-button {
         <dd>ネット小説記法のルビを解釈し、 odt に変換してダウンロードします。 LibreOffice などで開くことができます。ダウンロードに際してブラウザから危険性を示唆されます。自己責任でご利用ください。</dd>
       </label>
     </dl>
-
     <h3>書き方向</h3>
     <p>横書きと縦書きが選べます。</p>
     <dl>
@@ -315,7 +314,6 @@ html.dark #input-button {
         <dd>縦書きです。</dd>
       </label>
     </dl>
-
     <h3>テーマ</h3>
     <p>テーマはブラウザの設定から自動的に選ばれますが、明示的に指定することも可能です。</p>
     <dl>
@@ -330,12 +328,10 @@ html.dark #input-button {
         <dd>暗い配色です。</dd>
       </label>
     </dl>
-
     <h2>URL オプション</h2>
     <p>URL で ? に続けてオプションを指定することができます。</p>
     <p>& でつなげて複数指定することができます。</p>
     <p>例：<code>novel-parse?format=plot&theme=light&mode=c</code></p>
-
     <h3>フォーマット</h3>
     <dl>
       <dt>format=reading</dt>
@@ -349,7 +345,6 @@ html.dark #input-button {
       <dt>format=pickup</dt>
       <dd><span id="bracket"></span> で囲った部分をピックアップして表示する</dd>
     </dl>
-
     <h3>テーマ</h3>
     <dl>
       <dt>theme=light</dt>
@@ -357,7 +352,6 @@ html.dark #input-button {
       <dt>theme=dark</dt>
       <dd>ダーク</dd>
     </dl>
-
     <h3>モード</h3>
     <dl>
       <dt>mode=normal</dt>
@@ -365,7 +359,7 @@ html.dark #input-button {
       <dt>mode=c</dt>
       <dd>データ上の改行を 1 個少なく数える</dd>
     </dl>
-  </div><!-- text -->
+  </main><!-- text -->
 </div><!-- frame -->
 <div id="count">
   <div id="count-full" class="unloaded"></div>
@@ -423,10 +417,12 @@ let obj_mode = {
   "normal": function(src) {
     return src.replace(/^(?!#)(.+?)\r?\n/gm, '<p>$1</p>' + EOS)
               .replace(/^\r?\n/gm, '<p><br></p>' + EOS)
+              .replace(/(<p><br><\/p>\r?\n){4,}/g, "")
   },
   "c": function(src) {
     return src.replace(/((^(?!#).+?\r?\n)+)/gm, '<p>$1</p>' + EOS)
               .replace(/^(\r?\n){2}/gm, '<p><br></p>' + EOS)
+              .replace(/(<p><br><\/p>\r?\n){3,}/g, "")
   }
 }
 // FileReader による読み込みファイル
@@ -447,24 +443,24 @@ let obj_url = {
     "content":  "http://etc.satsuki.c/novel/" + obj_search["op"] + "?" + now,
     "readme":   "http://etc.satsuki.c/novel/" + arr_repoFile[0] + "/README.md?" + now,
     "linkBase": "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/",
-    "prev":     "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
-    "next":     "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+    "prev":     "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
+    "next":     "http://etc.satsuki.c/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
   },
   "https://etc.satsuki.me": {
     "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/",
     "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/" + arr_repoFile[1] + "?" + now,
     "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/README.md?" + now,
     "linkBase": "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/",
-    "prev":     "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
-    "next":     "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+    "prev":     "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
+    "next":     "https://etc.satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
   },
   "https://satsuki.me": {
     "backhost": "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/",
     "content":  "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/" + arr_repoFile[1] + "?" + now,
     "readme":   "https://raw.githubusercontent.com/satsuki-thyme/" + arr_repoFile[0] + "/master/README.md?" + now,
     "linkBase": "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/",
-    "prev":     "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
-    "next":     "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+    "prev":     "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + prevFile + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"],
+    "next":     "https://satsuki.me/novel-parse.html?op=" + arr_repoFile[0] + "/" + nextFile + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
   }
 }
 // タグの定義（タグ自身を処理の対象にする）
@@ -491,27 +487,19 @@ let arr_toc = []
 let obj_format = {
   reading: function(src) {
     countFull(src)
-    elm_text.innerHTML = obj_mode[obj_search["mode"]](parseRuby(procTag(src, 0)))
+    writeText(obj_mode[obj_search["mode"]](parseRuby(procTag(src, 0))).replace(/# (.*)/, '<h1>$1</h1>'))
   },
   plot: function(src) {
     countFull(src)
-    elm_text.innerHTML = obj_mode[obj_search["mode"]](
-      parseRuby(procTag(src, 1))
-        // タイトル
-        .replace(/^# (.*)$/m, '<h1>$1</h1>\n')
-        // #####(<h5>) を除く Markdown の削除
-        .replace(/(^## .*\r?\n|^### .*\r?\n|^#### .*\r?\n|^[*+-_~=`>|] .*\r?\n)/gm, "")
-  )
-    // #####(<h5>) の処理
-    .replace(/^##### (.*)$/gm, '<p class="plot-heading">$1</p>' + EOS)
+    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src, 1)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
   },
   post: function(src) {
-    elm_text.innerHTML = obj_mode[obj_search["mode"]](removeMd(procTag(src, 0)))
+    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src, 0), 1)).replace(/# .*/, ""))
   },
   odt: function(src) {
     let zip = new JSZip()
     let folder = null
-    zip.file("content.xml", parseOdt(removeMd(procTag(src, 0))))
+    zip.file("content.xml", parseOdt(removeMd(procTag(src, 0), 1).replace(/# (.*)/, '<h1>$1</h1>')))
     for (let i = 0; i < obj_odt["files"].length; i++) {
       let odtFileName = obj_odt["files"][i][0]
       let odtDirName = obj_odt["files"][i][1]
@@ -541,20 +529,21 @@ let obj_format = {
     }
   },
   pickup: function(src) {
+    let monoLine = removeMd(src).replace(/\r?\n/g, "")
     let h = 0
     pick("")
     function pick(w0) {
-      let w1 = w0
-      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "gm")
-      let match = src.match(RE_w)
+      let w = w0
+      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "g")
+      let match = monoLine.match(RE_w)
       if (match) {
-        w1 += mdParse(parseRuby(procTag(match.join(EOS).replace(/^/gm, "* "),1)))
+        w += mdParse(parseRuby(procTag(match.join(EOS).replace(/^/gm, "* "), 1)))
       }
       h++
       if (h < arr_bracketItself) {
-        pick(w1)
+        pick(w)
       } else {
-        elm_text.innerHTML = w1
+        writeText(w)
       }
     }
   },
@@ -580,7 +569,7 @@ let obj_format = {
           elm_countFull.innerHTML = "作品全体：" + fullLength + "文字"
           elm_countFull.classList.add("loaded")
           elm_countFull.classList.remove("unloaded")
-          elm_text.innerHTML = mdParse(src.replace(/((.*\r?\n)*)(#+ 目次.*\r?\n)((.*\r?\n)*)((#|$)(.*(\r?\n)*)*)/gm, "$1" + toc + "$6"))
+          writeText(mdParse(src.replace(/((.*\r?\n)*)(#+ 目次.*\r?\n)((.*\r?\n)*)((#|$)(.*(\r?\n)*)*)/gm, "$1" + toc + "$6")))
         }
       })
     }
@@ -644,11 +633,10 @@ if (obj_search["format"] === "reading") {
   alert("指定されたフォーマットには対応していません。")
 }
 // 書き方向
+toggleOrient(obj_search["orient"])
 if (obj_search["orient"] === "h") {
-  toggleOrient(obj_search["orient"])
   elm_orientH.checked = true
 } else if (obj_search["orient"] === "v") {
-  toggleOrient(obj_search["orient"])
   elm_orientV.checked = true
 }
 // テーマ
@@ -657,6 +645,10 @@ if (obj_search["theme"] === "light") {
   elm_themeLight.checked = true
 } else if (obj_search["theme"] === "dark") {
   elm_themeDark.checked = true
+}
+// モード
+if (obj_search["mode"] !== "c") {
+  obj_search["mode"] = "normal"
 }
 /*
 
@@ -713,6 +705,23 @@ window.addEventListener("drop", function(e) {
 })
 /*
 
+  一気にスクロールする処理
+
+*/
+window.onkeyup = (e) => {
+  if (e.key === "Enter") {
+    let documentHeight = document.body.scrollHeight - document.body.clientHeight
+    let currScroll = window.scrollY
+    if (currScroll === 0 || (currScroll >= documentHeight / 2 && currScroll !== documentHeight)) {
+      console.log(1)
+      window.scrollTo(0, documentHeight)
+    } else if (currScroll === documentHeight || currScroll < documentHeight / 2) {
+      window.scrollTo(0, 0)
+    }
+  }
+}
+/*
+
   文字列を選択したことで文字数を数えるときの処理
 
 */
@@ -727,17 +736,21 @@ window.addEventListener('touched', function(src) {
   関数
 
 */
-// 書き出しの実行
+// キーになる処理
 function exec(src) {
   let EOS_LF = src.match(/\n/)
   let EOS_CR = src.match(/\r\n/)
   if (EOS_LF === null || (EOS_LF !== null && EOS_CR !== null && EOS_LF.length < EOS_CR.length)) {
     EOS = "\r\n"
   }
-  if (src.match(/^# .*$/m)) {
-    elm_title.innerHTML = src.replace(/^# (.*)\r?\n[\s\S]*/m, '$1')
+  // <title> にタイトルを代入
+  let arr_title = src.match(/^(?<=# ).*$/m)
+  if (arr_title) {
+    elm_title.textContent = arr_title[0]
   }
+  // フォーマットどおりの処理
   obj_format[obj_search["format"]](src)
+  // README.md を取得してきてリンクを設定する
   loadContent(obj_url[currOrigin]["readme"]).then(m => {
     setLink(m)
   })
@@ -759,8 +772,13 @@ function removeRuby(src) {
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, "$1")
             .replace(/｜(（.*?）)/g, "$1")
 }
-function removeMd(src) {
-  return src.replace(/^[ \t]*[#*+-_~=`>|].*\r?\n/gm, "")
+function removeMd(src, type) {
+  if (type === 1) {
+                                      // ↓ 謎の現象。- 前に \ しないと HTML タグにヒットする
+    return src.replace(/^[ \t]*(#{2,}|[*+\-_~=`>|]).*\r?\n/gm, "")
+  } else {
+    return src.replace(/^[ \t]*[#*+\-_~=`>|].*\r?\n/gm, "")
+  }
 }
 function parseOdt(src) {
   return src.replace(/^(.*)$/gm, '<text:p>$1</text:p>')
@@ -768,6 +786,10 @@ function parseOdt(src) {
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
             .replace(/｜(（.*?）)/g, "$1")
             .replace(/([\s\S]*)/m, obj_odt["content"]["start"] + "$1" + obj_odt["content"]["end"])
+}
+// 書き出しとその後の処理
+function writeText(src) {
+  elm_text.innerHTML = src
 }
 // タグを処理する type=0 消去、tyep=1 色づけ
 function procTag(src, type) {
