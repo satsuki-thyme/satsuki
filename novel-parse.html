@@ -84,9 +84,6 @@ h6 ~ ul,
 h6 ~ dl {
   margin-left: 15px;
 }
-li + li {
-  margin-top: 30px;
-}
 label {
   display: block;
 }
@@ -140,7 +137,7 @@ div {
   width: 600px;
   max-width: 95%;
   margin: auto;
-  padding: 50px 0 100px 0;
+  padding: 50px 0 400px 0;
   font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
   font-size: 16px;
   line-height: 28.8px;
@@ -164,6 +161,9 @@ div {
 #count-full.unloaded,
 #count-select.unselected {
   display: none;
+}
+#pickup-list li + li {
+  margin-top: 30px;
 }
 .op-link {
   position: relative;
@@ -468,7 +468,7 @@ let arr_bracketItself = [
   {
     "before": "{",
     "after": "}",
-    "replaceBefore": '<span style="color: #d00">',
+    "replaceBefore": '<span style="color: #77f">',
     "replaceAfter": '</span>'
   }
 ]
@@ -477,7 +477,7 @@ let arr_bracketInclude = [
   {
     "before": "＜",
     "after": "＞",
-    "replaceBefore": '<span style="color: #44d">',
+    "replaceBefore": '<span style="color: #d00">',
     "replaceAfter": '</span>'
   }
 ]
@@ -487,19 +487,19 @@ let arr_toc = []
 let obj_format = {
   reading: function(src) {
     countFull(src)
-    writeText(obj_mode[obj_search["mode"]](parseRuby(procTag(src, 0))).replace(/# (.*)/, '<h1>$1</h1>'))
+    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
   },
   plot: function(src) {
     countFull(src)
     writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src, 1)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
   },
   post: function(src) {
-    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src, 0), 1)).replace(/# .*/, ""))
+    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src), 1)).replace(/# .*/, ""))
   },
   odt: function(src) {
     let zip = new JSZip()
     let folder = null
-    zip.file("content.xml", parseOdt(removeMd(procTag(src, 0), 1).replace(/# (.*)/, '<h1>$1</h1>')))
+    zip.file("content.xml", parseOdt(removeMd(procTag(src), 1).replace(/# (.*)/, '<h1>$1</h1>')))
     for (let i = 0; i < obj_odt["files"].length; i++) {
       let odtFileName = obj_odt["files"][i][0]
       let odtDirName = obj_odt["files"][i][1]
@@ -537,13 +537,13 @@ let obj_format = {
       let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "g")
       let match = monoLine.match(RE_w)
       if (match) {
-        w += mdParse(parseRuby(procTag(match.join(EOS).replace(/^/gm, "* "), 1)))
+        w += parseRuby(procTag(match.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1))
       }
       h++
       if (h < arr_bracketItself) {
         pick(w)
       } else {
-        writeText(w)
+        writeText(w.replace(/((.*(\r?\n)?)+)/gm, '<ul id="pickup-list">$1</ul>'))
       }
     }
   },
@@ -838,10 +838,10 @@ function procTag(src, type) {
       return w
     }
   }
-  if (type === 0) {
-    return src.replace(RE_deleteinclude(), "").replace(RE_deleteInclude(), "")
-  } else if (type === 1) {
+  if (type === 1) {
     return markupInclude(markupItself(src))
+  } else {
+    return src.replace(RE_deleteinclude(), "").replace(RE_deleteInclude(), "")
   }
 }
 // 全体の文字数を数える処理
