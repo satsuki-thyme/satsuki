@@ -146,36 +146,30 @@ div {
   margin: 0;
   padding: 0;
 }
-#count {
+#left-chip {
   position: fixed;
   top: 0;
   left: 0;
 }
-#count-full.loaded,
-#count-select.selected {
+#count-full,
+#count-select {
   padding: 8px;
   float: left;
   line-height: 1em;
   background-color: #ccc;
 }
-#count-full.unloaded,
-#count-select.unselected {
-  display: none;
-}
 #pickup-list li + li {
   margin-top: 30px;
 }
-.op-link {
+.link-chip {
   position: relative;
-  width: 600px;
-  max-width: 95%;
-  margin: auto;
+  right: 0;
   text-align: right;
 }
-.op-link:last-of-type {
+.link-chip:last-of-type {
   padding-bottom: 20px;
 }
-.op-link a {
+.link-chip a {
   display: inline-block;
   padding: 10px 5px 0 5px;
 }
@@ -184,7 +178,13 @@ a:visited,
 a:hover {
   color: #62a433;
 }
-
+html.post #left-chip,
+html.post .link-chip,
+#count-full.unloaded,
+#count-select.unselected,
+#format-chip.unloaded {
+  display: none;
+}
 .prev + .next {
   margin-left: 5px;
 }
@@ -209,11 +209,15 @@ a:hover {
 }
 @media (prefers-color-scheme: dark) {
   body {
-    color: #ccc;
     background-color: #000;
   }
-  #count-full.loaded,
-  #count-select.selected {
+  body,
+  #format-selector {
+    color: #ccc;
+  }
+  #count-full,
+  #count-select,
+  #format-selector {
     background-color: #222;
   }
   #input-button {
@@ -224,20 +228,28 @@ a:hover {
     border-bottom-color: #222;
   }
 }
-html.light {
-  color: #333;
+html.light body {
   background-color: #fff;
 }
-html.light #count-full.loaded,
-html.light #count-select.selected {
+html.light body,
+html.light #format-selecotr {
+  color: #333;
+}
+html.light #count-full,
+html.light #count-select,
+html.light #format-selector {
   background-color: #ccc;
 }
-html.dark body{
-  color: #ccc;
+html.dark body {
   background-color: #000;
 }
-html.dark #count-full.loaded,
-html.dark #count-select.selected {
+html.dark body,
+html.dark #format-selector {
+  color: #ccc;
+}
+html.dark #count-full,
+html.dark #count-select,
+html.dark #format-selector {
   background-color: #222;
 }
 html.light #input-button {
@@ -256,7 +268,7 @@ html.dark #input-button {
 }
 </style>
 <body>
-<div class="op-link">
+<div class="link-chip">
   <a class="prev"></a>
   <a class="next"></a>
 </div>
@@ -293,6 +305,16 @@ html.dark #input-button {
         <input id="format-post" type="radio" name="format" value="post">
         <dt>投稿</dt>
         <dd>Markdown が非表示になりますが面倒なのでテキトーです。ネット小説記法のルビをそのまま表示し、上付け文字に解釈することしません。</dd>
+      </label>
+      <label>
+        <input id="format-plot" type="radio" name="format" value="plot">
+        <dt>プロット</dt>
+        <dd>プロットを確認する際の表示です。閲覧、投稿では表示されない記号などがそのまま表示されます。</dd>
+      </label>
+      <label>
+        <input id="format-pickup" type="radio" name="format" value="pickup">
+        <dt>ピックアップ</dt>
+        <dd><span class="bracket"></span> で囲った部分をピックアップして表示します。</dd>
       </label>
       <label>
         <input id="format-odt" type="radio" name="format" value="odt">
@@ -343,7 +365,7 @@ html.dark #input-button {
       <dt>format=odt</dt>
       <dd>ODT</dd>
       <dt>format=pickup</dt>
-      <dd><span id="bracket"></span> で囲った部分をピックアップして表示する</dd>
+      <dd><span class="bracket"></span> で囲った部分をピックアップして表示する</dd>
     </dl>
     <h3>テーマ</h3>
     <dl>
@@ -361,11 +383,22 @@ html.dark #input-button {
     </dl>
   </main><!-- text -->
 </div><!-- frame -->
-<div id="count">
-  <div id="count-full" class="unloaded"></div>
-  <div id="count-select" class="unselected"></div>
+<div id="left-chip">
+  <div id="count-chip">
+    <div id="count-full" class="unloaded"></div>
+    <div id="count-select" class="unselected"></div>
+  </div>
+  <div id="format-chip" class="unloaded">
+    <select id="format-selector">
+      <option value="reading">閲覧</option>
+      <option value="post">投稿</option>
+      <option value="plot">プロット</option>
+      <option value="pickup">ピックアップ</option>
+      <option value="odt">ODT</option>
+    </select>
+  </div>
 </div>
-<div class="op-link">
+<div class="link-chip">
   <a class="prev"></a>
   <a class="next"></a>
 </div>
@@ -397,6 +430,8 @@ let elm_title = document.querySelector("title")
 let elm_input = document.querySelector("#input")
 let elm_formatReading = document.querySelector("#format-reading")
 let elm_formatPost = document.querySelector("#format-post")
+let elm_formatPlot = document.querySelector("#format-plot")
+let elm_formatPickup = document.querySelector("#format-pickup")
 let elm_formatOdt = document.querySelector("#format-odt")
 let elm_orientH = document.querySelector("#orient-h")
 let elm_orientV = document.querySelector("#orient-v")
@@ -409,7 +444,9 @@ let elm_countFull = document.querySelector("#count-full")
 let elm_countSelect = document.querySelector("#count-select")
 let elm_prev = document.querySelectorAll(".prev")
 let elm_next = document.querySelectorAll(".next")
-let elm_bracket = document.querySelector("#bracket")
+let elm_bracket = document.querySelector(".bracket")
+let elm_formatChip = document.querySelector("#format-chip")
+let elm_formatSelector = document.querySelector("#format-selector")
 // 改行の種類
 let EOS = "\n"
 // モード = 同一行の処理と、改行の読み取り
@@ -489,12 +526,31 @@ let obj_format = {
     countFull(src)
     writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
   },
+  post: function(src) {
+    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src), 1)).replace(/# .*/, ""))
+  },
   plot: function(src) {
     countFull(src)
     writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src, 1)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
   },
-  post: function(src) {
-    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src), 1)).replace(/# .*/, ""))
+  pickup: function(src) {
+    let monoLine = removeMd(src).replace(/\r?\n/g, "")
+    let h = 0
+    pick("")
+    function pick(w0) {
+      let w = w0
+      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "g")
+      let match = monoLine.match(RE_w)
+      if (match) {
+        w += parseRuby(procTag(match.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1))
+      }
+      h++
+      if (h < arr_bracketItself) {
+        pick(w)
+      } else {
+        writeText(w.replace(/((.*(\r?\n)?)+)/gm, '<ul id="pickup-list">$1</ul>'))
+      }
+    }
   },
   odt: function(src) {
     let zip = new JSZip()
@@ -526,25 +582,6 @@ let obj_format = {
           w2 += w1[i] + "."
       }
       return w2 + "odt"
-    }
-  },
-  pickup: function(src) {
-    let monoLine = removeMd(src).replace(/\r?\n/g, "")
-    let h = 0
-    pick("")
-    function pick(w0) {
-      let w = w0
-      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "g")
-      let match = monoLine.match(RE_w)
-      if (match) {
-        w += parseRuby(procTag(match.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1))
-      }
-      h++
-      if (h < arr_bracketItself) {
-        pick(w)
-      } else {
-        writeText(w.replace(/((.*(\r?\n)?)+)/gm, '<ul id="pickup-list">$1</ul>'))
-      }
     }
   },
   readme: function(src) {
@@ -584,7 +621,10 @@ let arr_bracket = []
 for (let i = 0; i < arr_bracketItself.length; i++) {
   arr_bracket.push(arr_bracketItself[i]["before"] + arr_bracketItself[i]["after"])
   if (i === arr_bracketItself.length - 1) {
-    elm_bracket.innerHTML = arr_bracket.join(", ")
+    let bracketJoined = arr_bracket.join(", ")
+    for (let j = 0; j < elm_bracket.length; j++) {
+      elm_bracket[j].innerHTML = bracketJoined
+    }
   }
 }
 /*
@@ -592,31 +632,41 @@ for (let i = 0; i < arr_bracketItself.length; i++) {
   オプション設定の処理
 
 */
-elm_formatReading.addEventListener("change", function(e) {
+elm_formatReading.onchange = () => {
   obj_search["format"] = "reading"
-})
-elm_formatPost.addEventListener("change", function(e) {
+}
+elm_formatPost.onchange = () => {
   obj_search["format"] = "post"
-})
-elm_formatOdt.addEventListener("change", function(e) {
+}
+elm_formatPlot.onchange = () => {
+  obj_search["format"] = "plot"
+}
+elm_formatPickup.onchange = () => {
+  obj_search["format"] = "pickup"
+}
+elm_formatOdt.onchange = () => {
   obj_search["format"] = "odt"
-})
-elm_orientH.addEventListener("change", function(e) {
+}
+elm_formatSelector.onchange = () => {
+  obj_search["format"] = elm_formatSelector.options[elm_formatSelector.selectedIndex].value
+  location.href = obj_url[currOrigin]["linkBase"] + arr_repoFile[1] + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+}
+elm_orientH.onchange = () => {
   obj_search["orient"] = "h"
   toggleOrient(obj_search["orient"])
-})
-elm_orientV.addEventListener("change", function(e) {
+}
+elm_orientV.onchange = () => {
   obj_search["orient"] = "v"
   toggleOrient(obj_search["orient"])
-})
-elm_themeLight.addEventListener("change", function(e) {
+}
+elm_themeLight.onchange = () => {
   obj_search["theme"] = "light"
   toggleTheme(obj_search["theme"])
-})
-elm_themeDark.addEventListener("change", function(e) {
+}
+elm_themeDark.onchange = () => {
   obj_search["theme"] = "dark"
   toggleTheme(obj_search["theme"])
-})
+}
 /*
 
   URL でオプションが指定されていた場合の処理
@@ -625,12 +675,19 @@ elm_themeDark.addEventListener("change", function(e) {
 // フォーマット
 if (obj_search["format"] === "reading") {
   elm_formatReading.checked = true
+  elm_formatSelector.options[0].selected = true
 } else if (obj_search["format"] === "post") {
   elm_formatPost.checked = true
+  elm_formatSelector.options[1].selected = true
+} else if (obj_search["format"] === "plot") {
+  elm_formatPlot.checked = true
+  elm_formatSelector.options[2].selected = true
+} else if (obj_search["format"] === "pickup") {
+  elm_formatPickup.checked = true
+  elm_formatSelector.options[3].selected = true
 } else if (obj_search["format"] === "odt") {
   elm_formatOdt.checked = true
-} else if (obj_search["format"] !== undefined && obj_format[obj_search["format"]] === undefined) {
-  alert("指定されたフォーマットには対応していません。")
+  elm_formatSelector.options[4].selected = true
 }
 // 書き方向
 toggleOrient(obj_search["orient"])
@@ -658,6 +715,8 @@ if (obj_search["mode"] !== "c") {
 if (obj_search["op"] !== undefined && arr_repoFile[1] !== "README.md") {
   loadContent(obj_url[currOrigin]["content"]).then(src => {
     exec(src)
+    elm_formatChip.classList.remove("unloaded")
+    elm_formatChip.classList.add("loaded")
   })
 } else if (arr_repoFile[1] === "README.md") {
   obj_search["format"] = "plot"
@@ -674,14 +733,14 @@ if (obj_search["op"] !== undefined && arr_repoFile[1] !== "README.md") {
   フォームからファイルが入力されたときの処理
 
 */
-elm_input.addEventListener("change", function(e) {
+elm_input.onchange = () => {
   let fr = new FileReader()
   trgFile = input.files[0]
   fr.readAsText(trgFile)
   fr.addEventListener("load", function() {
     exec(fr.result)
   })
-})
+}
 /*
 
   ドラッグ & ドロップされたときの処理
@@ -790,6 +849,8 @@ function parseOdt(src) {
 // 書き出しとその後の処理
 function writeText(src) {
   elm_text.innerHTML = src
+  elm_html.classList.remove("reading", "post", "plot", "pickup", "odt")
+  elm_html.classList.add(obj_search["format"])
 }
 // タグを処理する type=0 消去、tyep=1 色づけ
 function procTag(src, type) {
@@ -841,7 +902,7 @@ function procTag(src, type) {
   if (type === 1) {
     return markupInclude(markupItself(src))
   } else {
-    return src.replace(RE_deleteinclude(), "").replace(RE_deleteInclude(), "")
+    return src.replace(RE_deleteItself(), "").replace(RE_deleteInclude(), "")
   }
 }
 // 全体の文字数を数える処理
