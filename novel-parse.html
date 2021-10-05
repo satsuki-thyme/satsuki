@@ -770,12 +770,11 @@ window.addEventListener("drop", function(e) {
 window.onkeyup = (e) => {
   if (e.key === "Enter") {
     let documentHeight = document.body.scrollHeight - document.body.clientHeight
-    let currScroll = window.scrollY
+    let currScroll = document.body.scrollTop
     if (currScroll === 0 || (currScroll >= documentHeight / 2 && currScroll !== documentHeight)) {
-      console.log(1)
-      window.scrollTo(0, documentHeight)
+      document.body.scrollTo(0, documentHeight)
     } else if (currScroll === documentHeight || currScroll < documentHeight / 2) {
-      window.scrollTo(0, 0)
+      document.body.scrollTo(0, 0)
     }
   }
 }
@@ -792,6 +791,20 @@ window.addEventListener('touched', function(src) {
 })
 /*
 
+  リロード前のスクロールをリロード後に再現する
+
+*/
+window.onunload = () => {
+  localStorage.setItem("scroll", document.body.scrollTop)
+  localStorage.setItem("file", arr_repoFile[1])
+}
+window.onload = () => {
+  if (localStorage.getItem("file") === arr_repoFile[1]) {
+    document.body.scrollTop = localStorage.getItem("scroll")
+  }
+}
+/*
+
   関数
 
 */
@@ -803,9 +816,9 @@ function exec(src) {
     EOS = "\r\n"
   }
   // <title> にタイトルを代入
-  let arr_title = src.match(/^(?<=# ).*$/m)
+  let arr_title = src.match(/^# .*/m)
   if (arr_title) {
-    elm_title.textContent = arr_title[0]
+    elm_title.textContent = arr_title[0].replace(/# /, "")
   }
   // フォーマットどおりの処理
   obj_format[obj_search["format"]](src)
