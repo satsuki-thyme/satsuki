@@ -323,7 +323,8 @@ html.dark #input-button {
       </label>
     </dl>
     <h3>書き方向</h3>
-    <p>横書きと縦書きが選べます。</p>
+    <p>横書きと縦書きが選べます。<br>
+      フォーマット「 ODT 」には影響がありません。</p>
     <dl>
       <label>
         <input id="orient-h" type="radio" name="orient" value="orient-h" checked>
@@ -444,7 +445,7 @@ let elm_countFull = document.querySelector("#count-full")
 let elm_countSelect = document.querySelector("#count-select")
 let elm_prev = document.querySelectorAll(".prev")
 let elm_next = document.querySelectorAll(".next")
-let elm_bracket = document.querySelector(".bracket")
+let elmArr_bracket = document.querySelectorAll(".bracket")
 let elm_formatChip = document.querySelector("#format-chip")
 let elm_formatSelector = document.querySelector("#format-selector")
 // 改行の種類
@@ -622,8 +623,8 @@ for (let i = 0; i < arr_bracketItself.length; i++) {
   arr_bracket.push(arr_bracketItself[i]["before"] + arr_bracketItself[i]["after"])
   if (i === arr_bracketItself.length - 1) {
     let bracketJoined = arr_bracket.join(", ")
-    for (let j = 0; j < elm_bracket.length; j++) {
-      elm_bracket[j].innerHTML = bracketJoined
+    for (let j = 0; j < elmArr_bracket.length; j++) {
+      elmArr_bracket[j].innerHTML = bracketJoined
     }
   }
 }
