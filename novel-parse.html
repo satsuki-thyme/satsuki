@@ -525,14 +525,14 @@ let arr_toc = []
 let obj_format = {
   reading: function(src) {
     countFull(src)
-    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
+    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src)), 1)).replace(/# ([^\n]*)/, '<h1>$1</h1>'))
   },
   post: function(src) {
-    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src), 1)).replace(/# .*/, ""))
+    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src), 1)).replace(/# [^\n]*/, ""))
   },
   plot: function(src) {
     countFull(src)
-    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src, 1)), 1)).replace(/# (.*)/, '<h1>$1</h1>'))
+    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src, 1)), 1)).replace(/# ([^\n]*)/, '<h1>$1</h1>'))
   },
   pickup: function(src) {
     let monoLine = removeMd(src).replace(/\r?\n/g, "")
@@ -961,6 +961,7 @@ function setLink(src) {
       })
     }
   }
+  let currEpisode = 0
   for (let i = 0; i < arr_toc.length; i++) {
     if (arr_toc[i][0] === arr_repoFile[1]) {
       currEpisode = i
