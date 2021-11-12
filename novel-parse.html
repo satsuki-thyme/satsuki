@@ -176,6 +176,13 @@ div {
   display: inline-block;
   padding: 10px 5px 0 5px;
 }
+#mode-chip label {
+  display: inline-block;
+  margin-top: 0;
+}
+#mode-chip label + label {
+  margin-left: 10px;
+}
 a,
 a:visited,
 a:hover {
@@ -185,19 +192,12 @@ html.post #left-chip,
 html.post .link-chip,
 #count-full.unloaded,
 #count-select.unselected,
-#format-chip.unloaded {
+#format-chip.unloaded,
+#mode-chip.unloaded {
   display: none;
 }
 .prev + .next {
   margin-left: 5px;
-}
-.plot-heading {
-  display: block;
-  width: 280px;
-  margin-left: -300px;
-  float: left;
-  clear: both;
-  opacity: 0.5;
 }
 #input {
   display: none;
@@ -215,12 +215,14 @@ html.post .link-chip,
     background-color: #000;
   }
   body,
-  #format-selector {
+  #format-selector,
+  #mode-chip {
     color: #ccc;
   }
   #count-full,
   #count-select,
-  #format-selector {
+  #format-selector,
+  #mode-chip {
     background-color: #222;
   }
   #input-button {
@@ -235,24 +237,28 @@ html.light body {
   background-color: #fff;
 }
 html.light body,
-html.light #format-selecotr {
+html.light #format-selecotr,
+html.light #mode-chip {
   color: #333;
 }
 html.light #count-full,
 html.light #count-select,
-html.light #format-selector {
+html.light #format-selector,
+html.light #mode-chip {
   background-color: #ccc;
 }
 html.dark body {
   background-color: #000;
 }
 html.dark body,
-html.dark #format-selector {
+html.dark #format-selector,
+html.dark #mode-chip {
   color: #ccc;
 }
 html.dark #count-full,
 html.dark #count-select,
-html.dark #format-selector {
+html.dark #format-selector,
+html.dark #mode-chip {
   background-color: #222;
 }
 html.light #input-button {
@@ -354,6 +360,20 @@ html.dark #input-button {
         <dd>暗い配色です。</dd>
       </label>
     </dl>
+    <h3>モード</h3>
+    <p>原文の改行をそのまま反映するか、 2 個で 1 行の改行をするか選択できます。</p>
+    <dl>
+      <label>
+        <input id="mode-normal" type="radio" name="mode" value="normal">
+        <dt>標準</dt>
+        <dd>原文の改行をそのまま反映します。</dd>
+      </label>
+      <label>
+        <input id="mode-half" type="radio" name="mode" value="half">
+        <dt>ハーフ</dt>
+        <dd>原文の改行をそのまま反映します。</dd>
+      </label>
+    </dl>
     <h2>URL オプション</h2>
     <p>URL で ? に続けてオプションを指定することができます。</p>
     <p>& でつなげて複数指定することができます。</p>
@@ -381,9 +401,9 @@ html.dark #input-button {
     <h3>モード</h3>
     <dl>
       <dt>mode=normal</dt>
-      <dd>通常の改行モード</dd>
-      <dt>mode=c</dt>
-      <dd>データ上の改行を 1 個少なく数える</dd>
+      <dd>原文の改行をそのまま反映</dd>
+      <dt>mode=half</dt>
+      <dd>原文の改行 2 個で 1 行の改行</dd>
     </dl>
   </main><!-- text -->
 </div><!-- frame -->
@@ -400,6 +420,10 @@ html.dark #input-button {
       <option value="pickup">ピックアップ</option>
       <option value="odt">ODT</option>
     </select>
+  </div>
+  <div id="mode-chip" class="unloaded">
+    <label>normal<input id="mode-chip-normal" type="radio" name="mode-chip" value="normal"></label>
+    <label>c<input id="mode-chip-half" type="radio" name="mode-chip" value="half"></label>
   </div>
 </div>
 <div class="link-chip">
@@ -451,6 +475,11 @@ let elm_next = document.querySelectorAll(".next")
 let elmArr_bracket = document.querySelectorAll(".bracket")
 let elm_formatChip = document.querySelector("#format-chip")
 let elm_formatSelector = document.querySelector("#format-selector")
+let elm_modeChip = document.querySelector("#mode-chip")
+let elm_modeNormal = document.querySelector("#mode-normal")
+let elm_modeHalf = document.querySelector("#mode-half")
+let elm_modeChipNormal = document.querySelector("#mode-chip-normal")
+let elm_modeChipHalf = document.querySelector("#mode-chip-half")
 // 改行の種類
 let EOS = "\n"
 // モード = 同一行の処理と、改行の読み取り
@@ -460,7 +489,7 @@ let obj_mode = {
               .replace(/^\r?\n/gm, '<p><br></p>' + EOS)
               .replace(/(<p><br><\/p>\r?\n){4,}/g, "")
   },
-  "c": function(src) {
+  "half": function(src) {
     return src.replace(/((^(?!#).+?\r?\n)+)/gm, '<p>$1</p>' + EOS)
               .replace(/^(\r?\n){2}/gm, '<p><br></p>' + EOS)
               .replace(/(<p><br><\/p>\r?\n){3,}/g, "")
@@ -671,6 +700,20 @@ elm_themeDark.onchange = () => {
   obj_search["theme"] = "dark"
   toggleTheme(obj_search["theme"])
 }
+elm_modeNormal.onchange = () => {
+  obj_search["mode"] = "nomal"
+}
+elm_modeHalf.onchange = () => {
+  obj_search["mode"] = "half"
+}
+elm_modeChipNormal.onchange = () => {
+  obj_search["mode"] = elm_modeChipNormal.value
+  location.href = obj_url[currOrigin]["linkBase"] + arr_repoFile[1] + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+}
+elm_modeChipHalf.onchange = () => {
+  obj_search["mode"] = elm_modeChipHalf.value
+  location.href = obj_url[currOrigin]["linkBase"] + arr_repoFile[1] + "&format=" + obj_search["format"] + "&orient=" + obj_search["orient"] + "&theme=" + obj_search["theme"] + "&mode=" +  obj_search["mode"]
+}
 /*
 
   URL でオプションが指定されていた場合の処理
@@ -708,8 +751,13 @@ if (obj_search["theme"] === "light") {
   elm_themeDark.checked = true
 }
 // モード
-if (obj_search["mode"] !== "c") {
+if (obj_search["mode"] !== "half") {
   obj_search["mode"] = "normal"
+  elm_modeNormal.checked = true
+  elm_modeChipNormal.checked = true
+} else {
+  elm_modeHalf.checked = true
+  elm_modeChipHalf.checked = true
 }
 /*
 
@@ -721,6 +769,8 @@ if (obj_search["op"] !== undefined && arr_repoFile[1] !== "README.md") {
     exec(src)
     elm_formatChip.classList.remove("unloaded")
     elm_formatChip.classList.add("loaded")
+    elm_modeChip.classList.remove("unloaded")
+    elm_modeChip.classList.add("loaded")
   })
 } else if (arr_repoFile[1] === "README.md") {
   obj_search["format"] = "plot"
