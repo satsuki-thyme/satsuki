@@ -485,16 +485,17 @@ let EOS = "\n"
 // モード = 同一行の処理と、改行の読み取り
 let obj_mode = {
   "normal": function(src) {
-    return src.replace(/^(?!#)(.+?)\r?\n/gm, '<p>$1</p>' + EOS)
-              .replace(/^\r?\n/gm, '<p><br></p>' + EOS)
-              .replace(/(<p><br><\/p>\r?\n){4,}/g, "")
+    return src.replace(/\r?\n/g, EOS)
+              .replace(/(\r?\n){5,}/g, "")
   },
   "half": function(src) {
-    return src.replace(/((^(?!#).+?\r?\n)+)/gm, '<p>$1</p>' + EOS)
-              .replace(/^(\r?\n){2}/gm, '<p><br></p>' + EOS)
-              .replace(/(<p><br><\/p>\r?\n){3,}/g, "")
+    return src.replace(/(.+)\r?\n/g, "$1")
+              .replace(/(\r?\n){5,}/g, "")
+              .replace(/\r?\n/g, EOS)
   }
 }
+// タイトル
+let title = ""
 // FileReader による読み込みファイル
 let trgFile = null
 // URL の search で作品が指定されていた場合の作品のホスト
@@ -557,14 +558,33 @@ let arr_toc = []
 let obj_format = {
   reading: function(src) {
     countFull(src)
-    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src)), 1)).replace(/# ([^\n]*)/, '<h1>$1</h1>'))
+    writeText(
+      titleAdd(
+        parseNewline(
+          obj_mode[obj_search["mode"]](
+            removeMd(
+              parseRuby(
+                procBracket(src))))
+                  .replace(/# (.*)/, '<h1>$1</h1>'))))
   },
   post: function(src) {
-    writeText(obj_mode[obj_search["mode"]](removeMd(procTag(src), 1)).replace(/# [^\n]*/, ""))
+    writeText(
+      parseNewline(
+        obj_mode[obj_search["mode"]](
+          removeMd(
+            procBracket(src))))
+              .replace(/# (.*)/, '<h1>$1</h1>'))
   },
   plot: function(src) {
     countFull(src)
-    writeText(obj_mode[obj_search["mode"]](removeMd(parseRuby(procTag(src, 1)), 1)).replace(/# ([^\n]*)/, '<h1>$1</h1>'))
+    writeText(
+      titleAdd(
+        parseNewline(
+          obj_mode[obj_search["mode"]](
+            removeMd(
+              parseRuby(
+                procBracket(src))))
+                  .replace(/# (.*)/, '<h1>$1</h1>'))))
   },
   pickup: function(src) {
     let monoLine = removeMd(src).replace(/\r?\n/g, "")
@@ -575,7 +595,7 @@ let obj_format = {
       let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "g")
       let match = monoLine.match(RE_w)
       if (match) {
-        w += parseRuby(procTag(match.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1))
+        w += parseRuby(procBracket(match.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1))
       }
       h++
       if (h < arr_bracketItself) {
@@ -588,7 +608,7 @@ let obj_format = {
   odt: function(src) {
     let zip = new JSZip()
     let folder = null
-    zip.file("content.xml", parseOdt(removeMd(procTag(src), 1).replace(/# (.*)/, '<h1>$1</h1>')))
+    zip.file("content.xml", parseOdt(obj_mode[obj_search["mode"]](removeMd(procBracket(src)))))
     for (let i = 0; i < obj_odt["files"].length; i++) {
       let odtFileName = obj_odt["files"][i][0]
       let odtDirName = obj_odt["files"][i][1]
@@ -872,14 +892,17 @@ function exec(src) {
   // <title> にタイトルを代入
   let arr_title = src.match(/^# .*/m)
   if (arr_title) {
-    elm_title.textContent = arr_title[0].replace(/# /, "")
+    title = arr_title[0].replace(/# /, "")
+    elm_title.textContent = title
   }
   // フォーマットどおりの処理
   obj_format[obj_search["format"]](src)
   // README.md を取得してきてリンクを設定する
-  loadContent(obj_url[currOrigin]["readme"]).then(m => {
-    setLink(m)
-  })
+  if(arr_repoFile[0] !== undefined) {
+    loadContent(obj_url[currOrigin]["readme"]).then(m => {
+      setLink(m)
+    })
+  }
   elm_text.classList.add("loaded")
 }
 // ファイルの読み込み
@@ -888,6 +911,17 @@ async function loadContent(url) {
   return w.text()
 }
 // 変換の実処理
+function titleAdd(src) {
+  let titleHtml = ""
+  if (title.length >= 1) {
+    titleHtml = '<h1>' + title + '</h1>' + EOS
+  }
+  return titleHtml + src
+}
+function parseNewline(src) {
+  return src.replace(/^(.*)$/gm, '<p>$1</p>')
+            .replace(/<p><\/p>/g, '<p><br></p>')
+}
 function parseRuby(src) {
   return src.replace(/｜([^｜]*?)《(.*?)》/g, '<ruby>$1<rt>$2</rt></ruby>')
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<ruby>$1<rt>$2</rt></ruby>')
@@ -898,20 +932,21 @@ function removeRuby(src) {
             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, "$1")
             .replace(/｜(（.*?）)/g, "$1")
 }
-function removeMd(src, type) {
-  if (type === 1) {
-                                      // ↓ 謎の現象。- 前に \ しないと HTML タグにヒットする
-    return src.replace(/^[ \t]*(#{2,}|[*+\-_~=`>|]).*\r?\n/gm, "")
-  } else {
-    return src.replace(/^[ \t]*[#*+\-_~=`>|].*\r?\n/gm, "")
-  }
+function removeMd(src) {
+  return src.replace(/^[ \t]*[#*+\-_~=`>|].*\r?\n/gm, "")
 }
 function parseOdt(src) {
-  return src.replace(/^(.*)$/gm, '<text:p>$1</text:p>')
-            .replace(/｜([^｜]*?)《(.*?)》/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
-            .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
-            .replace(/｜(（.*?）)/g, "$1")
-            .replace(/([\s\S]*)/m, obj_odt["content"]["start"] + "$1" + obj_odt["content"]["end"])
+  let w = src.replace(/^(?!<.*>)(.*)$/gm, '<text:p>$1</text:p>')
+             .replace(/｜([^｜]*?)《(.*?)》/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
+             .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></ text:ruby>')
+             .replace(/｜(（.*?）)/g, "$1")
+  let titleOdt = ""
+  if (title.length >= 1) {
+    titleOdt = '<text:p text:style-name="Title">' + title + '</text:p>\n'
+    return (titleOdt + w).replace(/([\s\S]*)/m, obj_odt["content"]["start"] + "$1" + obj_odt["content"]["end"])
+  } else {
+    return w.replace(/([\s\S]*)/m, obj_odt["content"]["start"] + "$1" + obj_odt["content"]["end"])
+  }
 }
 // 書き出しとその後の処理
 function writeText(src) {
@@ -920,7 +955,7 @@ function writeText(src) {
   elm_html.classList.add(obj_search["format"])
 }
 // タグを処理する type=0 消去、tyep=1 色づけ
-function procTag(src, type) {
+function procBracket(src, type) {
   function RE_deleteItself() {
     let w = ""
     let h = 0
