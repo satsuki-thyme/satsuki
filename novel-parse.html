@@ -423,7 +423,7 @@ html.dark #input-button {
   </div>
   <div id="mode-chip" class="unloaded">
     <label>normal<input id="mode-chip-normal" type="radio" name="mode-chip" value="normal"></label>
-    <label>c<input id="mode-chip-half" type="radio" name="mode-chip" value="half"></label>
+    <label>half<input id="mode-chip-half" type="radio" name="mode-chip" value="half"></label>
   </div>
 </div>
 <div class="link-chip">
@@ -431,7 +431,7 @@ html.dark #input-button {
   <a class="next"></a>
 </div>
 </body>
-<script src="https://etc.satsuki.me/md-parse.js"></script>
+<script src="https://etc.satsuki.me/mdparse.js"></script>
 <script src="https://etc.satsuki.me/3rd-party-lib/jszip.min.js"></script>
 <script src="https://etc.satsuki.me/3rd-party-lib/FileSaver.min.js"></script>
 <script>
@@ -486,11 +486,11 @@ let EOS = "\n"
 let obj_mode = {
   "normal": function(src) {
     return src.replace(/\r?\n/g, EOS)
-              .replace(/(\r?\n){5,}/g, "")
+              .replace(/(\r?\n){5,}(?<![^\r\n])/g, "")
   },
   "half": function(src) {
     return src.replace(/(.+)\r?\n/g, "$1")
-              .replace(/(\r?\n){5,}/g, "")
+              .replace(/(\r?\n){5,}(?<![^\r\n])/g, "")
               .replace(/\r?\n/g, EOS)
   }
 }
@@ -583,7 +583,7 @@ let obj_format = {
           obj_mode[obj_search["mode"]](
             removeMd(
               parseRuby(
-                procBracket(src))))
+                procBracket(src, 1))))
                   .replace(/# (.*)/, '<h1>$1</h1>'))))
   },
   pickup: function(src) {
@@ -592,7 +592,7 @@ let obj_format = {
     pick("")
     function pick(w0) {
       let w = w0
-      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}", "g")
+      let RE_w = RegExp(".{0,30}" + arr_bracketItself[h]["before"] + ".*?" + arr_bracketItself[h]["after"] + ".{0,30}" + "(.{0,30}" + arr_bracketItself[h]["after"] + ")?", "g")
       let match = monoLine.match(RE_w)
       if (match) {
         w += parseRuby(procBracket(match.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1))
@@ -889,7 +889,7 @@ function exec(src) {
   if (EOS_LF === null || (EOS_LF !== null && EOS_CR !== null && EOS_LF.length < EOS_CR.length)) {
     EOS = "\r\n"
   }
-  // <title> にタイトルを代入
+  // 文章内のタイトル表記に使う変数 title に値を代入し、 <title> にタイトルを代入
   let arr_title = src.match(/^# .*/m)
   if (arr_title) {
     title = arr_title[0].replace(/# /, "")
@@ -907,7 +907,8 @@ function exec(src) {
 }
 // ファイルの読み込み
 async function loadContent(url) {
-  let w = await fetch(url)
+  let now = new Date.now()
+  let w = await fetch(url + "?" + now)
   return w.text()
 }
 // 変換の実処理
