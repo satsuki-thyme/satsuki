@@ -499,7 +499,7 @@ let title = ""
 // FileReader による読み込みファイル
 let trgFile = null
 // URL の search で作品が指定されていた場合の作品のホスト
-let now = Date.now()
+let now = Date()
 let arr_repoFile = []
 let prevFile = ""
 let nextFile = ""
@@ -907,7 +907,6 @@ function exec(src) {
 }
 // ファイルの読み込み
 async function loadContent(url) {
-  let now = new Date.now()
   let w = await fetch(url + "?" + now)
   return w.text()
 }
