@@ -172,6 +172,11 @@ html.v,
 html.v body {
   height: 100%
 }
+#frame {
+  width: 600px;
+  max-width: 95%;
+  margin: auto;
+}
 html.v #frame {
   position: fixed;
   top: 80px;
@@ -200,10 +205,8 @@ div {
   margin: 0;
 }
 #text {
-  width: 600px;
-  max-width: 95%;
-  margin: auto;
-  padding: 50px 0 400px 0;
+  margin-left: -300px;
+  padding: 50px 0 400px 300px;
   font-family: "メイリオ", "Meiryo", 'Lucida Grande', "sans-serif";
   font-size: 16px;
   line-height: 28.8px;
@@ -293,6 +296,26 @@ html.post .link-chip,
   line-height: 1;
   border-width: 1px;
   border-style: solid;
+}
+#text.loaded div.plot-heading-block {
+  display: block;
+  float: left;
+  width: 280px;
+  margin-left: -300px;
+}
+#text.loaded h2.plot-heading {
+  margin: 0;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 28.8px;
+  text-align: right;
+  opacity: 0.5;
+}
+.curly-bracketss {
+  color: #d00;
+}
+.square-bracketss {
+  color: #0ae;
 }
 @media (prefers-color-scheme: dark) {
   body {
@@ -394,27 +417,37 @@ html.dark #input-button {
       <label>
         <input id="format-reading" type="radio" name="format" value="reading" checked>
         <dt>閲覧</dt>
-        <dd>閲覧用の表示でデフォルトです。</dd>
+        <dd>閲覧用の表示でデフォルトです。<br>
+          ウェブ小説記法のルビを解釈します。<br>
+          Markdown を非表示にします。<br>
+          <span class="brackets-itself"></span> の括弧自体を非表示にし、 <span class="brackets-include"></span> の括弧と中身を非表示にします。</dd>
       </label>
       <label>
         <input id="format-post" type="radio" name="format" value="post">
         <dt>投稿</dt>
-        <dd>Markdown が非表示になりますが面倒なのでテキトーです。ネット小説記法のルビをそのまま表示し、上付け文字に解釈することしません。</dd>
+        <dd>ウェブ小説記法のルビをそのまま表示し、解釈することしません。<br>
+          Markdown を非表示にします。<br>
+          <span class="brackets-itself"></span> の括弧自体を非表示にし、 <span class="brackets-include"></span> の括弧と中身を非表示にします。</dd>
       </label>
       <label>
         <input id="format-plot" type="radio" name="format" value="plot">
         <dt>プロット</dt>
-        <dd>プロットを確認する際の表示です。閲覧、投稿では表示されない記号などがそのまま表示されます。</dd>
+        <dd>プロットを確認する際の表示です。<br>
+          Markdown を解釈しますが、見出しは本文左に表示します。<br>
+          閲覧、投稿では表示されない <span class="brackets"></span> をそのままハイライトして表示します。</dd>
       </label>
       <label>
         <input id="format-pickup" type="radio" name="format" value="pickup">
         <dt>ピックアップ</dt>
-        <dd><span class="bracket"></span> で囲った部分をピックアップして表示します。</dd>
+        <dd><span class="brackets"></span> で囲った部分をピックアップして表示します。</dd>
       </label>
       <label>
         <input id="format-odt" type="radio" name="format" value="odt">
         <dt>ODT</dt>
-        <dd>ネット小説記法のルビを解釈し、 odt に変換してダウンロードします。 LibreOffice などで開くことができます。ダウンロードに際してブラウザから危険性を示唆されます。自己責任でご利用ください。</dd>
+        <dd>ウェブ小説記法のルビを解釈し、 odt に変換してダウンロードします。<br>
+          LibreOffice などで開くことができます。<br>
+          <span class="brackets-itself"></span> の括弧自体を非表示にし、 <span class="brackets-include"></span> の括弧と中身を非表示にします。<br>
+          ダウンロードに際してブラウザから危険性を示唆されます。自己責任でご利用ください。</dd>
       </label>
     </dl>
     <h3>書き方向</h3>
@@ -467,15 +500,15 @@ html.dark #input-button {
     <h3>フォーマット</h3>
     <dl>
       <dt>format=reading</dt>
-      <dd>閲覧</dd>
+      <dd>標準</dd>
       <dt>format=plot</dt>
-      <dd>Markdown で書かれたプロットを特別な表示にする</dd>
+      <dd>プロット</dd>
       <dt>format=post</dt>
       <dd>投稿</dd>
       <dt>format=odt</dt>
       <dd>ODT</dd>
       <dt>format=pickup</dt>
-      <dd><span class="bracket"></span> で囲った部分をピックアップして表示する</dd>
+      <dd>ピックアップ</dd>
     </dl>
     <h3>テーマ</h3>
     <dl>
@@ -594,7 +627,9 @@ let elm_countFull = document.querySelector("#count-full")
 let elm_countSelect = document.querySelector("#count-select")
 let elm_prev = document.querySelectorAll(".prev")
 let elm_next = document.querySelectorAll(".next")
-let elmArr_bracket = document.querySelectorAll(".bracket")
+let elmArr_brackets = document.querySelectorAll(".brackets")
+let elmArr_bracketsInclude = document.querySelectorAll(".brackets-include")
+let elmArr_bracketsItself = document.querySelectorAll(".brackets-itself")
 let elm_formatChip = document.querySelector("#format-chip")
 let elm_formatSelector = document.querySelector("#format-selector")
 let elm_modeChip = document.querySelector("#mode-chip")
@@ -659,20 +694,20 @@ let arr_url = {
   }
 }
 // タグの定義（タグ自身を処理の対象にする）
-let arr_bracketItself = [
+let arr_bracketsItself = [
   {
     "before": "{",
     "after": "}",
-    "replaceBefore": '<span style="color: #77f">',
+    "replaceBefore": '<span class="curly-bracketss">',
     "replaceAfter": '</span>'
   }
 ]
 // タグの定義（タグと中身を処理の対象にする）
-let arr_bracketInclude = [
+let arr_bracketsInclude = [
   {
     "before": "[",
     "after": "]",
-    "replaceBefore": '<span style="color: #d00">',
+    "replaceBefore": '<span class="square-bracketss">',
     "replaceAfter": '</span>'
   }
 ]
@@ -681,7 +716,7 @@ let arr_toc = []
 // 変換先フォーマット毎の処理
 let arr_format = {
   reading: src => {
-    procBracket(src)
+    procbrackets(src)
     .then(r => {
       return parseRuby(r)
     }).then(r => {
@@ -700,7 +735,7 @@ let arr_format = {
     countFull(src)
   },
   post: src => {
-    procBracket(src)
+    procbrackets(src)
     .then(r => {
       return removeMd(r)
     }).then(r => {
@@ -714,11 +749,11 @@ let arr_format = {
     })
   },
   plot: src => {
-    procBracket(src, 1)
+    procbrackets(src, 1)
     .then(r => {
       return parseRuby(r)
     }).then(r => {
-      return removeMd(r)
+      return procMd(r)
     }).then(r => {
       return arr_mode[arr_option["mode"]](r)
     }).then(r => {
@@ -738,19 +773,19 @@ let arr_format = {
     pick("")
     function pick(w0) {
       let w = w0
-      let RE_w0 = RegExp(".{0,30}" + esc(arr_bracketItself[h]["before"]) + ".*?" + esc(arr_bracketItself[h]["after"]) + ".{0,30}" + "(.{0,30}" + esc(arr_bracketItself[h]["after"]) + ")?", "g")
-      let RE_w1 = RegExp(".{0,30}" + esc(arr_bracketInclude[h]["before"]) + ".*?" + esc(arr_bracketInclude[h]["after"]) + ".{0,30}" + "(.{0,30}" + esc(arr_bracketInclude[h]["after"]) + ")?", "g")
+      let RE_w0 = RegExp(".{0,30}" + esc(arr_bracketsItself[h]["before"]) + ".*?" + esc(arr_bracketsItself[h]["after"]) + ".{0,30}" + "(.{0,30}" + esc(arr_bracketsItself[h]["after"]) + ")?", "g")
+      let RE_w1 = RegExp(".{0,30}" + esc(arr_bracketsInclude[h]["before"]) + ".*?" + esc(arr_bracketsInclude[h]["after"]) + ".{0,30}" + "(.{0,30}" + esc(arr_bracketsInclude[h]["after"]) + ")?", "g")
       let arr_pickup0 = monoLine.match(RE_w0)
       let arr_pickup1 = monoLine.match(RE_w1)
       if (arr_pickup0 !== null || match1 !== null) {
         let arr_pickupAll = arr_pickup0.concat(arr_pickup1)
-        procBracket(arr_pickupAll.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1)
+        procbrackets(arr_pickupAll.join(EOS).replace(/^(.*)$/gm, '<li>$1</li>'), 1)
         .then(async r => {
           return parseRuby(r)
         }).then(async r => {
           w += r
           h++
-          if (h < arr_bracketItself) {
+          if (h < arr_bracketsItself) {
             pick(w)
           } else {
             writeText(w.replace(/((.*(\r?\n)?)+)/gm, '<ul id="pickup-list">$1</ul>'))
@@ -764,7 +799,7 @@ let arr_format = {
   odt: src => {
     let zip = new JSZip()
     let folder = null
-    procBracket(src)
+    procbrackets(src)
     .then(r => {
       return parseRuby(r)
     }).then(r => {
@@ -840,15 +875,25 @@ applyOption()
   括弧を書き出す
 
 */
-let arr_bracket = []
-for (let i = 0; i < arr_bracketItself.length; i++) {
-  arr_bracket.push(arr_bracketItself[i]["before"] + arr_bracketItself[i]["after"])
-  if (i === arr_bracketItself.length - 1) {
-    let bracketJoined = arr_bracket.join(", ")
-    for (let j = 0; j < elmArr_bracket.length; j++) {
-      elmArr_bracket[j].innerHTML = bracketJoined
-    }
-  }
+let arr_brackets0 = []
+let arr_brackets1 = []
+for (let i = 0; i < arr_bracketsItself.length; i++) {
+  arr_brackets0.push(arr_bracketsItself[i]["before"] + arr_bracketsItself[i]["after"])
+}
+for (let i = 0; i < arr_bracketsInclude.length; i++) {
+  arr_brackets1.push(arr_bracketsInclude[i]["before"] + arr_bracketsInclude[i]["after"])
+}
+let brackets0Joined = arr_brackets0.join(", ")
+let brackets1Joined = arr_brackets1.join(", ")
+let bracketsJoined = brackets0Joined + ", " + brackets1Joined
+for (let i = 0; i < elmArr_brackets.length; i++) {
+  elmArr_brackets[i].innerHTML = bracketsJoined
+}
+for (let i = 0; i < elmArr_bracketsInclude.length; i++) {
+  elmArr_bracketsInclude[i].innerHTML = brackets1Joined
+}
+for (let i = 0; i < elmArr_bracketsItself.length; i++) {
+  elmArr_bracketsItself[i].innerHTML = brackets0Joined
 }
 /*
 
@@ -1084,6 +1129,11 @@ function removeRuby(src) {
 function removeMd(src) {
   return src.replace(/^[ \t]*[#*+\-_~=`>|].*\r?\n/gm, "")
 }
+function procMd(src) {
+  return src.replace(/(^#{2,6} .*)/gm, `<h2 class="plot-heading">$1</h2>`)
+            .replace(/((<h2 class="plot-heading">.*?<\/h2>\r?\n)+)/gm, `<div class="plot-heading-block">$1</div>`)
+            .replace(/^# .*\n/, "")
+}
 function parseOdt(src) {
   let w = src.replace(/^(?!<.*>)(.*)$/gm, '<text:p>$1</text:p>')
              .replace(/｜([^｜]*?)《(.*?)》/g, '<text:ruby><text:ruby-base>$1</text:ruby-base><text:ruby-text>$2</text:ruby-text></text:ruby>')
@@ -1105,7 +1155,7 @@ function writeText(src) {
   return true
 }
 // タグを処理する type=0 消去、tyep=1 色づけ
-async function procBracket(src, type) {
+async function procbrackets(src, type) {
   if (type === 1) {
     return markupInclude(markupItself(src))
   } else {
@@ -1114,10 +1164,10 @@ async function procBracket(src, type) {
   function RE_deleteItself() {
     let w = ""
     let h = 0
-    for (let i = 0; i < arr_bracketItself.length; i++) {
-      w += esc(arr_bracketItself[i]["before"]) + esc(arr_bracketItself[i]["after"])
+    for (let i = 0; i < arr_bracketsItself.length; i++) {
+      w += esc(arr_bracketsItself[i]["before"]) + esc(arr_bracketsItself[i]["after"])
       h++
-      if (h === arr_bracketItself.length) {
+      if (h === arr_bracketsItself.length) {
         return RegExp("[" + w + "]", "g")
       }
     }
@@ -1125,21 +1175,21 @@ async function procBracket(src, type) {
   function RE_deleteInclude() {
     let w = ""
     let h = 0
-    for (let i = 0; i < arr_bracketInclude.length; i++) {
-      w += esc(arr_bracketInclude[i]["before"]) + ".*?" + esc(arr_bracketInclude[i]["after"]) + "|"
+    for (let i = 0; i < arr_bracketsInclude.length; i++) {
+      w += esc(arr_bracketsInclude[i]["before"]) + ".*?" + esc(arr_bracketsInclude[i]["after"]) + "|"
       h++
-      if (h === arr_bracketInclude.length) {
+      if (h === arr_bracketsInclude.length) {
         return RegExp("(" + w + ")", "g")
       }
     }
   }
   function markupItself(r) {
     let g = 0
-    let RE_bracketBefore = RegExp(esc(arr_bracketItself[g]["before"]), "g")
-    let RE_bracketAfter = RegExp(esc(arr_bracketItself[g]["after"]), "g")
-    let w = unEsc(r.replace(RE_bracketBefore, arr_bracketItself[g]["replaceBefore"] + esc(arr_bracketItself[g]["before"]) + arr_bracketItself[g]["replaceAfter"]).replace(RE_bracketAfter, arr_bracketItself[g]["replaceBefore"] + esc(arr_bracketItself[g]["after"]) + arr_bracketItself[g]["replaceAfter"]))
+    let RE_bracketsBefore = RegExp(esc(arr_bracketsItself[g]["before"]), "g")
+    let RE_bracketsAfter = RegExp(esc(arr_bracketsItself[g]["after"]), "g")
+    let w = unEsc(r.replace(RE_bracketsBefore, arr_bracketsItself[g]["replaceBefore"] + esc(arr_bracketsItself[g]["before"]) + arr_bracketsItself[g]["replaceAfter"]).replace(RE_bracketsAfter, arr_bracketsItself[g]["replaceBefore"] + esc(arr_bracketsItself[g]["after"]) + arr_bracketsItself[g]["replaceAfter"]))
     g++
-    if (g < arr_bracketItself.length) {
+    if (g < arr_bracketsItself.length) {
       markupItself(w)
     } else {
       return w
@@ -1147,10 +1197,10 @@ async function procBracket(src, type) {
   }
   function markupInclude(r) {
     let f = 0
-    let RE_bracket = RegExp(esc(arr_bracketInclude[f]["before"]) + "(.*?)" + esc(arr_bracketInclude[f]["after"]), "g")
-    let w = unEsc(r.replace(RE_bracket, arr_bracketInclude[f]["replaceBefore"] + esc(arr_bracketInclude[f]["before"]) + "$1" + esc(arr_bracketInclude[f]["after"]) + arr_bracketInclude[f]["replaceAfter"]))
+    let RE_brackets = RegExp(esc(arr_bracketsInclude[f]["before"]) + "(.*?)" + esc(arr_bracketsInclude[f]["after"]), "g")
+    let w = unEsc(r.replace(RE_brackets, arr_bracketsInclude[f]["replaceBefore"] + esc(arr_bracketsInclude[f]["before"]) + "$1" + esc(arr_bracketsInclude[f]["after"]) + arr_bracketsInclude[f]["replaceAfter"]))
     f++
-    if (f < arr_bracketInclude.length) {
+    if (f < arr_bracketsInclude.length) {
       markupInclude(w)
     } else {
       return w
