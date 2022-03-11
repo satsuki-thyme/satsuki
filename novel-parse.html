@@ -1196,7 +1196,7 @@ function writeReadme() {
     arr_prm.push(prm)
   }
   Promise.all(arr_prm).then(() => {
-    nod_text.innerHTML = addTitle(`<p>全体 : ${sum} 文字</p>${EOL}<ul>${EOL}${arr_readme.join(EOL)}${EOL}</ul>`)
+    nod_text.innerHTML = addTitle(`<p>全体 : ${sum} 文字</p>${EOL}<ol>${EOL}${arr_readme.join(EOL)}${EOL}</ol>`)
   })
 }
 function copyPost() {
@@ -1457,7 +1457,7 @@ async function makeToc(src) {
   let w = src.replace(/(.*\r?\n)*(#+ 目次.*\r?\n)((.*\r?\n)*)(#|$)/gm, "$3")
              .split(/\r?\n/)
              .filter(r => r !== "")
-             .map(r => r.replace(/^[*+-]? ?(.*)/g, "$1")
+             .map(r => r.replace(/^(?:\*|\+|-|\d+\.) (.*)/g, "$1")
              .split(/[ \t]*[:：][ \t]*/))
   w.map(r => r.push(arr_url[currOrigin]["linkBase"] + r[0]))
   return w
