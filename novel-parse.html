@@ -875,7 +875,20 @@ let arr_proc = {
     }
   },
   readme: () => {
-    writeReadme()
+    let arr_readme = []
+    let sum = 0
+    let arr_prm = []
+    for (let i = 0; i < arr_toc.length; i++) {
+      let prm = loadContent(`${arr_url[currOrigin]["backhost"]}${arr_toc[i][0]}?${now}`).then(async r => {
+        let w = await removeRuby(removeMd(r)).replace(/[\s　]/g, "").length
+        sum += w
+        arr_readme[i] = await `<li><a href="${arr_toc[i][2]}&format=reading">${arr_toc[i][1]}</a> : ${w} 文字</li>`
+      })
+      arr_prm.push(prm)
+    }
+    Promise.all(arr_prm).then(() => {
+      nod_text.innerHTML = addTitle(`<p>全体 : ${sum} 文字</p>${EOL}<ol>${EOL}${arr_readme.join(EOL)}${EOL}</ol>`)
+    })
   }
 }
 /*
@@ -956,7 +969,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     else /* if (arr_repoFile[1] === "README.md") */{
       arr_option["format"] = "readme"
-      arr_option["mode"] = "normal"
       loadContent(arr_url[currOrigin]["content"]).then(r => {
         makeToc(r).then((r1) => {
           arr_toc = r1
@@ -1182,22 +1194,6 @@ function exec(src) {
   }
   arr_proc[arr_option["format"]](src)
   nod_text.classList.add("loaded")
-}
-function writeReadme() {
-  let arr_readme = []
-  let sum = 0
-  let arr_prm = []
-  for (let i = 0; i < arr_toc.length; i++) {
-    let prm = loadContent(`${arr_url[currOrigin]["backhost"]}${arr_toc[i][0]}?${now}`).then(async r => {
-      let w = await removeRuby(removeMd(r)).replace(/[\s　]/g, "").length
-      sum += w
-      arr_readme[i] = await `<li><a href="${arr_toc[i][2]}&format=reading">${arr_toc[i][1]}</a> : ${w} 文字</li>`
-    })
-    arr_prm.push(prm)
-  }
-  Promise.all(arr_prm).then(() => {
-    nod_text.innerHTML = addTitle(`<p>全体 : ${sum} 文字</p>${EOL}<ol>${EOL}${arr_readme.join(EOL)}${EOL}</ol>`)
-  })
 }
 function copyPost() {
   procbrk(srcText)
