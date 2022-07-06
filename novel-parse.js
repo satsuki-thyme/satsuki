@@ -5,8 +5,8 @@
 */
 let now = Date()
 let eps = location
-          .search
-          .replace(/.*?(eps|episode|story)=(.*)(?=&|$)/gm, "$2")
+.search
+.replace(/.*?(eps|episode|story)=(.*)(?=&|$)/gm, "$2")
 let content = null
 // タグの定義（タグ自身を処理の対象にする）
 let arr_brkSlf = [
@@ -34,11 +34,11 @@ let opIdent = eps.replace(/(.*?)\d+\..*/, "$1")
 let currIdent = eps.replace(/.*?(\d+)\..*/, "$1")
 let extention = eps.replace(/.*(\..*)/, "$1")
 let currNum = Number(currIdent)
-let mode = null
+let format = null
 if (eps !== "README.md" && eps !== "") {
-  mode = 0
+  format = 0
 } else {
-  mode = 1
+  format = 1
 }
 /*
 
@@ -46,7 +46,7 @@ if (eps !== "README.md" && eps !== "") {
 
 */
 // 本文が小説本文なら
-if (mode === 0) {
+if (format === 0) {
   // 本文の処理
   prm_text = new Promise((resolve, reject) => {
     loadContent(backhost + eps + "?" + now)
@@ -127,14 +127,14 @@ window.addEventListener("DOMContentLoaded", () => {
   prm_text
   .then(r => {
     // 本文を挿入
-    prm_wrote = new Promise((resolve, reject) => {
+    prm_wrote = new Promise(resolve => {
       resolve(nod_text.innerHTML = r)
     })
     arr_prm_wrote.push(prm_wrote)
     // 本文が小説本文なら
-    if (mode === 0) {
+    if (format === 0) {
       // タイトルの表示
-      prm_link = new Promise((resolve, reject) => {
+      prm_link = new Promise(resolve => {
         prm_toc // <= 目次の処理が終わったら
         .then(r => {
           let nod_title = document.createElement("h1")
@@ -144,7 +144,7 @@ window.addEventListener("DOMContentLoaded", () => {
       })
       arr_prm_wrote.push(prm_link)
       // 目次へのリンクの表示
-      prm_add = new Promise((resolve, reject) => {
+      prm_add = new Promise(resolve => {
         let w = 0
         ndl_add.forEach(r => {
           r.classList.remove("hidden")
@@ -156,7 +156,7 @@ window.addEventListener("DOMContentLoaded", () => {
       })
       arr_prm_wrote.push(prm_add)
       // 文字数の表示
-      prm_len = new Promise((resolve, reject) => {
+      prm_len = new Promise(resolve => {
         prm_textSrc
         .then(r => {
           procBrk(r)
@@ -169,7 +169,7 @@ window.addEventListener("DOMContentLoaded", () => {
       Promise.all(arr_prm_wrote)
       .then(r => {
         if (localStorage.getItem("eps") === eps) {
-          document.body.scrollTop = localStorage.getItem("scroll_top")
+          document.body.scrollTop = localStorage.getItem("scrollTop")
         }
       })
    // 本文が README.md なら
@@ -190,7 +190,7 @@ window.addEventListener("DOMContentLoaded", () => {
     nod_text.innerHTML = `<p style="text-align: center;">エラーが発生しました。申し訳ないことです。</p>`
   })
   // 本文が小説本文なら
-  if (mode === 0) {
+  if (format === 0) {
     // 目次の処理が終わったら
     prm_toc
     .then(r => {
@@ -206,8 +206,8 @@ window.addEventListener("DOMContentLoaded", () => {
 */
 window.onunload = () => {
   // スクロール量
-  localStorage.setItem("scroll_top", document.body.scrollTop)
-  // リロード後にスクロール量を再現するか否かを判断するために今の話のリポジトリとファイルを記録する
+  localStorage.setItem("scrollTop", document.body.scrollTop)
+  // リロード後にスクロール量を再現するか否かを判断するために今の話のファイル名を記録する
   localStorage.setItem("eps", eps)
 }
 /*
