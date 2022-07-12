@@ -223,13 +223,13 @@ function loadContent(url) {
 function parseRuby(src) {
   return src
          .replace(/｜([^｜]*?)《(.*?)》/g, `<ruby>$1<rt>$2</rt></ruby>`)
-         .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, `<ruby>$1<rt>$2</rt></ruby>`)
+         .replace(/([々〇〻\u3400-\u9FFF\uF900-\uFAFF]+|[\uD840-\uD87F]+|[\uDC00-\uDFFF]+)（(.*?)）/g, `<ruby>$1<rt>$2</rt></ruby>`)
          .replace(/｜(（.*?）)/g, "$1")
 }
 // ルビを削除
 function removeRuby(src) {
   return src.replace(/｜([^｜]*?)《.*?》/g, "$1")
-            .replace(/([\u4E00-\u9FFF]+)（(.*?)）/g, "$1")
+            .replace(/([々〇〻\u3400-\u9FFF\uF900-\uFAFF]+|[\uD840-\uD87F]+|[\uDC00-\uDFFF]+)（(.*?)）/g, "$1")
             .replace(/｜(（.*?）)/g, "$1")
 }// Markdown を削除
 function removeMd(src) {
