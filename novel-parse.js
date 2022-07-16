@@ -6,7 +6,7 @@
 let now = Date()
 let eps = location
 .search
-.replace(/.*?(eps|episode|story)=(.*)(?=&|$)/gm, "$2")
+.replace(/.*?(?:eps|episode|story)=(.*?)(?:&.*|$)/gm, "$1")
 let content = null
 // タグの定義（タグ自身を処理の対象にする）
 let arr_brkSlf = [
@@ -37,6 +37,10 @@ let currNum = Number(currIdent)
 let format = null
 if (eps !== "README.md" && eps !== "") {
   format = 0
+  if (!eps.match(/\[\d+\]\d+\.txt/)) {
+    eps = `[${op}]${("00" + eps).slice(-3)}.txt`
+  }
+  console.log(eps)
 } else {
   format = 1
 }
