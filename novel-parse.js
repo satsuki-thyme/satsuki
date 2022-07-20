@@ -40,7 +40,6 @@ if (eps !== "README.md" && eps !== "") {
   if (!eps.match(/\[\d+\]\d+\.txt/)) {
     eps = `[${op}]${("00" + eps).slice(-3)}.txt`
   }
-  console.log(eps)
 } else {
   format = 1
 }
