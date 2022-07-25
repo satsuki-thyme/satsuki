@@ -1,0 +1,61 @@
+<p>ニコニコ大百科を使って開典占いができます。</p>
+<style>
+#web-opening-fortune-telling-niconico {
+  padding-top: 50px;
+  padding-bottom: 80px;
+  text-align: center;
+}
+#word + #button {
+  margin-top: 20px;
+}
+#word {
+  font-size: 32px;
+  text-align: center;
+}
+#button {
+  width: 200px;
+  height: 80px;
+  font-size: 28px;
+  letter-spacing: 0.2em;
+  line-height: 80px;
+}
+.hidden {
+  display: none;
+}
+/*
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #f1eee9;
+    background-color: #1e1f1c;
+  }
+  #button {
+    color: #f1eee9;
+    background-color: #41443a;
+    border-color: #30312c;
+  }
+}
+*/
+</style>
+<p>
+<script>
+loadDic()
+.then(r => {
+  console.log(r)
+  button.classList.remove("hidden")
+  update(r)
+  button.onclick = () => {
+    update(r)
+  }
+})
+async function loadDic() {
+  return (await fetch("//etc.satsuki.me/dic-niconico.json")).json()
+}
+function update(src) {
+  word.innerText = src[Math.round(Math.random() * (src.length))]
+}
+</script>
+</p>
+<div id="web-opening-fortune-telling-niconico">
+<p id="word"></p>
+<button id="button" class="hidden">更新</button></div>
+<p>ニコニコ大百科の語彙は「<a href="http://tkido.com/blog/1019.html">ニコニコ大百科IME辞書</a>」の「現在2022年07月20日 03:52版」を改変して利用しています。</p>
