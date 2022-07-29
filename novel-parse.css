@@ -27,8 +27,8 @@ h2 {
 
 */
 body {
-  color: #222;
-  background-color: #fff;
+  color: #1e1f1c;
+  background-color: #f1eee9;
 }
 #frame {
   width: 600px;
@@ -100,13 +100,13 @@ a:hover {
 }
 @media (prefers-color-scheme: dark) {
   body {
-    color: #ccc;
-    background-color: #111;
+    color: #f1eee9;
+    background-color: #1e1f1c;
   }
 }
 @media print {
   html body {
-    color: #222;
+    color: #000;
     background-color: #fff;
   }
   #frame {
