@@ -50,8 +50,8 @@ let server = location.origin
 if (/\.c$/.test(server)) {
   baseUrl = baseUrlArray[`c`]
 }
-else if (/github\.com$/.test(server)) {
-  baseUrl = baseUrlArray[`github.com`]
+else if (/satsuki\.me$/.test(server)) {
+  baseUrl = baseUrlArray[`satsuki.me`]
 }
 /*
   HTML コンテンツ

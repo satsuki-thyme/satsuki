@@ -282,6 +282,9 @@ html.text .nav-inner + .nav-outer {
 html.index thead {
   background-color: var(--decoration-color-bright-4);
 }
+html.index table td:first-child {
+  text-align: center;
+}
 html.text main.page-element p {
   margin: 0;
   line-height: 1.7;
