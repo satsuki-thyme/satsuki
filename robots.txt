@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://satsuki-thyme.com/sitemap.xml
+Sitemap: https://satsuki.me/sitemap.xml
