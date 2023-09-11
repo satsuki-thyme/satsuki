@@ -17,7 +17,7 @@ let repo = op
 // 本文データの参照先
 let baseUrlArray = {}
 baseUrlArray[`c`] = `scribe/${repo}/`
-baseUrlArray[`github.com`] = `//raw.githubusercontent.com/satsuki-thyme/${repo}/master/`
+baseUrlArray[`satsuki.me`] = `//raw.githubusercontent.com/satsuki-thyme/${repo}/master/`
 // インデックスデータの参照先
 let indexFile = `index.json`
 // トップページの表の ID
