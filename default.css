@@ -215,13 +215,14 @@ header.site-element h1 {
   margin: 0;
 }
 header.site-element a {
+  display: inline-block;
   text-decoration: none;
 }
-html.index header.site-element img,
-html.cover header.site-element img {
+html.index header.site-element a,
+html.cover header.site-element a {
   width: 300px;
 }
-html.text header.site-element img {
+html.text header.site-element a {
   width: 150px;
 }
 html.index header.site-element p,
