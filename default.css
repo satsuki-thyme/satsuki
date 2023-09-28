@@ -182,38 +182,28 @@ a {
   margin: auto;
   padding: 20px;
 }
+/*
+
+  site header
+
+*/
+/* header */
 html.index header.site-element,
-html.cover header.site-element,
-footer.site-element {
+html.cover header.site-element {
+  padding-top: 30px;
   text-align: center;
 }
 html.index header.site-element {
-  padding-top: 30px;
   padding-bottom: 100px;
 }
 html.cover header.site-element {
-  padding-top: 30px;
   padding-bottom: 30px;
 }
-html.index footer.site-element {
-  padding-top: 80px;
-}
-html.cover footer.site-element {
-  padding-top: 30px;
-}
-html.text header.site-element h1 {
-  display: inline-block;
-  text-align: center;
-}
-main.site-element {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-}
+/* h1 */
 header.site-element h1 {
   margin: 0;
 }
+/* a */
 header.site-element a {
   display: inline-block;
   text-decoration: none;
@@ -225,20 +215,59 @@ html.cover header.site-element a {
 html.text header.site-element a {
   width: 150px;
 }
+/* p */
 html.index header.site-element p,
 html.cover header.site-element p,
 html.text header.site-element p {
   font-weight: normal;
   color: var(--decoration-color-base);
 }
-  html.index header.site-element p,
-  html.cover header.site-element p {
-    margin: -20px 0 0;
-    font-size: 16px;
-  }
+html.index header.site-element p,
+html.cover header.site-element p {
+  margin: -20px 0 0;
+  font-size: 16px;
+}
 html.text header.site-element p {
+  width: 200px;
   margin: -15px 0 0;
   font-size: 8px;
+}
+/* img */
+html.index header.site-element img,
+html.cover header.site-element img {
+  width: 300px;
+}
+html.text header.site-element img {
+  width: 200px;
+}
+/*
+
+  site footer
+
+*/
+footer.site-element {
+  text-align: center;
+}
+html.index footer.site-element {
+  padding-top: 80px;
+}
+html.cover footer.site-element {
+  padding-top: 30px;
+}
+html.text header.site-element h1 {
+  display: inline-block;
+  text-align: center;
+}
+/*
+
+  site main
+
+*/
+main.site-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }
 header.page-element {
   text-align: center;
