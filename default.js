@@ -342,3 +342,49 @@ function unEsc(r) {
     return r.replace(/\\(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "$1")
   }
 }
+async function procToc(tocFileContents, op, type) {
+  return new Promise(revolve => {
+    if (type !== `text` && type !== `all` && type !== `others`) {
+      type = `text`
+    }
+    let tocBlob = /(?<!#)## 目次[\s\S]*?(?=(?<!#)##(?!#)|$)/.test(tocFileContents) ? tocFileContents.match(/(?<!#)## 目次[\s\S]*?(?=(?<!#)##(?!#)|$)/)[0] : undefined
+    let textBlob = /(?<!#)### 本文[\s\S]*?(?=(?<!#)###(?!#)|$)/.test(tocBlob) ? tocBlob.match(/(?<!#)### 本文[\s\S]*?(?=(?<!#)###(?!#)|$)/)[0] : tocBlob
+    let othersBlob = /### (?!本文)[\s\S]*?(?=$|### 本文)/.test(tocBlob) ? tocBlob.match(/### (?!本文)[\s\S]*?(?=$|### 本文)/)[0] : undefined
+    if (tocBlob !== undefined) {
+      if (type === `text`) {
+        revolve(getListSingle(textBlob))
+      }
+      else if (type === `all`) {
+        revolve(getListMulti(tocBlob))
+      }
+      else if (type === `others`) {
+        revolve(false)
+      }
+    }
+    else {
+      revolve(undefined)
+    }
+  })
+  function getListSingle(src) {
+    let w = {}
+    w.subheading = `${/(?<=##+ ).*/.test(src) ? src.match(/(?<=##+ ).*/)[0] : undefined}`
+    w.contents = src
+    .split(/\r?\n/)
+    .filter(rly => /^[\-+*] .+$/.test(rly))
+    .map(rly => {
+      let w = {}
+      w.title = `${/(?<=[\-+*].*?:[ \t]+)[^ \t].*$/.test(rly) ? rly.match(/(?<=[\-+*].*?:[ \t]+)[^ \t].*$/)[0] : undefined}`
+      w.href = `?${op}/${/(?<=[\-+*] ).*?(?=:)/.test(rly) ? rly.match(/(?<=[\-+*] ).*?(?=:)/)[0] : rly.match(/^(?<=[\-+*] ).*$/)[0]}`
+      return w
+    })
+    return w
+  }
+  function getListMulti(src) {
+    let w = src.match(/#+ .*\r?\n(?:[\-+*] .*(?:\r?\n|$))+/g)
+    let w1 = []
+    for (let i in w) {
+      w1.push(getListSingle(w[i]))
+    }
+    return w1
+  }
+}
