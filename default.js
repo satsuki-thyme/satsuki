@@ -222,7 +222,7 @@ async function textPage() {
           })
         }
         else {
-          resolve(`<p>${await textFile.text()}</p>`)
+          resolve(`<pre>${await textFile.text()}</pre>`)
         }
       }
     })
