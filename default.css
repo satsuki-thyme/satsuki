@@ -263,17 +263,10 @@ a {
   color: var(--dark-0);
 }
 #container {
+  width: 700px;
   max-width: 90%;
   margin: auto;
   padding: 20px;
-}
-#container,
-#container div,
-#contaienr header,
-#container main,
-#container footer,
-#container pre {
-  width: 700px;
 }
 /*
 
