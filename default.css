@@ -53,25 +53,37 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+h6,
+html.text.md main.page-element h1,
+html.text.md main.page-element h2,
+html.text.md main.page-element h3,
+html.text.md main.page-element h4,
+html.text.md main.page-element h5,
+html.text.md main.page-element h6 {
   margin: 0;
 }
-* + h1 {
+* + h1,
+html.text.md main.page-element * + h1 {
   margin-top: 60px;
 }
-* + h2 {
+* + h2,
+html.text.md main.page-element * + h2 {
   margin-top: 50px;
 }
-* + h3 {
+* + h3,
+html.text.md main.page-element * + h3 {
   margin-top: 40px;
 }
-* + h4 {
+* + h4,
+html.text.md main.page-element * + h4 {
   margin-top: 32px;
 }
-* + h5 {
+* + h5,
+html.text.md main.page-element * + h5 {
   margin-top: 26px;
 }
-* + h6 {
+* + h6,
+html.text.md main.page-element * + h6 {
   margin-top: 22px;
 }
 h1 + h1,
@@ -79,7 +91,13 @@ h1 + h2,
 h1 + h3,
 h1 + h4,
 h1 + h5,
-h1 + h6 {
+h1 + h6,
+html.text.md main.page-element h1 + h1,
+html.text.md main.page-element h1 + h2,
+html.text.md main.page-element h1 + h3,
+html.text.md main.page-element h1 + h4,
+html.text.md main.page-element h1 + h5,
+html.text.md main.page-element h1 + h6 {
   margin-top: 15px;
 }
 h2 + h1,
@@ -87,7 +105,13 @@ h2 + h2,
 h2 + h3,
 h2 + h4,
 h2 + h5,
-h2 + h6 {
+h2 + h6,
+html.text.md main.page-element h2 + h1,
+html.text.md main.page-element h2 + h2,
+html.text.md main.page-element h2 + h3,
+html.text.md main.page-element h2 + h4,
+html.text.md main.page-element h2 + h5,
+html.text.md main.page-element h2 + h6 {
   margin-top: 11px;
 }
 h3 + h1,
@@ -95,7 +119,13 @@ h3 + h2,
 h3 + h3,
 h3 + h4,
 h3 + h5,
-h3 + h6 {
+h3 + h6,
+html.text.md main.page-element h3 + h1,
+html.text.md main.page-element h3 + h2,
+html.text.md main.page-element h3 + h3,
+html.text.md main.page-element h3 + h4,
+html.text.md main.page-element h3 + h5,
+html.text.md main.page-element h3 + h6 {
   margin-top: 7px;
 }
 h4 + h1,
@@ -103,8 +133,66 @@ h4 + h2,
 h4 + h3,
 h4 + h4,
 h4 + h5,
-h4 + h6 {
+h4 + h6,
+html.text.md main.page-element h4 + h1,
+html.text.md main.page-element h4 + h2,
+html.text.md main.page-element h4 + h3,
+html.text.md main.page-element h4 + h4,
+html.text.md main.page-element h4 + h5,
+html.text.md main.page-element h4 + h6 {
   margin-top: 3px;
+}
+h1 + p,
+h1 + ul,
+h1 + ol,
+h1 + pre,
+h1 + table,
+html.text.md main.page-element h1 + p,
+html.text.md main.page-element h1 + ul,
+html.text.md main.page-element h1 + ol,
+html.text.md main.page-element h1 + pre,
+html.text.md main.page-element h1 + table {
+  margin-top: 30px;
+}
+h2 + p,
+h2 + ul,
+h2 + ol,
+h2 + pre,
+h2 + table,
+html.text.md main.page-element h2 + p,
+html.text.md main.page-element h2 + ul,
+html.text.md main.page-element h2 + ol,
+html.text.md main.page-element h2 + pre,
+html.text.md main.page-element h2 + table {
+  margin-top: 20px;
+}
+h3 + p,
+h3 + ul,
+h3 + ol,
+h3 + pre,
+h3 + table,
+html.text.md main.page-element h3 + p,
+html.text.md main.page-element h3 + ul,
+html.text.md main.page-element h3 + ol,
+html.text.md main.page-element h3 + pre,
+html.text.md main.page-element h3 + table {
+  margin-top: 10px;
+}
+h4 + p,
+h4 + ul,
+h4 + ol,
+h4 + pre,
+h4 + table,
+html.text.md main.page-element h4 + p,
+html.text.md main.page-element h4 + ul,
+html.text.md main.page-element h4 + ol,
+html.text.md main.page-element h4 + pre,
+html.text.md main.page-element h4 + table {
+  margin-top: 5px;
+}
+p + p,
+html.text.md main.page-element p + p {
+  margin-top: 1em;
 }
 ul {
   padding-left: 15px;
@@ -133,8 +221,6 @@ li input[type="checkbox"] {
 }
 pre {
   line-height: 1.7;
-  letter-spacing: 0.1em;
-  text-wrap: unset;
 }
 table,
 td,
@@ -177,10 +263,17 @@ a {
   color: var(--dark-0);
 }
 #container {
-  width: 700px;
   max-width: 90%;
   margin: auto;
   padding: 20px;
+}
+#container,
+#container div,
+#contaienr header,
+#container main,
+#container footer,
+#container pre {
+  width: 700px;
 }
 /*
 
