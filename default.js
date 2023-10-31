@@ -221,6 +221,23 @@ async function textPage() {
             resolve(textHtml)
           })
         }
+        else if (/\.ya?ml$/.test(file)) {
+          html.classList.add(`yml`)
+          resolve(
+            yamlparse((await textFile.text()))
+            .replace(/^(.*?:[ \t]+)(\\d+)$/gm, `$1<span class="number">$2</span>`)
+            .replace(/(?<!\\(?:\\\\)*|_)_(?!_|.*<br>)(.+?)(?<!_|\\(?:\\\\)*)_(?!_)/g, `<em>$1</em>`)
+            .replace(/(?<!\\(?:\\\\)*|_)__(?!_|.*<br>)(.+?)(?<!_|\\(?:\\\\)*)__(?!_)/g, `<strong>$1</strong>`)
+            .replace(/(?<!\\(?:\\\\)*)___(?!.*<br>)(.+?)(?<!\\(?:\\\\)*)___/g, `<strong><em>$1</em></strong>`)
+            .replace(/(?<!\\(?:\\\\)*|\*)\*(?!\*|.*<br>)(.+?)(?<!\*|\\(?:\\\\)*)\*(?!\*)/g, `<em>$1</em>`)
+            .replace(/(?<!\\(?:\\\\)*|\*)\*\*(?!\*|.*<br>)(.+?)(?<!\*|\\(?:\\\\)*)\*\*(?!\*)/g, `<strong>$1</strong>`)
+            .replace(/(?<!\\(?:\\\\)*)\*\*\*((?!.*<br>).+?)(?<!\\(?:\\\\)*)\*\*\*/g, `<strong><em>$1</em></strong>`)
+            .replace(/(?<!\\(?:\\\\)*|~)~~(?!~|.*<br>)(.+?)(?<!\\(?:\\\\)*)~~(?!~)/g, `<del>$1</del>`)
+            .replace(/(?<!\\(?:\\\\)*|!)\[(?!.*<br>)(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, `<a href="$2">$1</a>`)
+            .replace(/(?<!\\(?:\\\\)*)!\[(?!.*<br>)(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, `<img src="$2" alt="$1">`)      
+            .replace(/(<=|=>)/g, `<span class="arrow">$1</span>`)
+            )
+        }
         else {
           resolve(`<pre>${await textFile.text()}</pre>`)
         }

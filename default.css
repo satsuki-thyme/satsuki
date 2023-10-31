@@ -413,6 +413,47 @@ html.text main.page-element p {
   margin: 0;
   line-height: 1.7;
 }
+html.text.yml main.page-element div {
+  padding-left: 1em;
+  line-height: 1.5em;
+}
+html.text.yml main.page-element div + div {
+  margin-top: 0.2em;
+}
+html.text.yml main.page-element pre {
+  margin: 0;
+  font-family: monospace;
+  line-height: 1;
+  letter-spacing: 0;
+}
+html.text.yml main.page-element {
+  color: #e6d874;
+}
+html.text.yml main.page-element .key {
+  color: #f92672;
+}
+html.text.yml main.page-element .colon,
+html.text.yml main.page-element .bullet {
+  color: #f8f8f2;
+}
+html.text.yml main.page-element .number {
+  color: #ae81ff;
+}
+html.text.yml main.page-element .vertical-bar {
+  color: #f92672;
+}
+html.text.yml main.page-element .comment {
+  color: #88846f;
+}
+html.text.yml main.page-element .arrow {
+  color: #66d9ef;
+}
+html.text.yml main.page-element strong {
+  color: #66d9ef;
+}
+html.text.yml main.page-element em {
+  color: #a6e228;
+}
 @media (prefers-color-scheme: dark) {
   body {
     color: var(--light-0);
