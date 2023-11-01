@@ -200,7 +200,7 @@ ul {
 ul li {
   list-style: none;
 }
-ul li::before {
+ul li:not(:has(input[type="checkbox"]))::before {
   content: "-";
   margin-right: 0.5em;
   font-weight: bold;
@@ -449,9 +449,11 @@ html.text.yml main.page-element .arrow {
   color: #66d9ef;
 }
 html.text.yml main.page-element strong {
+  font-weight: bold;
   color: #66d9ef;
 }
 html.text.yml main.page-element em {
+  font-style: italic;
   color: #a6e228;
 }
 @media (prefers-color-scheme: dark) {
