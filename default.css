@@ -267,6 +267,7 @@ a {
   max-width: 600px;
   margin: auto;
   padding: 20px;
+  box-sizing: border-box;
 }
 #container > div,
 #contaienr > header,
@@ -274,7 +275,7 @@ a {
 #container > footer,
 #container > pre {
   width: 100%;
-  max-width: 600px;
+  box-sizing: border-box;
 }
 /*
 
