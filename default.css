@@ -294,6 +294,11 @@ html.index header.site-element {
 html.cover header.site-element {
   padding-bottom: 30px;
 }
+@media (max-width: 450px) {
+  html.text header.site-element {
+    text-align: center;
+  }
+}
 /* h1 */
 header.site-element h1 {
   margin: 0;
@@ -323,17 +328,14 @@ html.cover header.site-element p {
   font-size: 16px;
 }
 html.text header.site-element p {
-  width: 200px;
   margin: -15px 0 0;
   font-size: 8px;
 }
 /* img */
 html.index header.site-element img,
-html.cover header.site-element img {
-  width: 300px;
-}
+html.cover header.site-element img,
 html.text header.site-element img {
-  width: 200px;
+  width: 100%;
 }
 /*
 
