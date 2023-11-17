@@ -421,7 +421,7 @@ html.text.yml main.page-element div {
   line-height: 1.5em;
 }
 html.text.yml main.page-element div + div {
-  margin-top: 0.2em;
+  margin-top: 0.3em;
 }
 html.text.yml main.page-element pre {
   margin: 0;
@@ -432,23 +432,23 @@ html.text.yml main.page-element pre {
 html.text.yml main.page-element {
   color: #e6d874;
 }
-html.text.yml main.page-element .key {
+html.text.yml main.page-element span.key {
   color: #f92672;
 }
-html.text.yml main.page-element .colon,
-html.text.yml main.page-element .bullet {
+html.text.yml main.page-element span.colon,
+html.text.yml main.page-element span.bullet {
   color: #f8f8f2;
 }
-html.text.yml main.page-element .number {
+html.text.yml main.page-element span.number {
   color: #ae81ff;
 }
-html.text.yml main.page-element .vertical-bar {
+html.text.yml main.page-element span.vertical-bar {
   color: #f92672;
 }
-html.text.yml main.page-element .comment {
+html.text.yml main.page-element span.comment {
   color: #88846f;
 }
-html.text.yml main.page-element .arrow {
+html.text.yml main.page-element span.arrow {
   color: #66d9ef;
 }
 html.text.yml main.page-element strong {
