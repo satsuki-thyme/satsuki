@@ -143,7 +143,7 @@ async function indexPage() {
       }
       write(`
         <div id="unit">
-          ${maketable([w1, indexTableThead], [`table`])}
+          ${maketable(w1, indexTableThead, indexTableId)}
         </div>
       `)}
   })
