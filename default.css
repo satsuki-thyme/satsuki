@@ -406,6 +406,18 @@ html.text .nav-inner + .nav-outer {
 .unit + .unit {
   margin-top: 50px;
 }
+/*
+
+  page element
+
+*/
+html.index main.site-element {
+  display: flex;
+  flex-direction: column;
+}
+html.index aside {
+  padding-top: 80px;
+}
 html.index thead {
   background-color: var(--decoration-color-bright-4);
 }
