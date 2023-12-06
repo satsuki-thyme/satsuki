@@ -69,6 +69,9 @@ let header = `
 `
 // サイトのフッタ
 let footer = `
+<aside class="site-element">
+  <p><a href="https://wavebox.me/wave/2rz5vnppvponxtdz/">Wavebox に行ってメッセージを送る</a></p>
+</aside>
 <footer class="site-element">
   <p>&copy;Satsuki Thyme</p>
 </footer>
@@ -145,9 +148,6 @@ async function indexPage() {
         <div id="unit">
           ${maketable(w1, indexTableThead, indexTableId)}
         </div>
-        <aside>
-          <p><a href="https://wavebox.me/wave/2rz5vnppvponxtdz/">Wavebox に行ってメッセージを送る</a></p>
-        </aside>
       `)}
   })
 }

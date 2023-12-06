@@ -337,6 +337,11 @@ html.cover header.site-element img,
 html.text header.site-element img {
   width: 100%;
 }
+/* h */
+html.text header.site-element h1 {
+  display: inline-block;
+  text-align: center;
+}
 /*
 
   site footer
@@ -351,9 +356,25 @@ html.index footer.site-element {
 html.cover footer.site-element {
   padding-top: 30px;
 }
-html.text header.site-element h1 {
-  display: inline-block;
+html.text footer.site-element {
+  padding-top: 30px;
+}
+/*
+
+  site aside
+
+*/
+aside.site-element {
   text-align: center;
+}
+html.index aside.site-element {
+  padding-top: 80px;
+}
+html.cover aside.site-element {
+  padding-top: 30px;
+}
+html.text aside.site-element {
+  padding-top: 30px;
 }
 /*
 
@@ -411,13 +432,6 @@ html.text .nav-inner + .nav-outer {
   page element
 
 */
-html.index main.site-element {
-  display: flex;
-  flex-direction: column;
-}
-html.index aside {
-  padding-top: 80px;
-}
 html.index thead {
   background-color: var(--decoration-color-bright-4);
 }
