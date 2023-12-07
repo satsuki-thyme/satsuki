@@ -194,17 +194,6 @@ p + p,
 html.text.md main.page-element p + p {
   margin-top: 1em;
 }
-ul {
-  padding-left: 15px;
-}
-ul li {
-  list-style: none;
-}
-ul li:not(:has(input[type="checkbox"]))::before {
-  content: "-";
-  margin-right: 0.5em;
-  font-weight: bold;
-}
 li + li,
 li + ul,
 li + ol,
