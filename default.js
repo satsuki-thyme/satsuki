@@ -219,7 +219,7 @@ async function textPage() {
         }
         else if (/\.md$/.test(file)) {
           html.classList.add(`md`)
-          mdparse(await textFile.text(), `permissive`)
+          mdparse(await textFile.text(), {"permissive": true, "section": true})
           .then(textHtml => {
             resolve(textHtml)
           })
