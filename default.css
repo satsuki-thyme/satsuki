@@ -62,28 +62,22 @@ html.text.md main.page-element h5,
 html.text.md main.page-element h6 {
   margin: 0;
 }
-* + h1,
-html.text.md main.page-element * + h1 {
+section:has(> h1) {
   margin-top: 60px;
 }
-* + h2,
-html.text.md main.page-element * + h2 {
+section:has(> h2) {
   margin-top: 50px;
 }
-* + h3,
-html.text.md main.page-element * + h3 {
+section:has(> h3) {
   margin-top: 40px;
 }
-* + h4,
-html.text.md main.page-element * + h4 {
+section:has(> h4) {
   margin-top: 32px;
 }
-* + h5,
-html.text.md main.page-element * + h5 {
+section:has(> h5) {
   margin-top: 26px;
 }
-* + h6,
-html.text.md main.page-element * + h6 {
+section:has(> h6) {
   margin-top: 22px;
 }
 h1 + h1,
@@ -463,9 +457,6 @@ html.text.yml main.page-element span.vertical-bar {
 html.text.yml main.page-element span.comment {
   color: #88846f;
 }
-html.text.yml main.page-element span.arrow {
-  color: #66d9ef;
-}
 html.text.yml main.page-element strong {
   font-weight: bold;
   color: #66d9ef;
@@ -473,6 +464,36 @@ html.text.yml main.page-element strong {
 html.text.yml main.page-element em {
   font-style: italic;
   color: #a6e228;
+}
+span.select,
+span.point,
+span.decided,
+span.arrow {
+  font-family: consolas, monospace;
+  letter-spacing: 0;
+}
+span.select,
+span.point,
+span.decided {
+  font-weight: bold;
+}
+span.arrow {
+  font-weight: normal;
+}
+span.select {
+  color: #a6e228;
+}
+span.point {
+    color: #ffd700;
+}
+span.decided {
+  color: #f92672;
+}
+a.aside {
+  color: #ae81ff;
+}
+span.arrow {
+  color: #66d9ef;
 }
 @media (prefers-color-scheme: dark) {
   body {

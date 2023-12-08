@@ -219,7 +219,7 @@ async function textPage() {
         }
         else if (/\.md$/.test(file)) {
           html.classList.add(`md`)
-          mdparse(await textFile.text(), {"permissive": true, "section": true})
+          mdparse(myMarkup(await textFile.text()), {"permissive": true, "section": true})
           .then(textHtml => {
             resolve(textHtml)
           })
@@ -227,25 +227,35 @@ async function textPage() {
         else if (/\.ya?ml$/.test(file)) {
           html.classList.add(`yml`)
           resolve(
-            yamlparse((await textFile.text()))
-            .replace(/^(.*?:[ \t]+)(\\d+)$/gm, `$1<span class="number">$2</span>`)
-            .replace(/(?<!\\(?:\\\\)*|_)_(?!_|.*<br>)(.+?)(?<!_|\\(?:\\\\)*)_(?!_)/g, `<em>$1</em>`)
-            .replace(/(?<!\\(?:\\\\)*|_)__(?!_|.*<br>)(.+?)(?<!_|\\(?:\\\\)*)__(?!_)/g, `<strong>$1</strong>`)
-            .replace(/(?<!\\(?:\\\\)*)___(?!.*<br>)(.+?)(?<!\\(?:\\\\)*)___/g, `<strong><em>$1</em></strong>`)
-            .replace(/(?<!\\(?:\\\\)*|\*)\*(?!\*|.*<br>)(.+?)(?<!\*|\\(?:\\\\)*)\*(?!\*)/g, `<em>$1</em>`)
-            .replace(/(?<!\\(?:\\\\)*|\*)\*\*(?!\*|.*<br>)(.+?)(?<!\*|\\(?:\\\\)*)\*\*(?!\*)/g, `<strong>$1</strong>`)
-            .replace(/(?<!\\(?:\\\\)*)\*\*\*((?!.*<br>).+?)(?<!\\(?:\\\\)*)\*\*\*/g, `<strong><em>$1</em></strong>`)
-            .replace(/(?<!\\(?:\\\\)*|~)~~(?!~|.*<br>)(.+?)(?<!\\(?:\\\\)*)~~(?!~)/g, `<del>$1</del>`)
-            .replace(/(?<!\\(?:\\\\)*|!)\[(?!.*<br>)(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, `<a href="$2">$1</a>`)
-            .replace(/(?<!\\(?:\\\\)*)!\[(?!.*<br>)(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, `<img src="$2" alt="$1">`)      
-            .replace(/(<=|=>)/g, `<span class="arrow">$1</span>`)
-            )
+            yamlparse(myMarkup(await textFile.text()))
+            .replace(/(\\*)__(.+?)(?<!\\(?:\\\\)*)__/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<strong>${grp2}</strong>` : match)
+            .replace(/(\\*)_(.+?)(?<!\\(?:\\\\)*)_/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<em>${grp2}</em>` : match)
+            .replace(/(\\*)\*\*(.+?)(?<!\\(?:\\\\)*)\*\*/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<strong>${grp2}</strong>` : match)
+            .replace(/(\\*)\*(.+?)(?<!\\(?:\\\\)*)\*/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<em>${grp2}</em>` : match)
+            .replace(/(\\*)~~(.+?)(?<!\\(?:\\\\)*)~~/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<del>${grp2}</del>` : match)
+            .replace(/(\\*)!\[(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, (match, grp1, grp2, grp3) => (!grp1 || grp1.length % 2 === 0) ? `<img src="${grp3}" alt="${grp2}">` : match)
+            .replace(/(\\*)(?<!!)\[(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, (match, grp1, grp2, grp3) => (!grp1 || grp1.length % 2 === 0) ? `<a href="${grp3}">${grp2}</a>` : match)
+          )
         }
         else {
           resolve(`<pre>${await textFile.text()}</pre>`)
         }
       }
     })
+    function myMarkup(src) {
+      return src
+      // number
+      .replace(/^(.*?:[ \t]+)(\\d+)$/gm, `$1<span class="number">$2</span>`)
+      // markup
+      .replace(/<= select/g, `<span class="select"><= select</span>`)
+      .replace(/<= point/g, `<span class="point"><= point</span>`)
+      .replace(/<= decided/g, `<span class="decided"><= decided</span>`)
+      // arrow
+      .replace(/(<=|=>)/g, `<span class="arrow">$1</span>`)
+      // aside
+      .replace(/(?<!#+ )\[==(.+?)]/g, `[<a href="#$1" class="aside">$1</a>]`)
+      .replace(/(?<=#+ )\[==(.+?)]/g, `[<a name="$1" class="aside">$1</a>]`)
+    }
   })
   let title = new Promise(resolve => {
     fetch(indexFile)
