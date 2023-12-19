@@ -80,62 +80,6 @@ section:has(> h5) {
 section:has(> h6) {
   margin-top: 22px;
 }
-h1 + h1,
-h1 + h2,
-h1 + h3,
-h1 + h4,
-h1 + h5,
-h1 + h6,
-html.text.md main.page-element h1 + h1,
-html.text.md main.page-element h1 + h2,
-html.text.md main.page-element h1 + h3,
-html.text.md main.page-element h1 + h4,
-html.text.md main.page-element h1 + h5,
-html.text.md main.page-element h1 + h6 {
-  margin-top: 15px;
-}
-h2 + h1,
-h2 + h2,
-h2 + h3,
-h2 + h4,
-h2 + h5,
-h2 + h6,
-html.text.md main.page-element h2 + h1,
-html.text.md main.page-element h2 + h2,
-html.text.md main.page-element h2 + h3,
-html.text.md main.page-element h2 + h4,
-html.text.md main.page-element h2 + h5,
-html.text.md main.page-element h2 + h6 {
-  margin-top: 11px;
-}
-h3 + h1,
-h3 + h2,
-h3 + h3,
-h3 + h4,
-h3 + h5,
-h3 + h6,
-html.text.md main.page-element h3 + h1,
-html.text.md main.page-element h3 + h2,
-html.text.md main.page-element h3 + h3,
-html.text.md main.page-element h3 + h4,
-html.text.md main.page-element h3 + h5,
-html.text.md main.page-element h3 + h6 {
-  margin-top: 7px;
-}
-h4 + h1,
-h4 + h2,
-h4 + h3,
-h4 + h4,
-h4 + h5,
-h4 + h6,
-html.text.md main.page-element h4 + h1,
-html.text.md main.page-element h4 + h2,
-html.text.md main.page-element h4 + h3,
-html.text.md main.page-element h4 + h4,
-html.text.md main.page-element h4 + h5,
-html.text.md main.page-element h4 + h6 {
-  margin-top: 3px;
-}
 h1 + p,
 h1 + ul,
 h1 + ol,
@@ -187,6 +131,10 @@ html.text.md main.page-element h4 + table {
 p + p,
 html.text.md main.page-element p + p {
   margin-top: 1em;
+}
+ul,
+ol {
+  display: inline-block;
 }
 li + li,
 li + ul,
@@ -366,6 +314,7 @@ html.text aside.site-element {
 */
 main.site-element {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center;
@@ -374,29 +323,33 @@ header.page-element {
   text-align: center;
 }
 header.page-element h2 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: normal;
+  margin-top: 5px;
+  font-size: 28px;
+  letter-spacing: 0.1em;
 }
 header.page-element h3 {
   margin-top: 5px;
   font-size: 25px;
   letter-spacing: 0.1em;
 }
-.nav {
+nav {
   text-align: center;
 }
-html.cover header.page-element .nav {
+html.cover header.page-element nav {
   padding-bottom: 50px;
 }
-html.cover footer.page-element .nav {
-  padding-top: 50px;
-}
-html.text header.page-element .nav {
+html.cover header.page-element nav {
   padding-top: 20px;
   padding-bottom: 20px;
 }
-html.text footer.page-element .nav {
+html.cover footer.page-element nav {
+  padding-top: 50px;
+}
+html.text header.page-element nav {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+html.text footer.page-element nav {
   padding-top: 20px;
 }
 html.text main.page-element {
@@ -407,6 +360,14 @@ html.text .nav-outer + .nav-inner,
 html.text .nav-inner + .nav-outer {
   margin-top: 10px;
 }
+.unit {
+  text-align: center;
+}
+.unit ul,
+.unit ol {
+  margin-left: -30px;
+  text-align: left;
+}
 .unit + .unit {
   margin-top: 50px;
 }
@@ -416,9 +377,19 @@ html.text .nav-inner + .nav-outer {
 
 */
 html.index thead {
+  vertical-align: bottom;
   background-color: var(--decoration-color-bright-4);
 }
+html.index table th:first-child,
 html.index table td:first-child {
+  padding-right: 5px;
+  padding-left: 5px;
+  text-align: center;
+}
+html.index table th:last-child,
+html.index table td:last-child {
+  padding-right: 5px;
+  padding-left: 5px;
   text-align: center;
 }
 html.text main.page-element p {

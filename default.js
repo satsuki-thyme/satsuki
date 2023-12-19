@@ -23,11 +23,11 @@ let indexFile = `index.json`
 // トップページの表の ID
 let indexTableId = `table`
 // トップページの表の thead
-let indexTableThead = ["op", "タイトル", "説明"]
+let indexTableThead = ["op", "タイトル", "説明", "状態"]
 // 目次ファイル
 let tocFile = "README.md"
 // 目次の小見出しのレベル <h?>...</h?>
-let subheadingLevel = 2
+let subheadingLevel = 3
 // 作品タイトルのレベル <h?>...</h?>
 let opTitleLevel = 2
 // 作品サブタイトルのレベル <h?>...</h?>
@@ -88,25 +88,27 @@ let toTopNav = `
 
 */
 window.addEventListener(`DOMContentLoaded`, async () => {
-  /*
-
-    変数
-
-  */
-  // コンテナ
-  let container = document.querySelector(`#container`)
-  if (search === ``) {
-    indexPage()
-  }
-  else if (/^op[^\/]+$/.test(search)) {
-    coverPage()
-  }
-  else if (/^op[^\/]+\/.+\..+$/.test(search)) {
-    textPage()
-  }
-  else {
-   errorPage()
-  }
+  fetch(indexFile)
+  .then(async rly => {
+    if (rly.ok) {
+      let index = await rly.json()
+      if (search === ``) {
+        indexPage(index)
+      }
+      else if (/^op[^\/]+$/.test(search)) {
+        coverPage(index)
+      }
+      else if (/^op[^\/]+\/.+\..+$/.test(search)) {
+        textPage(index)
+      }
+      else {
+      errorPage()
+      }
+    }
+    else {
+      errorPage()
+    }
+  })
 })
 //========
 //
@@ -123,57 +125,60 @@ window.addEventListener(`DOMContentLoaded`, async () => {
   サイトのトップページを生成
 
 */
-async function indexPage() {
+async function indexPage(index) {
   html.classList.add(`index`)
-  fetch(indexFile)
-  .then(async rly => {
-    if (rly.ok) {
-      let w = await rly.json()
-      let w1 = []
-      for (let i in w) {
-        let w2 = []
-        for (let j in Object.keys(w[i])) {
-          let w3 = ``
-          if (Object.keys(w[i])[j] === `title`) {
-            w3 = `<a href="?op${w[i].op}">${w[i][Object.keys(w[i])[j]]}</a>`
-          }
-          else {
-            w3 = w[i][Object.keys(w[i])[j]]
-          }
-          w2.push(w3)
-        }
-        w1.push(w2)
+  let w1 = []
+  for (let i in index) {
+    let w2 = []
+    for (let j in Object.keys(index[i])) {
+      let w3 = ``
+      if (Object.keys(index[i])[j] === `title`) {
+        w3 = `<a href="?op${index[i].op}">${index[i][Object.keys(index[i])[j]]}</a>`
       }
-      write(`
-        <div id="unit">
-          ${maketable(w1, indexTableThead, indexTableId)}
-        </div>
-      `)}
-  })
+      if (Object.keys(index[i])[j] === `status`) {
+        w3 = index[i][Object.keys(index[i])[j]]
+        .replace(/unfinished/, `未完`)
+        .replace(/under construction/, `編集中`)
+      }
+      if (/op|description/.test(Object.keys(index[i])[j])) {
+        w3 = index[i][Object.keys(index[i])[j]]
+      }
+      w2.push(w3)
+    }
+    w1.push(w2)
+  }
+  write(`
+    <div id="unit">
+      ${maketable(w1, indexTableThead, indexTableId)}
+    </div>
+  `)
 }
 /*
 
   小説のカバーページを生成
 
 */
-async function coverPage() {
+async function coverPage(index) {
   html.classList.add(`cover`)
+  let statusSet = getStatus(index)
   fetch(`${baseUrl}${tocFile}`)
   .then(async rly => {
     if (rly.ok) {
       procToc(await rly.text(), op, `all`)
       .then(rly => {
         let tocAssebmle = `
-          <div id="unit">
             <header class="page-element">
-              <div class="nav">
+              <h${opTitleLevel}>
+                ${statusSet.title}${statusSet.status}
+              </h${opTitleLevel}>
+              <nav>
                 ${toTopNav}
-              </div>
+              </nav>
             </header>
         `
         for (let i in rly) {
           tocAssebmle += `
-            <div class="unit">
+            <section class="unit">
               <h${subheadingLevel}>
                 ${rly[i].subheading}
               </h${subheadingLevel}>
@@ -184,16 +189,15 @@ async function coverPage() {
           }
           tocAssebmle += `
               </${rly[i].subheading === `本文` || rly[i].subheading === `目次` ? listBulletText : listBulletOthers}>
-            </div>
+            </section>
           `
         }
         tocAssebmle += `
             <footer class="page-element">
-              <div class="nav">
+              <nav>
                 ${toTopNav}
-              </div>
+              </nav>
             </footer>
-          </div>
         `
         write(tocAssebmle)
       })
@@ -205,8 +209,9 @@ async function coverPage() {
   小説本文のページを生成
 
 */
-async function textPage() {
+async function textPage(index) {
   html.classList.add(`text`)
+  let statusSet = getStatus(index)
   let textHtml = new Promise(resolve => {
     fetch(`${baseUrl}${file}`)
     .then(async textFile => {
@@ -257,14 +262,6 @@ async function textPage() {
       .replace(/(?<=#+ )\[==(.+?)]/g, `[<a name="$1" class="aside">$1</a>]`)
     }
   })
-  let title = new Promise(resolve => {
-    fetch(indexFile)
-    .then(async indexFile => {
-      if (indexFile.ok) {
-        resolve((await indexFile.json()).filter(rly => rly.op === op.replace(/^op/, ``))[0].title)
-      }
-    })
-  })
   let href = new Promise(resolve => {
     fetch(`${baseUrl}${tocFile}`)
     .then(async tocFile => {
@@ -289,12 +286,11 @@ async function textPage() {
       }
     })
   })
-  Promise.all([textHtml, title, href])
+  Promise.all([textHtml, href])
   .then(rly => {
     let textHtml = rly[0]
-    let title = rly[1]
-    let tocEssence = rly[2][0]
-    let currNum = rly[2][1]
+    let tocEssence = rly[1][0]
+    let currNum = rly[1][1]
     let subtitle = tocEssence[currNum].subtitle
     let prevHref = currNum !== 0 ? tocEssence[currNum - 1].href : null
     let nextHref = currNum !== tocEssence.length - 1 ? tocEssence[currNum + 1].href : null
@@ -312,22 +308,22 @@ async function textPage() {
         <div id="unit">
         <header class="page-element">
           <div id="op-title">
-            <h${opTitleLevel}>${title}</h${opTitleLevel}>
+            <h${opTitleLevel}>${statusSet.title}${statusSet.status}</h${opTitleLevel}>
               <h${opSubtitleLevel}>${subtitle}</h${opSubtitleLevel}>
             </div>
-            <div class="nav">
+            <nav>
               ${toTopNav}
               ${opNav}
-            </div>
+            </nav>
           </header>
           <main class="page-element">
             ${textHtml}
           </main>
           <footer class="page-element">
-            <div class="nav">
+            <nav>
               ${opNav}
               ${toTopNav}
-            </div>
+            </nav>
           </footer>
         </div>
       `
@@ -347,6 +343,13 @@ async function errorPage() {
   その他の補助的な関数
 
 */
+function getStatus(index) {
+  let w = index.filter(rly => rly.op === op.replace(/op/, ``))[0]
+  if (w.status === `under construction`) {
+    w.status = ` -（編集中）`
+  }
+  return w
+}
 function sort(src) {
   let textArray = src.split(/\r?\n/)
   let markArray = []
