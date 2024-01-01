@@ -110,7 +110,7 @@ window.addEventListener(`DOMContentLoaded`, async () => {
   window.onkeydown = e => {
     if (e.key === `s`) {
       etcSwitch = true
-      etc.innerHTML = shareTitle
+      etc.innerHTML = shareTitle + `\n${location.href.replace(/http:/, `https:`).replace(/satsuki\.c/, `satsuki.me`)}`
       etc.style.display = `inline-block`
       etcWidth = etc.getBoundingClientRect().width
       etc.style.width = etcWidth < 600 ? etcWidth + `px` : `600px`
