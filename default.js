@@ -121,15 +121,10 @@ window.addEventListener(`DOMContentLoaded`, async () => {
       selectRange.setEnd(etc, etc.childNodes.length)
       document.getSelection().removeAllRanges()
       document.getSelection().addRange(selectRange)
-      return true
     }
     else if (etcSwitch === true && !(e.key === `Control` || (e.key === `c` && e.ctrlKey === true))) {
       html.classList.remove(`use-popup`)
       etc.style.display = null
-      return true
-    }
-    else {
-      return true
     }
   }
   document.querySelector(`#cover`).onclick = e => {
