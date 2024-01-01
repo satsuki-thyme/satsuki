@@ -193,6 +193,47 @@ a {
   text-decoration-color: var(--decoration-color-dark);
   color: var(--dark-0);
 }
+
+
+
+
+
+
+#etc {
+  display: none;
+  box-sizing: border-box;
+  margin: auto;
+  padding: 15px;
+}
+#etc {
+  background-color: var(--light-0);
+}
+@media (prefers-color-scheme: dark) {
+  #etc {
+    background-color: var(--dark-0);
+  }
+}
+html.use-popup #etc {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+  html.use-popup #cover {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8)
+}
+
+
+
+
 #container {
   width: 90%;
   max-width: 600px;

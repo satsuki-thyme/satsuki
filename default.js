@@ -3,21 +3,17 @@
   変数
 
 */
-/*
-  定義
-*/
 // URL の ? の後ろ
 let search = location.search.slice(1) || ``
 // URL の ? の後ろで指定された op
 let op = /^op[^\/]+/.test(search) ? search.match(/^op[^\/]+/)[0] : ``
+// レポジトリ
 let repo = op
-/*
-  設定
-*/
 // 本文データの参照先
-let baseUrlArray = {}
-baseUrlArray[`c`] = `scribe/${repo}/`
-baseUrlArray[`satsuki.me`] = `//raw.githubusercontent.com/satsuki-thyme/${repo}/master/`
+let baseUrlArray = {
+  "c": `scribe/${repo}/`,
+  "satsuki.me": `//raw.githubusercontent.com/satsuki-thyme/${repo}/master/`
+}
 // インデックスデータの参照先
 let indexFile = `index.json`
 // トップページの表の ID
@@ -32,21 +28,20 @@ let subheadingLevel = 3
 let opTitleLevel = 2
 // 作品サブタイトルのレベル <h?>...</h?>
 let opSubtitleLevel = 3
-// 小見出し「本文」の リストのバレット？ <ul> or <ol>
+// 小見出し「本文」の リストのバレット ul or ol
 let listBulletText = `ol`
-// 小見出し「本文」以外の リストのバレット？ <ul> or <ol>
+// 小見出し「本文」以外の リストのバレット ul or ol
 let listBulletOthers = `ul`
-/*
-  定義
-*/
+// シェア用のタイトル
+let shareTitle = `五月タイムのサイト`
 // html タグ
 let html = document.querySelector(`html`)
 // URL の ? の後ろで指定されたディレクトリとファイル
 let file = /(?<=op[^\/]+\/).+\..+$/.test(search) ? search.match(/(?<=op[^\/]+\/).+\..+$/)[0] : ``
-// 本文データの参照先
-let baseUrl = ``
 // サーバの URL
 let server = location.origin
+// 本文データの参照先
+let baseUrl = ``
 if (/\.c$/.test(server)) {
   baseUrl = baseUrlArray[`c`]
 }
@@ -88,6 +83,8 @@ let toTopNav = `
 
 */
 window.addEventListener(`DOMContentLoaded`, async () => {
+  // 汎用パネル
+  let etc = document.querySelector(`#etc`)
   fetch(indexFile)
   .then(async rly => {
     if (rly.ok) {
@@ -109,6 +106,36 @@ window.addEventListener(`DOMContentLoaded`, async () => {
       errorPage()
     }
   })
+  let etcSwitch = false
+  window.onkeydown = e => {
+    if (e.key === `s`) {
+      etcSwitch = true
+      etc.innerHTML = shareTitle
+      etc.style.display = `inline-block`
+      etcWidth = etc.getBoundingClientRect().width
+      etc.style.width = etcWidth < 600 ? etcWidth + `px` : `600px`
+      etc.style.height = etc.getBoundingClientRect().height + `px`
+      html.classList.add(`use-popup`)
+      let selectRange = document.createRange()
+      selectRange.setStart(etc, 0)
+      selectRange.setEnd(etc, etc.childNodes.length)
+      document.getSelection().removeAllRanges()
+      document.getSelection().addRange(selectRange)
+      return true
+    }
+    else if (etcSwitch === true && !(e.key === `Control` || (e.key === `c` && e.ctrlKey === true))) {
+      html.classList.remove(`use-popup`)
+      etc.style.display = null
+      return true
+    }
+    else {
+      return true
+    }
+  }
+  document.querySelector(`#cover`).onclick = e => {
+    html.classList.remove(`use-popup`)
+    return false
+  }
 })
 //========
 //
@@ -152,6 +179,7 @@ async function indexPage(index) {
       ${maketable(w1, indexTableThead, indexTableId)}
     </div>
   `)
+  return true
 }
 /*
 
@@ -160,8 +188,9 @@ async function indexPage(index) {
 */
 async function coverPage(index) {
   html.classList.add(`cover`)
-  let statusSet = getStatus(index)
-  fetch(`${baseUrl}${tocFile}`)
+  let status = getStatus(index)
+  shareTitle = `${status.title}${status.status}`
+  return fetch(`${baseUrl}${tocFile}`)
   .then(async rly => {
     if (rly.ok) {
       procToc(await rly.text(), op, `all`)
@@ -169,7 +198,7 @@ async function coverPage(index) {
         let tocAssebmle = `
             <header class="page-element">
               <h${opTitleLevel}>
-                ${statusSet.title}${statusSet.status}
+                ${status.title}${status.status}
               </h${opTitleLevel}>
               <nav>
                 ${toTopNav}
@@ -202,6 +231,7 @@ async function coverPage(index) {
         write(tocAssebmle)
       })
     }
+    return true
   })
 }
 /*
@@ -211,7 +241,7 @@ async function coverPage(index) {
 */
 async function textPage(index) {
   html.classList.add(`text`)
-  let statusSet = getStatus(index)
+  let status = getStatus(index)
   let textHtml = new Promise(resolve => {
     fetch(`${baseUrl}${file}`)
     .then(async textFile => {
@@ -286,7 +316,7 @@ async function textPage(index) {
       }
     })
   })
-  Promise.all([textHtml, href])
+  return Promise.all([textHtml, href])
   .then(rly => {
     let textHtml = rly[0]
     let tocEssence = rly[1][0]
@@ -294,6 +324,7 @@ async function textPage(index) {
     let subtitle = tocEssence[currNum].subtitle
     let prevHref = currNum !== 0 ? tocEssence[currNum - 1].href : null
     let nextHref = currNum !== tocEssence.length - 1 ? tocEssence[currNum + 1].href : null
+    shareTitle = `${subtitle} | ${status.title}${status.status}`
     let opNav = `
       <div class="nav-inner">
         ${prevHref !== null ? `<a href="${prevHref}" class="nav-element">${tocEssence[currNum - 1].subtitle}</a>` : `<span class="nav-element grayout">なし</span>`}
@@ -308,7 +339,7 @@ async function textPage(index) {
         <div id="unit">
         <header class="page-element">
           <div id="op-title">
-            <h${opTitleLevel}>${statusSet.title}${statusSet.status}</h${opTitleLevel}>
+            <h${opTitleLevel}>${status.title}${status.status}</h${opTitleLevel}>
               <h${opSubtitleLevel}>${subtitle}</h${opSubtitleLevel}>
             </div>
             <nav>
@@ -328,6 +359,7 @@ async function textPage(index) {
         </div>
       `
     )
+    return true
   })
 }
 /*
@@ -336,7 +368,7 @@ async function textPage(index) {
 
 */
 async function errorPage() {
-
+  return true
 }
 /*
 
