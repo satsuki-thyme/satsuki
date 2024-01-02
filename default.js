@@ -277,11 +277,12 @@ async function textPage(index) {
       // number
       .replace(/^(.*?:[ \t]+)(\\d+)$/gm, `$1<span class="number">$2</span>`)
       // markup
-      .replace(/<= select/g, `<span class="select"><= select</span>`)
-      .replace(/<= point/g, `<span class="point"><= point</span>`)
-      .replace(/<= decided/g, `<span class="decided"><= decided</span>`)
+      .replace(/<= select/g, `<span class="select">&lt;= select</span>`)
+      .replace(/<= point/g, `<span class="point">&lt;= point</span>`)
+      .replace(/<= decided/g, `<span class="decided">&lt;= decided</span>`)
       // arrow
-      .replace(/(<=|=>)/g, `<span class="arrow">$1</span>`)
+      .replace(/<=/g, `<span class="arrow">=&lt;</span>`)
+      .replace(/=>/g, `<span class="arrow">=&gt;</span>`)
       // aside
       .replace(/(?<!#+ )\[==(.+?)]/g, `[<a href="#$1" class="aside">$1</a>]`)
       .replace(/(?<=#+ )\[==(.+?)]/g, `[<a name="$1" class="aside">$1</a>]`)
@@ -321,14 +322,22 @@ async function textPage(index) {
     let nextHref = currNum !== tocEssence.length - 1 ? tocEssence[currNum + 1].href : null
     shareTitle = `${subtitle} | ${status.title}${status.status}`
     let opNav = `
-      <div class="nav-inner">
-        ${prevHref !== null ? `<a href="${prevHref}" class="nav-element">${tocEssence[currNum - 1].subtitle}</a>` : `<span class="nav-element grayout">なし</span>`}
-        <span class="nav-separater"> | </span>
-        <a href="?${op}" class="nav-element">目次</a>
-        <span class="nav-separater"> | </span>
-        ${nextHref !== null ? `<a href="${nextHref}" class="nav-element">${tocEssence[currNum + 1].subtitle}</a>` : `<span class="nav-element grayout">なし</span>`}
-      </div>
-    `
+      <nav class="nav-inner">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                ${prevHref !== null ? `<a href="${prevHref}" class="nav-element">${tocEssence[currNum - 1].subtitle}</a>` : `<span class="nav-element grayout">なし</span>`}
+              </td>
+              <td><span class="nav-separater">|</span><a href="?${op}" class="nav-element">目次</a><span class="nav-separater">|</span></td>
+              <td>
+                ${nextHref !== null ? `<a href="${nextHref}" class="nav-element">${tocEssence[currNum + 1].subtitle}</a>` : `<span class="nav-element grayout">なし</span>`}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </nav>
+`
     write(
       `
         <div id="unit">

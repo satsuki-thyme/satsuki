@@ -401,6 +401,34 @@ html.text .nav-outer + .nav-inner,
 html.text .nav-inner + .nav-outer {
   margin-top: 10px;
 }
+html.text .nav-inner {
+  text-align: center;
+}
+html.text .nav-inner table,
+html.text .nav-inner tr,
+html.text .nav-inner td {
+  padding: 0;
+  border-width: 0;
+}
+html.text .nav-inner table {
+  margin: auto;
+}
+html.text .nav-inner td:nth-child(2) {
+  text-align: center;
+}
+html.text .nav-inner td:first-child,
+html.text .nav-inner td:last-child {
+  width: calc(560px / 2 - 50px);
+}
+html.text .nav-inner td:first-child {
+  text-align: right;
+}
+html.text .nav-inner td:last-child {
+  text-align: left;
+}
+html.text .nav-inner .nav-separater {
+  padding: 0 10px;
+}
 .unit {
   text-align: center;
 }
