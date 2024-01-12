@@ -7,12 +7,11 @@
 let search = location.search.slice(1) || ``
 // URL の ? の後ろで指定された op
 let op = /^op[^\/]+/.test(search) ? search.match(/^op[^\/]+/)[0] : ``
-// レポジトリ
-let repo = op
 // 本文データの参照先
 let baseUrlArray = {
-  "c": `scribe/${repo}/`,
-  "satsuki.me": `//raw.githubusercontent.com/satsuki-thyme/${repo}/master/`
+  "http://localhost:8080": `scribe/${op}/`,
+  "http://satsuki.c": `scribe/${op}/`,
+  "https://satsuki.me": `//raw.githubusercontent.com/satsuki-thyme/${op}/master/`
 }
 // インデックスデータの参照先
 let indexFile = `index.json`
@@ -41,13 +40,7 @@ let file = /(?<=op[^\/]+\/).+\..+$/.test(search) ? search.match(/(?<=op[^\/]+\/)
 // サーバの URL
 let server = location.origin
 // 本文データの参照先
-let baseUrl = ``
-if (/\.c$/.test(server)) {
-  baseUrl = baseUrlArray[`c`]
-}
-else if (/satsuki\.me$/.test(server)) {
-  baseUrl = baseUrlArray[`satsuki.me`]
-}
+let baseUrl = baseUrlArray[server]
 /*
   HTML コンテンツ
 */
@@ -149,29 +142,22 @@ window.addEventListener(`DOMContentLoaded`, async () => {
 */
 async function indexPage(index) {
   html.classList.add(`index`)
-  let w1 = []
-  for (let i in index) {
-    let w2 = []
-    for (let j in Object.keys(index[i])) {
-      let w3 = ``
-      if (Object.keys(index[i])[j] === `title`) {
-        w3 = `<a href="?op${index[i].op}">${index[i][Object.keys(index[i])[j]]}</a>`
+  let w = []
+  for (let i of index) {
+    if (i.display === true) {
+      let w1 = []
+      for (let i1 of Object.keys(i).splice(0, 4)) {
+        if (i1 === `title`) {
+          i[i1] = `<a href="?op${i[`op`]}">${i[i1]}</a>`
+        }
+        w1.push(String(i[i1]).replace(/under construction/, `編集中`).replace(/unfinished/, `中止`))
       }
-      if (Object.keys(index[i])[j] === `status`) {
-        w3 = index[i][Object.keys(index[i])[j]]
-        .replace(/unfinished/, `未完`)
-        .replace(/under construction/, `編集中`)
-      }
-      if (/op|description/.test(Object.keys(index[i])[j])) {
-        w3 = index[i][Object.keys(index[i])[j]]
-      }
-      w2.push(w3)
+      w.push(w1)
     }
-    w1.push(w2)
   }
   write(`
     <div id="unit">
-      ${maketable(w1, indexTableThead, indexTableId)}
+      ${maketable(w, indexTableThead, indexTableId)}
     </div>
   `)
   return true
@@ -380,9 +366,12 @@ async function errorPage() {
 
 */
 function getStatus(index) {
-  let w = index.filter(rly => rly.op === op.replace(/op/, ``))[0]
+  let w = index.filter(rly => String(rly.op) === op.replace(/op/, ``))[0]
   if (w.status === `under construction`) {
     w.status = ` -（編集中）`
+  }
+  if (w.status === `unfinished`) {
+    w.status = ` -（未完）`
   }
   return w
 }
