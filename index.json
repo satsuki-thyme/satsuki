@@ -430,6 +430,13 @@
     "op": 61,
     "title": "イェルクの冒険",
     "description": "イェルクが冒険する話",
+    "status": "unfinished",
+    "display": false
+  },
+  {
+    "op": 62,
+    "title": "タイトル未定",
+    "description": "レゼルが冒険する話",
     "status": "under construction",
     "display": true
   }
