@@ -228,7 +228,7 @@ async function textPage(index) {
     .then(async textFile => {
       if (textFile.ok) {
         if (/\.txt$/.test(file)) {
-          novelparse(await textFile.text(), `few`)
+          novelparse(await brackettool(await textFile.text(), ["{", "}"], `delete`), `few`)
           .then(textHtml => {
             resolve(textHtml)
           })
