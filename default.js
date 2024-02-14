@@ -41,6 +41,8 @@ let file = /(?<=op[^\/]+\/).+\..+$/.test(search) ? search.match(/(?<=op[^\/]+\/)
 let server = location.origin
 // 本文データの参照先
 let baseUrl = baseUrlArray[server]
+// 処理する括弧
+let brackets = [["{", "}"], ["[", "]"]]
 /*
   HTML コンテンツ
 */
@@ -228,7 +230,7 @@ async function textPage(index) {
     .then(async textFile => {
       if (textFile.ok) {
         if (/\.txt$/.test(file)) {
-          novelparse(await brackettool(await textFile.text(), ["{", "}"], `delete`), `few`)
+          novelparse(await brackettool(await textFile.text(), brackets, `delete`), `few`)
           .then(textHtml => {
             resolve(textHtml)
           })
