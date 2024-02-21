@@ -42,7 +42,7 @@ let server = location.origin
 // 本文データの参照先
 let baseUrl = baseUrlArray[server]
 // 処理する括弧
-let brackets = [["{", "}"], ["[", "]"]]
+let brackets = [["{", "}"], ["[", "]"], ["<", ">"]]
 /*
   HTML コンテンツ
 */

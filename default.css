@@ -198,7 +198,9 @@ a {
 
 
 
-
+#index-update {
+  display: none;
+}
 #etc {
   display: none;
   box-sizing: border-box;
@@ -220,7 +222,7 @@ html.use-popup #etc {
   bottom: 0;
   left: 0;
 }
-  html.use-popup #cover {
+html.use-popup #cover {
   content: "";
   display: block;
   position: fixed;
