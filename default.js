@@ -43,6 +43,8 @@ let server = location.origin
 let baseUrl = baseUrlArray[server]
 // 処理する括弧
 let brackets = [["{", "}"], ["[", "]"], ["<", ">"]]
+// => とかのマークアップを指定する
+let markupSpecialNotation = `https://cdn.jsdelivr.net/gh/satsuki-thyme/common@main/markup-special-notation.json?2024-03-02`
 /*
   HTML コンテンツ
 */
@@ -243,20 +245,11 @@ async function textPage(index) {
           })
         }
         else if (/\.ya?ml$/.test(file)) {
-          html.classList.add(`yaml`)
           yamlparse(myMarkup(await textFile.text()))
-          .then(rly => {
-            resolve(
-              rly[0]
-              .replace(/(\\*)__(.+?)(?<!\\(?:\\\\)*)__/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<strong>${grp2}</strong>` : match)
-              .replace(/(\\*)_(.+?)(?<!\\(?:\\\\)*)_/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<em>${grp2}</em>` : match)
-              .replace(/(\\*)\*\*(.+?)(?<!\\(?:\\\\)*)\*\*/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<strong>${grp2}</strong>` : match)
-              .replace(/(\\*)\*(.+?)(?<!\\(?:\\\\)*)\*/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<em>${grp2}</em>` : match)
-              .replace(/(\\*)~~(.+?)(?<!\\(?:\\\\)*)~~/g, (match, grp1, grp2) => (!grp1 || grp1.length % 2 === 0) ? `<del>${grp2}</del>` : match)
-              .replace(/(\\*)!\[(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, (match, grp1, grp2, grp3) => (!grp1 || grp1.length % 2 === 0) ? `<img src="${grp3}" alt="${grp2}">` : match)
-              .replace(/(\\*)(?<!!)\[(.+?)(?<!\\(?:\\\\)*)\]\((.+?)\)/g, (match, grp1, grp2, grp3) => (!grp1 || grp1.length % 2 === 0) ? `<a href="${grp3}">${grp2}</a>` : match)
-            )
+          .then(async rly => {
+            resolve(await replacetool(await fetch(markupSpecialNotation).then(async rly => rly.json()), rly[0]))
           })
+          html.classList.add(`yaml`)
         }
         else {
           resolve(`<pre>${await textFile.text()}</pre>`)
