@@ -352,7 +352,8 @@ html.text aside.site-element {
   site main
 
 */
-main.site-element {
+html.index main.site-element,
+html.cover main.site-element {
   display: flex;
   flex-direction: column;
   justify-content: center;

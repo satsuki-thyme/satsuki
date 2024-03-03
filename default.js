@@ -14,7 +14,7 @@ let baseUrlArray = {
   "https://satsuki.me": `//raw.githubusercontent.com/satsuki-thyme/${op}/master/`
 }
 // インデックスデータの参照先
-let indexFile = `index.json?2024-02-21`
+let indexFile = `index.json?2024-03-02`
 // トップページの表の ID
 let indexTableId = `table`
 // トップページの表の thead

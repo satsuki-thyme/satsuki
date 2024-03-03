@@ -437,6 +437,13 @@
     "op": 62,
     "title": "最強の力で世界を旅するレゼルの冒険",
     "description": "レゼルが冒険する話",
+    "status": "unfinished",
+    "display": false
+  },
+  {
+    "op": 63,
+    "title": "タイトル未定",
+    "description": "",
     "status": "under construction",
     "display": true
   }
