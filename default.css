@@ -145,7 +145,7 @@ ol + li {
 }
 li + ul,
 li + ol {
-  padding-left: 25px;
+  padding-left: 15px;
 }
 li input[type="checkbox"] {
   user-select: text;

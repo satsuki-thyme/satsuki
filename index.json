@@ -443,7 +443,14 @@
   {
     "op": 63,
     "title": "タイトル未定",
-    "description": "",
+    "description": "主人公とヒロインが旅をする話",
+    "status": "unfinished",
+    "display": false
+  },
+  {
+    "op": 64,
+    "title": "タイトル未定",
+    "description": "プロットなし異世界転生",
     "status": "under construction",
     "display": true
   }
