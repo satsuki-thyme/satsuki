@@ -19,9 +19,9 @@ let indexFile = `index.json?2024-03-02`
 let indexTableId = `table`
 // トップページの表の thead
 let indexTableThead = ["op", "タイトル", "説明", "状態"]
-// 目次ファイル
-let tocFile = "README.md"
-// 目次の小見出しのレベル <h?>...</h?>
+// 個別のインデックスファイル
+let indvIndexFile = "README.md"
+// 個別のインデックスの小見出しのレベル <h?>...</h?>
 let subheadingLevel = 3
 // 作品タイトルのレベル <h?>...</h?>
 let opTitleLevel = 2
@@ -175,7 +175,7 @@ async function coverPage(index) {
   html.classList.add(`cover`)
   let status = getStatus(index)
   shareTitle = `${status.title}${status.status}`
-  return fetch(`${baseUrl}${tocFile}`)
+  return fetch(`${baseUrl}${indvIndexFile}`)
   .then(async rly => {
     if (rly.ok) {
       procToc(await rly.text(), op, `all`)
@@ -196,13 +196,13 @@ async function coverPage(index) {
               <h${subheadingLevel}>
                 ${rly[i].subheading}
               </h${subheadingLevel}>
-              <${rly[i].subheading === `本文` || rly[i].subheading === `目次` ? listBulletText : listBulletOthers}>
+              <${rly[i].subheading === `本文` || /文書|目次/.test(rly[i].subheading) ? listBulletText : listBulletOthers}>
           `
           for (let j in rly[i].contents) {
             tocAssebmle += `<li><a href="${rly[i].contents[j].href}">${rly[i].contents[j].title}</a></li>`
           }
           tocAssebmle += `
-              </${rly[i].subheading === `本文` || rly[i].subheading === `目次` ? listBulletText : listBulletOthers}>
+              </${rly[i].subheading === `本文` || /文書|目次/.test(rly[i].subheading) ? listBulletText : listBulletOthers}>
             </section>
           `
         }
@@ -273,10 +273,10 @@ async function textPage(index) {
     }
   })
   let href = new Promise(resolve => {
-    fetch(`${baseUrl}${tocFile}`)
-    .then(async tocFile => {
-      if (tocFile.ok) {
-        let tocBlob = await tocFile.text()
+    fetch(`${baseUrl}${indvIndexFile}`)
+    .then(async indvIndexFile => {
+      if (indvIndexFile.ok) {
+        let tocBlob = await indvIndexFile.text()
         procToc(tocBlob, op, `all`)
         .then(textToc => {
           let hrefArray = []
@@ -405,12 +405,12 @@ function unEsc(r) {
     return r.replace(/\\(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "$1")
   }
 }
-async function procToc(tocFileContents, op, type) {
+async function procToc(indvIndexFileContents, op, type) {
   return new Promise(revolve => {
     if (type !== `text` && type !== `all` && type !== `others`) {
       type = `text`
     }
-    let tocBlob = /(?<!#)## 目次[\s\S]*?(?=(?<!#)##(?!#)|$)/.test(tocFileContents) ? tocFileContents.match(/(?<!#)## 目次[\s\S]*?(?=(?<!#)##(?!#)|$)/)[0] : undefined
+    let tocBlob = /(?<!#)## (?:文書|目次)[\s\S]*?(?=(?<!#)##(?!#)|$)/.test(indvIndexFileContents) ? indvIndexFileContents.match(/(?<!#)## (?:文書|目次)[\s\S]*?(?=(?<!#)##(?!#)|$)/)[0] : undefined
     let textBlob = /(?<!#)### 本文[\s\S]*?(?=(?<!#)###(?!#)|$)/.test(tocBlob) ? tocBlob.match(/(?<!#)### 本文[\s\S]*?(?=(?<!#)###(?!#)|$)/)[0] : tocBlob
     let othersBlob = /### (?!本文)[\s\S]*?(?=$|### 本文)/.test(tocBlob) ? tocBlob.match(/### (?!本文)[\s\S]*?(?=$|### 本文)/)[0] : undefined
     if (tocBlob !== undefined) {
