@@ -301,7 +301,7 @@ async function textPage(index) {
     let textHtml = rly[0]
     let tocEssence = rly[1][0]
     let currNum = rly[1][1]
-    let subtitle = tocEssence[currNum].subtitle
+    let subtitle = `第${currNum + 1}話 ${tocEssence[currNum].subtitle}`
     let prevHref = currNum !== 0 ? tocEssence[currNum - 1].href : null
     let nextHref = currNum !== tocEssence.length - 1 ? tocEssence[currNum + 1].href : null
     shareTitle = `${subtitle} | ${status.title}${status.status}`
