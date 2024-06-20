@@ -42,7 +42,16 @@ let server = location.origin
 // 本文データの参照先
 let baseUrl = baseUrlArray[server]
 // 処理する括弧
-let brackets = [["{", "}"], ["[", "]"], ["<", ">"]]
+let brackets = [["{", "}"], ["[", "]"], ["(", ")"]]
+let brackets1 = [
+  ["#", "#"], // 人
+  ["%", "%"], // 地
+  ["@", "@"], // 物事
+  ["&", "&"], // 魔物
+  ["$", "$"], // 鍵言のない魔法
+  ["^", "^"], // その他
+  ["?", "?"]  // 性質・属性
+]
 // => とかのマークアップを指定する
 let markupSpecialNotation = `https://cdn.jsdelivr.net/gh/satsuki-thyme/common@main/markup-special-notation.json?2024-03-02`
 /*
@@ -232,7 +241,7 @@ async function textPage(index) {
     .then(async textFile => {
       if (textFile.ok) {
         if (/\.txt$/.test(file)) {
-          novelparse(await brackettool(await textFile.text(), brackets, `delete`), `few`)
+          novelparse(await brackettool(await brackettool(await textFile.text(), brackets, `delete-together`), brackets1, `delete`), `few`)
           .then(textHtml => {
             resolve(textHtml)
           })
