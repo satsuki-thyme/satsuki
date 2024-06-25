@@ -36,7 +36,7 @@ let shareTitle = `五月タイムのサイト`
 // html タグ
 let html = document.querySelector(`html`)
 // URL の ? の後ろで指定されたディレクトリとファイル
-let file = /(?<=op[^\/]+\/).+\..+$/.test(search) ? search.match(/(?<=op[^\/]+\/).+\..+$/)[0] : ``
+let file = /(?=op[^\/]+\/).+\..+$/.test(search) ? search.match(/[^/]+\/[^/]+\..+$/)[0] : ``
 // サーバの URL
 let server = location.origin
 // 本文データの参照先
@@ -277,8 +277,8 @@ async function textPage(index) {
       .replace(/<=/g, `<span class="arrow">=&lt;</span>`)
       .replace(/=>/g, `<span class="arrow">=&gt;</span>`)
       // aside
-      .replace(/(?<!#+ )\[==(.+?)]/g, `[<a href="#$1" class="aside">$1</a>]`)
-      .replace(/(?<=#+ )\[==(.+?)]/g, `[<a name="$1" class="aside">$1</a>]`)
+      .replace(/(?!#+ )\[==(.+?)]/g, `[<a href="#$1" class="aside">$1</a>]`)
+      .replace(/(?=#+ )\[==(.+?)]/g, `[<a name="$1" class="aside">$1</a>]`)
     }
   })
   let href = new Promise(resolve => {
@@ -310,7 +310,11 @@ async function textPage(index) {
     let textHtml = rly[0]
     let tocEssence = rly[1][0]
     let currNum = rly[1][1]
-    let subtitle = `第${currNum + 1}話 ${tocEssence[currNum].subtitle}`
+    let epsNum = ``
+    if (/^text/.test(file)) {
+      epsNum = `第${currNum + 1}話`
+    }
+    let subtitle = `${epsNum} ${tocEssence[currNum].subtitle}`
     let prevHref = currNum !== 0 ? tocEssence[currNum - 1].href : null
     let nextHref = currNum !== tocEssence.length - 1 ? tocEssence[currNum + 1].href : null
     shareTitle = `${subtitle} | ${status.title}${status.status}`
@@ -439,14 +443,14 @@ async function procToc(indvIndexFileContents, op, type) {
   })
   function getListSingle(src) {
     let w = {}
-    w.subheading = `${/(?<=##+ ).*/.test(src) ? src.match(/(?<=##+ ).*/)[0] : undefined}`
+    w.subheading = `${/##+ .*/.test(src) ? src.match(/##+ .*/)[0].replace(/^#+/, ``) : undefined}`
     w.contents = src
     .split(/\r?\n/)
     .filter(rly => /^[\-+*] .+$/.test(rly))
     .map(rly => {
       let w = {}
-      w.title = `${/(?<=[\-+*].*?:[ \t]+)[^ \t].*$/.test(rly) ? rly.match(/(?<=[\-+*].*?:[ \t]+)[^ \t].*$/)[0] : undefined}`
-      w.href = `?${op}/${/(?<=[\-+*] ).*?(?=:)/.test(rly) ? rly.match(/(?<=[\-+*] ).*?(?=:)/)[0] : rly.match(/^(?<=[\-+*] ).*$/)[0]}`
+      w.title = `${/(?=[\-+*].*?:[ \t]+)[^ \t].*$/.test(rly) ? rly.match(/[\-+*].*?:[ \t]+[^ \t].*$/)[0].replace(/^[\-+*].*?:[ \t]+/, ``) : undefined}`
+      w.href = `?${op}/${/(?=[\-+*] ).*?(?=:)/.test(rly) ? rly.match(/[\-+*] .*?(?=:)/)[0].replace(/^[\-+*] /, ``) : rly.match(/^(?=[\-+*] ).*$/)[0]}`
       return w
     })
     return w
