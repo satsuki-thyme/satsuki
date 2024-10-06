@@ -36,7 +36,7 @@ let shareTitle = `五月タイムのサイト`
 // html タグ
 let html = document.querySelector(`html`)
 // URL の ? の後ろで指定されたディレクトリとファイル
-let file = /(?=op[^\/]+\/).+\..+$/.test(search) ? search.match(/[^/]+\/[^/]+\..+$/)[0] : ``
+let file = /(?<=op.*?\/).+$/.test(search) ? search.match(/(?<=op.*?\/).+$/)[0] : ``
 // サーバの URL
 let server = location.origin
 // 本文データの参照先

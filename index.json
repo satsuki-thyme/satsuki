@@ -460,5 +460,33 @@
     "description": "原初の少女は魔力郷を求めて旅をする。無邪気で奔放な冒険紀行だ。出会う女性たちが仲間に加わり強かに苦難を乗り越えていく。最強の少女が味わう世界旅程は希望と波乱に満ちていた。",
     "status": "under construction",
     "display": true
+  },
+  {
+    "op": 66,
+    "title": "名称未設定",
+    "description": "",
+    "status": "unfinished",
+    "display": false
+  },
+  {
+    "op": 67,
+    "title": "名称未設定",
+    "description": "",
+    "status": "unfinished",
+    "display": false
+  },
+  {
+    "op": 68,
+    "title": "お転婆魔女の冒険譚",
+    "description": "お転婆の侯爵令嬢リエルが気ままな旅に出る。",
+    "status": "under construction",
+    "display": true
+  },
+  {
+    "op": 69,
+    "title": "現代武人の異世界魔法理論",
+    "description": "現代日本で最強の武人となった弘至は魔法のないこの世界で「俺の魔法理論」を夢想していた。弘至にとって理論は完璧だった。それでも使えない魔法。だが異世界に召喚されたことで事態は急変する。俺の魔法理論は最強の魔法理論だった！",
+    "status": "under construction",
+    "display": true
   }
 ]
