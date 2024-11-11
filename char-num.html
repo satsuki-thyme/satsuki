@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja-JP">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>文字数</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="lib/base.css">
+    <link rel="stylesheet" href="lib/color-scheme-standard.css">
+    <link rel="stylesheet" href="default.css">
+    <script src="lib/mdtoctool.js/mdtoctool.js"></script>
+    <script src="lib/wordcount.js/wordcount.js"></script>
+    <script src="lib/maketable.js/maketable.js"></script>
+    <script src="counttext.js"></script>
+    <script src="countexternal.js"></script>
+    <style>
+      #stage div.table-row {
+        display: flex;
+        justify-content: space-between;
+      }
+      #stage div.table-row + div.table-row {
+        margin-top: 20px;
+      }
+      #stage table#gen tbody tr,
+      #stage table.indv tbody tr {
+        user-select: all;
+      }
+      .center-fix {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+      }
+    </style>
+    <script>
+      window.addEventListener(`DOMContentLoaded`, async () => {
+        let scribe = await counttext(`scribe`, ``, `index.json`, `README.md`, `本文`, ``)
+        let biblio = await counttext(``,       ``,   `index.json`, `README.md`, `目次`, ``)
+        let studio = await counttext(`lib`,    ``,   `index.json`, `README.md`, `目次`, `(?:説明|動作|使い方|CDN)`)
+        let external = await countexternal(2023, `reservoir`, [`external-text`])
+        let genDispData = [
+          scribe.all.main,
+          scribe.all.others,
+          external,
+          biblio.all.main + studio.all.main
+        ]
+        let indvDispData = scribe.opus
+        let genDisp = maketable(genDispData, [`小説本文`, `小説関連`, `外部文書`, `コード`], ``, `gen`)
+        let indvDisp = () => {
+          let tableUnion = ``
+          for (let key of Object.keys(scribe.indv)) {
+            tableUnion += `<table class="indv">`
+            + `<thead><tr><th colspan="2">${key}</th></tr></thead>`
+            + `<tbody><tr><td>${scribe.indv[key].main}</td><td>${scribe.indv[key].others}</td></tr></tbody>`
+            + `</table>`
+          }
+          return tableUnion
+        }
+        let elmStage = document.querySelector(`#stage`)
+        elmStage.innerHTML = `<div class="table-row">${genDisp}</div><div class="table-row">${indvDisp()}</div>`
+        elmStage.style.width = elmStage.getBoundingClientRect().width + `px`
+        elmStage.style.height = elmStage.getBoundingClientRect().height + `px`
+        elmStage.classList.add(`center-fix`)
+        let elmNums = document.querySelector(`#stage table#gen tbody tr`)
+        let range = document.createRange()
+        range.setStart(elmNums, 0)
+        range.setEnd(elmNums, elmNums.childNodes.length)
+        document.getSelection().removeAllRanges()
+        document.getSelection().addRange(range)
+        window.addEventListener(`mousedown`, e0 => {
+          if (e0.button === 0) {
+            let t = Date.now()
+            window.addEventListener(`mousedown`, e1 => {
+              if (e1.button === 0 && Date.now() - t < 500) {
+                location.reload()
+              }
+              else {
+                return true
+              }
+            })
+            return setTimeout(() => {
+              return true
+            }, 300)
+          }
+        })
+      })
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="stage"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja-JP">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>日付</title>
+    <link rel="stylesheet" href="lib/color-scheme-standard.css">
+    <link rel="stylesheet" href="lib/base.css">
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        position: relative;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        display: inline-block;
+        text-align: center;
+        line-height: 0.85;
+      }
+      #container.fix {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+      }
+      #upper .separator {
+        line-height: 1.1;
+        vertical-align: bottom;
+      }
+      .last-day {
+        font-size: 40%;
+      }
+      #seconds {
+        display: inline-block;
+        vertical-align: bottom;
+        background-color: var(--light-0);
+        transition: height 1s linear;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="upper"><span id="western-calendar-year"></span><span class="separator"> | </span>令和<span id="japanese-calendar-year"></span>年</div>
+      <div id="middle"><span id="month"></span><span class="separator">/</span><span id="date"></span><span class="separator last-day">/</span><span id="last-day" class="last-day"></span></div>
+      <div id="lower"><span id="week"></span><span class="separator"> - </span><span id="hours"></span><span class="separator">:</span><span id="minutes"></span><div id="seconds"></div></div>
+    </div>
+  </body>
+  <script>
+    let firstSwitch = 0
+    let lowerH = 0
+    let lower = document.querySelector(`#lower`)
+    let seconds = document.querySelector(`#seconds`)
+    updateDate()
+    updateYear()
+    updateTime()
+    updateSeconds()
+    dateTimer()
+    yearTimer()
+    timeTimer()
+    secondsTimer()
+    window.onresize = () => {
+      setPos()
+    }
+    function updateDate() {
+      let now = new Date(Date.now())
+      let month = now.getMonth()
+      document.querySelector(`#month`).innerText = month + 1
+      document.querySelector(`#date`).innerText = now.getDate()
+      document.querySelector(`#week`).innerText = [
+        `Sun`,
+        `Mon`,
+        `Tue`,
+        `Wed`,
+        `Thu`,
+        `Fri`,
+        `Sat`
+      ][now.getDay()]
+      document.querySelector(`#last-day`).innerText = new Date(new Date(now.getFullYear(), month + 1, 1).getTime() - 60 * 60 * 24 * 1000).getDate()
+      setPos()
+    }
+    function updateYear() {
+      let now = new Date(Date.now())
+      document.querySelector(`#western-calendar-year`).innerText = now.getFullYear()
+      document.querySelector(`#japanese-calendar-year`).innerText = now.getFullYear() - 2018
+      setPos()
+    }
+    function updateTime() {
+      let now = new Date(Date.now())
+      document.querySelector(`#hours`).innerText = now.getHours()
+      document.querySelector(`#minutes`).innerText = (`0` + String(now.getMinutes())).slice(-2)
+      setPos()
+    }
+    function updateSeconds() {
+      let now = new Date(Date.now())
+      seconds.style.height = now.getSeconds() / 60 * lowerH + `px`
+    }
+    function dateTimer() {
+      let now = new Date(Date.now())
+      let year = now.getFullYear()
+      let month = now.getMonth()
+      let date = now.getDate()
+      let tomorrow = new Date(new Date(year, month, date).getTime() + 60 * 60 * 24 * 1000).setSeconds(0)
+      setTimeout(() => {
+        let now = new Date(Date.now())
+        seeker()
+        function seeker() {
+          setTimeout(() => {
+            updateDate()
+            dateTimer()
+          }, tomorrow - now)
+        }
+      }, new Date(year, month, date, 23, 59, 50) - now)
+    }
+    function yearTimer() {
+      let now = new Date(Date.now())
+      let year = now.getFullYear()
+      let nextYear = new Date(new Date(year, 0, 1).getTime() + 60 * 60 * 24 * 365 * 1000).setDate(1)
+      setTimeout(() => {
+        let now = new Date(Date.now())
+        seeker()
+        function seeker() {
+          setTimeout(() => {
+            updateYear()
+            yearTimer()
+          }, nextYear - now)
+        }
+      }, new Date(year, 11, 30) - now)
+    }
+    function timeTimer() {
+      let now = new Date(Date.now())
+      let year = now.getFullYear()
+      let month = now.getMonth()
+      let date = now.getDate()
+      let hours = now.getHours()
+      let minutes = now.getMinutes()
+      let nextMinutes = new Date(new Date(year, month, date, hours, minutes, 0).getTime() + 60 * 1000).setSeconds(0)
+      setTimeout(() => {
+        let now = new Date(Date.now())
+        seeker()
+        function seeker() {
+          setTimeout(() => {
+            updateTime()
+            timeTimer()
+          }, nextMinutes - now)
+        }
+      }, new Date(year, month, date, hours, minutes, 50) - now)
+    }
+    function secondsTimer() {
+      setTimeout(() => {
+        updateSeconds()
+        secondsTimer()
+      }, 1000)
+    }
+    function setPos() {
+      let scale = 0.8
+      let fontSizeUpper = 10
+      let fontSizeMiddle = 30
+      let fontSizeLower = 14
+      let secondsWidth = 0.05
+      if (firstSwitch > 1) {
+        let fontSizeAll = fontSizeUpper + fontSizeMiddle + fontSizeLower
+        let upper = document.querySelector(`#upper`)
+        let middle = document.querySelector(`#middle`)
+        upper.style.fontSize = fontSizeUpper + `px`
+        middle.style.fontSize = fontSizeMiddle + `px`
+        lower.style.fontSize = fontSizeLower + `px`
+        let container = document.querySelector(`#container`)
+        let containerAspect = container.getBoundingClientRect().height / container.getBoundingClientRect().width
+        container.classList.remove(`fix`)
+        container.style.width = null
+        container.style.height = null
+        let windowW = window.innerWidth
+        let windowH = window.innerHeight
+        if (containerAspect >= windowH / windowW) {
+          changeSize(windowH)
+        }
+        else {
+          changeSize(windowW * containerAspect)
+        }
+        function changeSize(baseH) {
+          upper.style.fontSize = baseH * fontSizeUpper / fontSizeAll * scale + `px`
+          middle.style.fontSize = baseH * fontSizeMiddle / fontSizeAll * scale + `px`
+          lower.style.fontSize = baseH * fontSizeLower / fontSizeAll * scale + `px`
+          lowerH = lower.getBoundingClientRect().height
+          lower.style.height = lowerH + `px`
+          seconds.style.width = lowerH * secondsWidth + `px`
+          seconds.style.marginLeft = lowerH * secondsWidth * 2 + `px`
+          container.style.width = container.getBoundingClientRect().width + `px`
+          container.style.height = container.getBoundingClientRect().height + `px`
+          container.classList.add(`fix`)
+        }
+      }
+      else {
+        firstSwitch++
+      }
+    }
+  </script>
+</html>
