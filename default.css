@@ -1,13 +1,18 @@
+/*
+  ######      #######     ##           #######     ########  
+ ##    ##    ##     ##    ##          ##     ##    ##     ## 
+ ##          ##     ##    ##          ##     ##    ##     ## 
+ ##          ##     ##    ##          ##     ##    ########  
+ ##          ##     ##    ##          ##     ##    ##   ##   
+ ##    ##    ##     ##    ##          ##     ##    ##    ##  
+  ######      #######     ########     #######     ##     ## 
+*/
 :root {
-  --base-color-background: #fff; /* Base color : Background */
-  --base-color-foreground-shadow: #999; /* Base color : Foreground - Sub, Shadow */
-  --base-color-foreground: #202124; /* Base color : Foreground */
-  --decoration-color-bright-1: #5ec63e; /* Decoration color : Bright - link foreground (with white background) */
-  --decoration-color-bright-2: #66b72d; /* Decoration color : Bright - link background (with white foreground) */
-  --decoration-color-bright-3: #95bc79; /* Decoration color : Bright alternative */
-  --decoration-color-bright-4: #e4eedb; /* Decoration color : Bright pale - Background (with black foreground) */
-  --decoration-color-base: #62a433; /* Decoration color : Base */
-  --decoration-color-dark: #4c7f27; /* Decoration color : Dark */
+  --thyme--1: #325718;
+  --thyme--2: #42721f;
+  --thyme-0: #62a433;
+  --thyme-1: #6eb43c;
+  --thyme-2: #92ce67;
   --dark--2: #080807;
   --dark--1: #10110f;
   --dark-0: #1e1f1c;
@@ -44,432 +49,26 @@
   --grape-1: #bd14d3;
 }
 body {
-  letter-spacing: 0.1em;
   color: var(--dark-0);
-  background-color: var(--light-0);
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-html.text.md main.page-element h1,
-html.text.md main.page-element h2,
-html.text.md main.page-element h3,
-html.text.md main.page-element h4,
-html.text.md main.page-element h5,
-html.text.md main.page-element h6 {
-  margin: 0;
-}
-section:has(> h1) {
-  margin-top: 60px;
-}
-section:has(> h2) {
-  margin-top: 50px;
-}
-section:has(> h3) {
-  margin-top: 40px;
-}
-section:has(> h4) {
-  margin-top: 32px;
-}
-section:has(> h5) {
-  margin-top: 26px;
-}
-section:has(> h6) {
-  margin-top: 22px;
-}
-h1 + p,
-h1 + ul,
-h1 + ol,
-h1 + pre,
-h1 + table,
-html.text.md main.page-element h1 + p,
-html.text.md main.page-element h1 + ul,
-html.text.md main.page-element h1 + ol,
-html.text.md main.page-element h1 + pre,
-html.text.md main.page-element h1 + table {
-  margin-top: 30px;
-}
-h2 + p,
-h2 + ul,
-h2 + ol,
-h2 + pre,
-h2 + table,
-html.text.md main.page-element h2 + p,
-html.text.md main.page-element h2 + ul,
-html.text.md main.page-element h2 + ol,
-html.text.md main.page-element h2 + pre,
-html.text.md main.page-element h2 + table {
-  margin-top: 20px;
-}
-h3 + p,
-h3 + ul,
-h3 + ol,
-h3 + pre,
-h3 + table,
-html.text.md main.page-element h3 + p,
-html.text.md main.page-element h3 + ul,
-html.text.md main.page-element h3 + ol,
-html.text.md main.page-element h3 + pre,
-html.text.md main.page-element h3 + table {
-  margin-top: 10px;
-}
-h4 + p,
-h4 + ul,
-h4 + ol,
-h4 + pre,
-h4 + table,
-html.text.md main.page-element h4 + p,
-html.text.md main.page-element h4 + ul,
-html.text.md main.page-element h4 + ol,
-html.text.md main.page-element h4 + pre,
-html.text.md main.page-element h4 + table {
-  margin-top: 5px;
-}
-p + p,
-html.text.md main.page-element p + p {
-  margin-top: 1em;
-}
-ul,
-ol {
-  display: inline-block;
-}
-li + li,
-li + ul,
-li + ol,
-ul + li,
-ol + li {
-  margin-top: 10px;
-}
-li + ul,
-li + ol {
-  padding-left: 15px;
-}
-li input[type="checkbox"] {
-  user-select: text;
-}
-pre {
-  line-height: 1.7;
+  background-color: #fff;
 }
 table,
 td,
 th {
-  border-style: solid;
-  border-color: var(--decoration-color-dark);
+  border-color: var(--dark-2);
 }
-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  border-width: 1px;
+a,
+a:visited {
+  color: var(--sky-1);
 }
-td,
-th {
-  padding: 10px 15px;
-  line-height: 1.5;
-  vertical-align: top;
-  border-width: 1px 0 0 1px;
+#return-to-top {
+  background-color: var(--light--1);
 }
-tr:first-child td,
-tr:first-child th {
-  border-top-width: 0;
+.text .control-panel {
+  background-color: #fff;
 }
-td:first-child,
-th:first-child {
-  border-left-width: 0;
-}
-thead + tbody tr:first-child td,
-thead + tbody tr:first-child th {
-  border-top-width: 1px;
-}
-tfoot tr:first-child td,
-tfoot tr:first-child th {
-  border-top-width: 1px;
-}
-a {
-  text-decoration-style: dotted;
-  text-decoration-thickness: 1px;
-  text-decoration-color: var(--decoration-color-dark);
-  color: var(--dark-0);
-}
-
-
-
-
-
-#etc {
-  display: none;
-  box-sizing: border-box;
-  margin: auto;
-  padding: 15px;
-}
-#etc {
-  background-color: var(--light-0);
-}
-@media (prefers-color-scheme: dark) {
-  #etc {
-    background-color: var(--dark-0);
-  }
-}
-html.use-popup #etc {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-html.use-popup #cover {
-  content: "";
-  display: block;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.8)
-}
-
-
-
-
-#container {
-  width: 90%;
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  box-sizing: border-box;
-}
-#container > div,
-#contaienr > header,
-#container > main,
-#container > footer,
-#container > pre {
-  width: 100%;
-  box-sizing: border-box;
-}
-/*
-
-  site header
-
-*/
-/* header */
-html.index header.site-element,
-html.cover header.site-element {
-  padding-top: 30px;
-  text-align: center;
-}
-html.index header.site-element {
-  padding-bottom: 100px;
-}
-html.cover header.site-element {
-  padding-bottom: 30px;
-}
-@media (max-width: 450px) {
-  html.text header.site-element {
-    text-align: center;
-  }
-}
-/* h1 */
-header.site-element h1 {
-  margin: 0;
-}
-/* a */
-header.site-element a {
-  display: inline-block;
-  text-decoration: none;
-}
-html.index header.site-element a,
-html.cover header.site-element a {
-  width: 300px;
-}
-html.text header.site-element a {
-  width: 150px;
-}
-/* p */
-html.index header.site-element p,
-html.cover header.site-element p,
-html.text header.site-element p {
-  font-weight: normal;
-  color: var(--decoration-color-base);
-}
-html.index header.site-element p,
-html.cover header.site-element p {
-  margin: -20px 0 0;
-  font-size: 16px;
-}
-html.text header.site-element p {
-  margin: -15px 0 0;
-  font-size: 8px;
-}
-/* img */
-html.index header.site-element img,
-html.cover header.site-element img,
-html.text header.site-element img {
-  width: 100%;
-}
-/* h */
-html.text header.site-element h1 {
-  display: inline-block;
-  text-align: center;
-}
-/*
-
-  site footer
-
-*/
-footer.site-element {
-  text-align: center;
-}
-html.index footer.site-element {
-  padding-top: 80px;
-}
-html.cover footer.site-element {
-  padding-top: 30px;
-}
-html.text footer.site-element {
-  padding-top: 30px;
-}
-/*
-
-  site aside
-
-*/
-aside.site-element {
-  text-align: center;
-}
-html.index aside.site-element {
-  padding-top: 80px;
-}
-html.cover aside.site-element {
-  padding-top: 30px;
-}
-html.text aside.site-element {
-  padding-top: 30px;
-}
-/*
-
-  site main
-
-*/
-html.index main.site-element,
-html.cover main.site-element {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-}
-header.page-element {
-  text-align: center;
-}
-header.page-element h2 {
-  margin-top: 5px;
-  font-size: 28px;
-  letter-spacing: 0.1em;
-}
-header.page-element h3 {
-  margin-top: 5px;
-  font-size: 25px;
-  letter-spacing: 0.1em;
-}
-nav {
-  text-align: center;
-}
-html.cover header.page-element nav {
-  padding-bottom: 50px;
-}
-html.cover header.page-element nav {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-html.cover footer.page-element nav {
-  padding-top: 50px;
-}
-html.text header.page-element nav {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-html.text footer.page-element nav {
-  padding-top: 20px;
-}
-html.text main.page-element {
-  padding-top: 50px;
-  padding-bottom: 50px;
-}
-html.text .nav-outer + .nav-inner,
-html.text .nav-inner + .nav-outer {
-  margin-top: 10px;
-}
-html.text .nav-inner {
-  text-align: center;
-}
-html.text .nav-inner table,
-html.text .nav-inner tr,
-html.text .nav-inner td {
-  padding: 0;
-  border-width: 0;
-}
-html.text .nav-inner table {
-  margin: auto;
-}
-html.text .nav-inner td:nth-child(2) {
-  text-align: center;
-}
-html.text .nav-inner td:first-child,
-html.text .nav-inner td:last-child {
-  width: calc(560px / 2 - 50px);
-}
-html.text .nav-inner td:first-child {
-  text-align: right;
-}
-html.text .nav-inner td:last-child {
-  text-align: left;
-}
-html.text .nav-inner .nav-separater {
-  padding: 0 10px;
-}
-.unit {
-  text-align: center;
-}
-.unit ul,
-.unit ol {
-  margin-left: -30px;
-  text-align: left;
-}
-.unit + .unit {
-  margin-top: 50px;
-}
-/*
-
-  page element
-
-*/
-html.index thead {
-  vertical-align: bottom;
-  background-color: var(--decoration-color-bright-4);
-}
-html.index table th:first-child,
-html.index table td:first-child {
-  padding-right: 5px;
-  padding-left: 5px;
-  text-align: center;
-}
-html.index table th:last-child,
-html.index table td:last-child {
-  padding-right: 5px;
-  padding-left: 5px;
-  text-align: center;
-}
-html.text main.page-element p {
-  margin: 0;
-  line-height: 1.7;
-}
-a.aside {
-  color: #ae81ff;
-}
-span.arrow {
-  color: #66d9ef;
+.text .control-panel .switch-set {
+  border-color: var(--light-2);
 }
 @media (prefers-color-scheme: dark) {
   body {
@@ -479,16 +78,691 @@ span.arrow {
   table,
   td,
   th {
-    border-color: var(--decoration-color-bright-3);
+    border-color: var(--dark-2);
   }
-  a {
-    text-decoration-color: var(--decoration-color-bright-3);
-    color: var(--light-0);
+  a,
+  a:visited {
+    color: var(--sky-1);
   }
-  html.index thead {
-    background-color: var(--decoration-color-dark);
+  #return-to-top {
+    background-color: var(--dark--1);
   }
-  html.text main.page-element p {
-    color: var(--light-0)
+  .text .control-panel {
+    background-color: var(--dark-0);
   }
+  .text .control-panel .switch-set {
+    border-color: var(--dark-2);
+  }
+}
+.internet.text .control-panel {
+  height: 0;
+  visibility: hidden;
+}
+.text #pre-area.display {
+  background-color: var(--dark--2);
+}
+
+
+
+
+
+
+/*
+ ########        ###        ######     ######## 
+ ##     ##      ## ##      ##    ##    ##       
+ ##     ##     ##   ##     ##          ##       
+ ########     ##     ##     ######     ######   
+ ##     ##    #########          ##    ##       
+ ##     ##    ##     ##    ##    ##    ##       
+ ########     ##     ##     ######     ######## 
+*/
+body {
+  margin: auto;
+  font-family: Helvetica, Arial, "ヒラギノ角ゴシック", "游ゴシック", "メイリオ";
+  font-size: 17.5px;
+}
+#active-container header,
+#active-container footer,
+#active-container main,
+#static-container aside {
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+}
+#active-container header,
+#active-container footer {
+  text-align: center;
+}
+#active-container header {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+#active-container header p {
+  margin: 0;
+}
+.internet #active-container header {
+  padding-top: 0;
+}
+#active-container header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+#active-container footer {
+  padding-top: 30px;
+}
+#active-container header .return-to-index {
+  padding-top: 30px;
+}
+#active-container footer .return-to-index {
+  padding-bottom: 50px;
+}
+#active-container section > section {
+  margin-top: 30px;
+  margin-left: 15px;
+}
+#active-container h1,
+#active-container h2,
+#active-container h3,
+#active-container h4,
+#active-container h5,
+#active-container h6 {
+  margin: 0;
+}
+#active-container main h1 {
+  font-size: 38px;
+}
+#active-container main h2 {
+  font-size: 32px;
+}
+#active-container main h3 {
+  font-size: 27px;
+}
+#active-container main h4 {
+  font-size: 23px;
+}
+#active-container main h5 {
+  font-size: 20px;
+}
+#active-container main h6 {
+  font-size: 18px;
+}
+#active-container ul,
+#active-container ol {
+  margin-left: 10px;
+}
+#active-container li + * li + * li + * li {
+  list-style-type: disc;
+}
+#active-container li + * li + * li + * li + * li {
+  list-style-type: circle;
+}
+#active-container li + * li + * li + * li + * li + * li {
+  list-style-type: square;
+}
+#active-container li + * li + * li + li + * li + * li + * li {
+  list-style-type: disc;
+}
+#active-container li + * li + * li + li + * li + * li + * li + * li {
+  list-style-type: circle;
+}
+#active-container li + * li + * li + li + * li + * li + * li + * li + * li {
+  list-style-type: square;
+}
+#active-container table,
+#active-container td,
+#active-container th {
+  border-style: solid;
+}
+#active-container table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-width: 1px;
+}
+#active-container td,
+#active-container th {
+  padding: 5px 10px;
+  line-height: 1.5;
+  vertical-align: top;
+  border-width: 1px 0 0 1px;
+}
+#active-container tr:first-child td,
+#active-container tr:first-child th {
+  border-top-width: 0;
+}
+#active-container td:first-child,
+#active-container th:first-child {
+  border-left-width: 0;
+}
+#active-container thead + tbody tr:first-child td,
+#active-container thead + tbody tr:first-child th {
+  border-top-width: 1px;
+}
+#active-container tfoot tr:first-child td,
+#active-container tfoot tr:first-child th {
+  border-top-width: 1px;
+}
+#active-container label {
+  user-select: none;
+}
+#active-container hr {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+#container {
+  min-height: calc(100% - 85px);
+  padding: 10px 3px;
+  box-sizing: border-box;
+}
+#active-container,
+#static-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+#static-container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0;
+}
+#copyright {
+  margin-top: 50px;
+}
+/*
+  ######      #######     ##     ##    ##     ##     #######     ##    ## 
+ ##    ##    ##     ##    ###   ###    ###   ###    ##     ##    ###   ## 
+ ##          ##     ##    #### ####    #### ####    ##     ##    ####  ## 
+ ##          ##     ##    ## ### ##    ## ### ##    ##     ##    ## ## ## 
+ ##          ##     ##    ##     ##    ##     ##    ##     ##    ##  #### 
+ ##    ##    ##     ##    ##     ##    ##     ##    ##     ##    ##   ### 
+  ######      #######     ##     ##    ##     ##     #######     ##    ## 
+*/
+header#site-header {
+  display: none;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.internet header#site-header {
+  display: initial;
+}
+#site-logo {
+  width: 240px;
+  height: 55px;
+  margin: 15px auto;
+  background-image: url('attachment/satsuki-thyme-fg-green.svg');
+  background-repeat: no-repeat;
+}
+.index,
+.index body,
+.cover,
+.cover body {
+  height: 100%;
+}
+#static-container aside {
+  position: relative;
+}
+#return-to-top {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  right: 5px;
+  bottom: 5px;
+  font-size: 13px;
+  text-align: center;
+  line-height: 52px;
+  opacity: 0.5;
+  border-radius: 50%;
+  cursor: pointer;
+}
+#return-to-top span {
+  user-select: none;
+}
+.anchor {
+  display: block;
+  height: 0;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  line-height: 0;
+}
+/*
+ ####    ##    ##    ########     ########    ##     ## 
+  ##     ###   ##    ##     ##    ##           ##   ##  
+  ##     ####  ##    ##     ##    ##            ## ##   
+  ##     ## ## ##    ##     ##    ######         ###    
+  ##     ##  ####    ##     ##    ##            ## ##   
+  ##     ##   ###    ##     ##    ##           ##   ##  
+ ####    ##    ##    ########     ########    ##     ## 
+*/
+.index #active-container {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+.index #upper-area {
+  width: 100%;
+}
+.index td:first-child {
+  text-align: center;
+}
+.index #char-num-itself,
+.index #etc-num-itself,
+.index .char-num,
+.index .etc-num {
+  user-select: all;
+}
+/*
+  ######      #######     ##     ##    ########    ######## 
+ ##    ##    ##     ##    ##     ##    ##          ##     ##
+ ##          ##     ##    ##     ##    ##          ##     ##
+ ##          ##     ##    ##     ##    ######      ######## 
+ ##          ##     ##     ##   ##     ##          ##   ##  
+ ##    ##    ##     ##      ## ##      ##          ##    ## 
+  ######      #######        ###       ########    ##     ##
+*/
+.cover #active-container {
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.cover main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: center;
+}
+.cover main > section {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: center;
+}
+.cover main > section > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: center;
+}
+.cover section {
+  margin: 25px 0;
+}
+.cover h2 + div > section,
+.cover h3 + div > section,
+.cover h4 + div > section,
+.cover h5 + div > section,
+.cover h6 + div > section {
+  margin-top: 0;
+}
+.cover h2,
+.cover h3,
+.cover h4,
+.cover h5,
+.cover h6 {
+  line-height: 1.5;
+}
+.cover #list ul {
+  width: fit-content;
+  margin: auto;
+}
+.cover table {
+  margin: auto;
+  font-size: 90%;
+}
+.cover #list {
+  font-size: 90%;
+}
+.cover table + table {
+  margin-top: 30px;
+}
+@media screen and (max-width: 320px) {
+  .cover table {
+    font-size: 70%;
+  }
+    .cover thead {
+    font-size: 50%;
+    font-weight: normal;
+  }
+  .cover td,
+  .cover th {
+    padding: 2px 3px;
+  }
+}
+@media screen and (min-width: 321px) and (max-width: 600px) {
+  .cover table {
+    font-size: 80%;
+  }
+    .cover thead {
+    font-size: 70%;
+  }
+  .cover td,
+  .cover th {
+    padding: 3px 5px;
+  }
+}
+.cover table.text-table td:nth-child(1),
+.cover table.text-table td:nth-child(4),
+.cover table.text-table td:nth-child(5),
+.cover table.text-table td:nth-child(6) {
+  text-align: center;
+}
+.cover table.text-table td:nth-child(3) {
+  text-align: right;
+}
+.cover table.doc-table td {
+  text-align: left;
+}
+.cover .text-table tr:last-child td:nth-child(2) {
+  text-align: center;
+}
+.cover .text-table tr:last-child td:nth-child(2) span {
+  letter-spacing: 2em;
+}
+.cover .text-table td:nth-child(3) {
+  user-select: all;
+}
+
+
+
+
+
+/*
+ ########    ########    ##     ##    ######## 
+    ##       ##           ##   ##        ##    
+    ##       ##            ## ##         ##    
+    ##       ######         ###          ##    
+    ##       ##            ## ##         ##    
+    ##       ##           ##   ##        ##    
+    ##       ########    ##     ##       ##    
+*/
+.text header p.context-level-1 {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: normal;
+}
+.text .control-panel {
+  display: flex;
+  justify-content: center;
+  font-size: 80%;
+}
+.text .control-panel .label {
+  font-size: 85%;
+}
+.text .control-panel .switch-set {
+  display: inline-block;
+  margin: 5px;
+  padding: 3px 5px;
+  vertical-align: middle;
+  border-width: 1px;
+  border-style: solid;
+}
+.text .control-panel label {
+  display: inline-block;
+  padding: 1px 0 0 0;
+}
+.text .control-panel input {
+  display: inline-block;
+  vertical-align: -10%;
+}
+.text .control-panel .text-select input {
+  font-size: 70%;
+}
+.text #pre-area {
+  display: none;
+}
+.text #pre-area.display {
+  display: initial;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 2em;
+}
+.text #char-num {
+  display: none;
+}
+.text #active-container table.relation-link,
+.text #active-container table.relation-link td {
+  border-width: 0;
+}
+/*
+ ########      #######      ######  
+ ##     ##    ##     ##    ##    ## 
+ ##     ##    ##     ##    ##       
+ ##     ##    ##     ##    ##       
+ ##     ##    ##     ##    ##       
+ ##     ##    ##     ##    ##    ## 
+ ########      #######      ######  
+*/
+.doc #active-container {
+  flex-direction: column;
+}
+.doc aside {
+  order: 0;
+}
+.doc header {
+  order: 1;
+}
+.doc main {
+  order: 2;
+  max-width: 600px;
+  padding: 50px 10px;
+}
+.doc footer {
+  order: 3;
+}
+.doc .brackets {
+  color: #d00;
+}
+.doc blockquote {
+  padding-left: 10px;
+  border-left: 7px solid #ccc;
+}
+.doc blockquote blockquote {
+  margin-left: 0;
+}
+.doc code {
+  padding: 3px;
+  color: #f8f8f2;
+  background-color: #272822;
+  border-radius: 3px;
+}
+.doc pre code {
+  display: inline-block;
+  padding: 10px;
+  line-height: 1.5em;
+}
+.doc table + table {
+  margin-top: 20px;
+}
+.doc table,
+.doc td,
+.doc th {
+  border-style: solid;
+  border-color: #0d0015;
+}
+.doc table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-width: 1px;
+}
+.doc td,
+.doc th {
+  padding: 5px 10px;
+  vertical-align: top;
+  border-width: 1px 0 0 1px;
+}
+.doc tr:first-child td,
+.doc tr:first-child th {
+  border-top-width: 0;
+}
+.doc td:first-child,
+.doc th:first-child {
+  border-left-width: 0;
+}
+.doc thead + tbody tr:first-child td,
+.doc thead + tbody tr:first-child th {
+  border-top-width: 1px;
+}
+.doc tfoot tr:first-child td,
+.doc tfoot tr:first-child th {
+  border-top-width: 1px;
+}
+.doc sup a {
+  text-decoration: none;
+  color: #00f;
+}
+.doc main h1::before,
+.doc main h2::before,
+.doc main h3::before,
+.doc main h4::before,
+.doc main h5::before,
+.doc main h6::before {
+  display: inline;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: 0;
+  line-height: 1;
+}
+.doc main h1::before {
+  content: ".";
+}
+.doc main h2::before {
+  content: "..";
+}
+.doc main h3::before {
+  content: "...";
+}
+.doc main h4::before {
+  content: "....";
+}
+.doc main h5::before {
+  content: ".....";
+}
+.doc main h6::before {
+  content: "......";
+}
+.doc main p {
+  margin: 0;
+  vertical-align: middle;
+  line-height: 1.8;
+}
+.doc #active-container .nav-outer + .nav-inner,
+.doc #active-container .nav-inner + .nav-outer {
+  margin-top: 10px;
+}
+.doc #active-container .nav-inner {
+  text-align: center;
+}
+.doc #active-container .nav-inner table,
+.doc #active-container .nav-inner tr,
+.doc #active-container .nav-inner td {
+  padding: 0;
+  border-width: 0;
+}
+.doc #active-container .nav-inner table {
+  width: 100%;
+  margin: auto;
+  font-size: 85%;
+}
+.doc #active-container .nav-inner td {
+  padding: 0;
+}
+.doc #active-container .nav-inner td:nth-child(2) {
+  width: 6em;
+  text-align: center;
+}
+.doc #active-container .nav-inner td:first-child,
+.doc #active-container .nav-inner td:last-child {
+  max-width: calc(50% - 6em);
+}
+.doc #active-container .nav-inner td:first-child {
+  text-align: right;
+}
+.doc #active-container .nav-inner td:last-child {
+  text-align: left;
+}
+.doc #active-container .nav-inner .nav-separater {
+  padding: 0 5px;
+}
+.doc #active-container .user-cnt-tasklist {
+  list-style: none;
+  text-indent: -1.5em;
+}
+.doc #active-container .user-cnt-table-right {
+  text-align: right;
+}
+.doc #active-container .user-cnt-table-center {
+  text-align: center;
+}
+.doc #active-container .user-cnt-table-left {
+  text-align: left;
+}
+.doc .user-cnt-arrow {
+  display: inline-block;
+  height: 12px;
+  vertical-align: middle;
+  fill: #00f;
+}
+/*
+ ##     ##       ###       ########     ##    ##    ########      #######     ##      ##    ##    ## 
+ ###   ###      ## ##      ##     ##    ##   ##     ##     ##    ##     ##    ##  ##  ##    ###   ## 
+ #### ####     ##   ##     ##     ##    ##  ##      ##     ##    ##     ##    ##  ##  ##    ####  ## 
+ ## ### ##    ##     ##    ########     #####       ##     ##    ##     ##    ##  ##  ##    ## ## ## 
+ ##     ##    #########    ##   ##      ##  ##      ##     ##    ##     ##    ##  ##  ##    ##  #### 
+ ##     ##    ##     ##    ##    ##     ##   ##     ##     ##    ##     ##    ##  ##  ##    ##   ### 
+ ##     ##    ##     ##    ##     ##    ##    ##    ########      #######      ###  ###     ##    ## 
+*/
+.markdown ul,
+.markdown ol {
+  padding-left: 15px;
+}
+/*
+ ##          ####     ######     ######## 
+ ##           ##     ##    ##       ##    
+ ##           ##     ##             ##    
+ ##           ##      ######        ##    
+ ##           ##           ##       ##    
+ ##           ##     ##    ##       ##    
+ ########    ####     ######        ##    
+*/
+.list #active-container {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+#character-list th:first-child,
+#character-list td:first-child {
+  width: 120px;
+}
+.list p {
+  margin: 0;
+}
+.list header .return {
+  text-align: left;
+}
+.list footer .return {
+  text-align: right;
+}
+.list section h1 + main,
+.list section h2 + main,
+.list section h3 + main,
+.list section h4 + main,
+.list section h5 + main,
+.list section h6 + main {
+  margin-top: 15px;
+}
+.list section + section {
+  margin-top: 50px;
+}
+.list table {
+  width: 100%;
+  margin: auto;
+}
+.list .mark {
+  color: #ff2;
 }
