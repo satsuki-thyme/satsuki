@@ -44,15 +44,15 @@ let q = search.get(`q`)
 let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
 let laterInsertionDn = ``
 let server = location.origin
-let baseUrl = {
-  "http://localhost:8080": `${textDir}/${dn}`,
-  "http://satsuki.c": `${textDir}/${dn}`,
-  "https://satsuki.me": `${githubFront}${dn}/${githubBack}`
-}[server]
 let textDir = {
   "http://localhost:8080": localTextDir,
   "http://satsuki.c": localTextDir,
   "https://satsuki.me": `${githubFront}${githubPageRepo}/${githubBack}`
+}[server]
+let baseUrl = {
+  "http://localhost:8080": `${textDir}/${dn}`,
+  "http://satsuki.c": `${textDir}/${dn}`,
+  "https://satsuki.me": `${githubFront}${dn}/${githubBack}`
 }[server]
 
 // 変数 dn の算出語に決定
