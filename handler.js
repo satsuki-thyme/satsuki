@@ -14,8 +14,9 @@
 */
 let githubFront = `//raw.githubusercontent.com/satsuki-thyme/`
 let githubBack = `master`
+let githubPageRepo = `satsuki`
+let localTextDir = `scribe/novel`
 let basePage = `index.html`
-let textDir = `scribe/novel`
 let indexFile = `index.json`
 let indvIndexFile = `README.md`
 let listDir = `list`
@@ -45,8 +46,13 @@ let laterInsertionDn = ``
 let server = location.origin
 let baseUrl = {
   "http://localhost:8080": `${textDir}/${dn}`,
-  "http://biblio.c": `${textDir}/${dn}`,
+  "http://satsuki.c": `${textDir}/${dn}`,
   "https://satsuki.me": `${githubFront}${dn}/${githubBack}`
+}[server]
+let textDir = {
+  "http://localhost:8080": localTextDir,
+  "http://satsuki.c": localTextDir,
+  "https://satsuki.me": `${githubFront}${githubPageRepo}/${githubBack}`
 }[server]
 
 // 変数 dn の算出語に決定
@@ -250,7 +256,7 @@ let scriptArray = [
 for (let i in CSSArray) {
   let a = {
     "http://localhost:8080": `lib/${CSSArray[i].repo}/${CSSArray[i].file}`,
-    "http://biblio.c": `lib/${CSSArray[i].repo}/${CSSArray[i].file}`,
+    "http://satsuki.c": `lib/${CSSArray[i].repo}/${CSSArray[i].file}`,
     "https://satsuki.me": `${githubFront}${CSSArray[i].repo}/${githubBack}/${CSSArray[i].file}`
   }
   loadCSS(a[server])
@@ -258,7 +264,7 @@ for (let i in CSSArray) {
 for (let i in scriptArray) {
   let a = {
     "http://localhost:8080": `lib/${scriptArray[i]}/${scriptArray[i]}`,
-    "http://biblio.c": `lib/${scriptArray[i]}/${scriptArray[i]}`,
+    "http://satsuki.c": `lib/${scriptArray[i]}/${scriptArray[i]}`,
     "https://satsuki.me": `${githubFront}${scriptArray[i]}/${githubBack}/${scriptArray[i]}`
   }
   loadScript(a[server])
@@ -360,7 +366,7 @@ window.onload = async () => {
               laterInsertionDn = rly0
               let baseUrlArrayNoIncludeDn = {
                 "http://localhost:8080": `${textDir}/${laterInsertionDn}`,
-                "http://biblio.c": `${textDir}/${laterInsertionDn}`,
+                "http://satsuki.c": `${textDir}/${laterInsertionDn}`,
                 "https://satsuki.me": `${githubFront}${laterInsertionDn}/${githubBack}`
               }
               return fetch(`${baseUrlArrayNoIncludeDn[server]}/${indvIndexFile}`)
