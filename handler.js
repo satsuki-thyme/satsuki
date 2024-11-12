@@ -62,36 +62,39 @@ let reTextPage = new RegExp(`^${dn}/(?!.*${listDir}).*`)
 
 // リスト
 let listPage = []
-let reListUrls = fetch(indivMarkupFileDir + `/` + markupFile)
-.then(async rly => {
-  if (rly.ok) {
-    listPage = await rly.json()
-    marksP(listPage)
-    marksE(listPage)
-    return listPage
-  }
-  else {
-    fetch(defaultMarkupFileDir + `/` + markupFile)
-    .then(async rly => {
-      if (rly.ok) {
-        listPage = await rly.json()
-        marksP(listPage)
-        marksE(listPage)
-        return listPage
-      }
-      else {
-        return false
-      }
-    })
-  }
-})
-.then(rly => {
-  return new RegExp(`^.+?/(${
-    rly
-    .map(rly => listDir + `/` + rly.path)
-    .join(`|`)
-  })$`)
-})
+let reListUrls = null
+if (q && /^[^/]+$/.test(q)) {
+  reListUrls = fetch(indivMarkupFileDir + `/` + markupFile)
+  .then(async rly => {
+    if (rly.ok) {
+      listPage = await rly.json()
+      marksP(listPage)
+      marksE(listPage)
+      return listPage
+    }
+    else {
+      fetch(defaultMarkupFileDir + `/` + markupFile)
+      .then(async rly => {
+        if (rly.ok) {
+          listPage = await rly.json()
+          marksP(listPage)
+          marksE(listPage)
+          return listPage
+        }
+        else {
+          return false
+        }
+      })
+    }
+  })
+  .then(rly => {
+    return new RegExp(`^.+?/(${
+      rly
+      .map(rly => listDir + `/` + rly.path)
+      .join(`|`)
+    })$`)
+  })
+}
 
 
 
@@ -224,68 +227,6 @@ if (server === `https://satsuki.me`) {
 
 
 
-/*
- ##           #######        ###       ########
- ##          ##     ##      ## ##      ##     ##
- ##          ##     ##     ##   ##     ##     ##
- ##          ##     ##    ##     ##    ##     ##
- ##          ##     ##    #########    ##     ##
- ##          ##     ##    ##     ##    ##     ##
- ########     #######     ##     ##    ########
-*/
-let CSSArray = [
-  {
-    "repo": `yamlparse.js`,
-    "file": `yaml.css`
-  },
-  {
-    "repo": `common`,
-    "file": `markup-special-notation.css`
-  }
-]
-let scriptArray = [
-  `wordcount.js`,
-  `maketable.js`,
-  `comparearray.js`,
-  `mdparse.js`,
-  `yamlparse.js`,
-  `replacetool.js`,
-  `novelparse.js`,
-  `brackettool.js`
-]
-for (let i in CSSArray) {
-  let a = {
-    "http://localhost:8080": `lib/${CSSArray[i].repo}/${CSSArray[i].file}`,
-    "http://satsuki.c": `lib/${CSSArray[i].repo}/${CSSArray[i].file}`,
-    "https://satsuki.me": `${githubFront}${CSSArray[i].repo}/${githubBack}/${CSSArray[i].file}`
-  }
-  loadCSS(a[server])
-}
-for (let i in scriptArray) {
-  let a = {
-    "http://localhost:8080": `lib/${scriptArray[i]}/${scriptArray[i]}`,
-    "http://satsuki.c": `lib/${scriptArray[i]}/${scriptArray[i]}`,
-    "https://satsuki.me": `${githubFront}${scriptArray[i]}/${githubBack}/${scriptArray[i]}`
-  }
-  loadScript(a[server])
-}
-function loadCSS(URL) {
-  let e = document.createElement(`link`)
-  e.rel = `stylesheet`
-  e.href = URL
-  document.head.appendChild(e)
-}
-async function loadScript(URL) {
-  let e = document.createElement(`script`)
-  e.src = URL
-  e.async = true
-  document.head.appendChild(e)
-}
-
-
-
-
-
 window.onload = async () => {
   /*
     要素の取得
@@ -336,6 +277,7 @@ window.onload = async () => {
       .then(async rly => {
         if (rly.ok) {
           let index = await rly.json()
+          console.log(index)
           let filteredIndex = Array.from(
             new Set(
               index.filter(rly => {
@@ -1148,167 +1090,168 @@ window.onload = async () => {
    ##           ##     ##    ##       ##    
    ########    ####     ######        ##    
   */
-  reListUrls
-  .then(rly => {
-    if (q && rly.test(q)) {
-      let targetPage = listPage
-      .filter(e => e.active)
-      .filter(e => e.path === q.match(/([^/]*)$/)[0])[0]
-      displayList(targetPage)
-      document.querySelector(`title`).innerText = targetPage.name
-      async function displayList(arg) {
-        let mark = arg.mark || []
-        let type = arg.markupType || ``
-        let listName = arg.name || ``
-        let htmlClass = arg.var[0] || ``
-        let tableClass = arg.var[1] || ``
-        let tableID = arg.var[2] || ``
-        let tableHeading = arg.var[3] || ``
-        let prefix = Number(arg.var[4]) || 0
-        let postfix = Number(arg.var[5]) || 0
-  
-        html.classList.add(htmlClass)
-        let indexContents = await fetch(`${baseUrl}/${indvIndexFile}`)
-        .then(async rly => {
-          if (rly.ok) {
-            return await rly.text()
-          }
-          else {
-            return false
-          }
-        })
-        let header = `<header><h1>${(indexContents.match(/# .*/))[0].replace(/^# /, ``)}</h1><h2>${listName}</h2><p class="return"><a href="?q=${dn}">戻る</a></p></header>`
-        let footer = `<footer><p class="return"><a href="?q=${dn}">戻る</a></p></footer>`
-        let text = (
-          await Promise.all(
-            indexContents
-            .match(reTextBlob)[0]
-            .match(/(?:([\-+*]|\d+ \.) )(.+?)(?= *[:：])/g)
-            .map(e => e.replace(/([\-+*]|\d+ \.) /, ``))
-            .map(async rly => {
-              return fetch(`${baseUrl}/${rly}`)
-              .then(async rly => {
-                if (rly.ok) {
-                  return await rly.text()
-                }
-                else {
-                  return false
-                }
-              })
-            })
-          )
-        )
-        .join(``)
-        if (type === `enclosure`) {
-          activeContainer.innerHTML = header + (
-            await Promise.all(
-              (
-                await getMarkListForEnclosure(mark, prefix, postfix))
-                .filter(rly => rly.description[0] !== undefined)
-                .map(async rly => {
-                  let tableContents = []
-                  for (let i in rly.keyword) {
-                    tableContents.push([rly.description[i]])
-                  }
-                  let partialHeader = `<section><h3>${rly.attribute}</h3>`
-                  let partialMain = `<main>${await maketable(tableContents, ``, tableClass, tableID)}</main>`
-                  let partialFooter = `</section>`
-                  return partialHeader + partialMain + partialFooter
-                }
-              )
-            )
-          ).join(``) + footer
-        }
-        if (type === `preposition`) {
-          let contents = await getMarkListForPreposition(mark)
-          activeContainer.innerHTML = 
-          `${header}
-          <main>
-            <ol>${contents.map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
-            ${maketable(contents.map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
-          </main>
-          ${footer}`
-        }
-        async function getMarkListForEnclosure(mark, prefix, postfix) {
-          let singleLineText = text.replace(/\r|\n/g, ``)
-          let keywordList = []
-          let reBCISrc = Array.from(
-            new Set(
-              marksPreposition
-              .map(rly => rly[1])
-            )
-          ).join(``)
-          for (let i in mark) {
-            keywordList[i] = {}
-            let importedMark = [esc(mark[i][0][0]), esc(mark[i][0][1])]
-            let reKeywordSrc = []
-            reKeywordSrc.push(`${importedMark[0]}.*?${importedMark[1]}`)
-            let reMarkSrc = []
-            reMarkSrc.push(importedMark[0])
-            reMarkSrc.push(importedMark[1])
-            reMarkSrc = Array.from(new Set(reMarkSrc))
-            let reKeyword = new RegExp(`(${reKeywordSrc.join(`|`)})`, `g`)
-            let reMark = new RegExp(`${reMarkSrc.join('|')}`, `g`)
-            let keywordSrc = Array.from(new Set(singleLineText.match(reKeyword)))
-            keywordList[i].keyword = await Promise.all(
-              keywordSrc.map(async rly => (await novelparse({"src": rly.replace(/^.|.$/g, ``), "newLineMode": `unprocessed`, "rubyMode": `parse`, "parenthesis": `normal`, "comment": `delete-together`})).replace(/　 /, ``)),
-            )
-            keywordList[i].description = await Promise.all(
-              keywordSrc
-              .map(async rly => {
-                let reDescription = new RegExp(`.{0,${prefix}}${esc(rly)}.{0,${postfix}}(?:[^《]*?》)?`)
-                let reMarklessKeyword = new RegExp(`(?!\\{[^${esc(reBCISrc)}]*)(${esc(rly.replace(reMark, ``))})`)
-                let w0 = singleLineText
-                .match(reDescription)[0]
-                .replace(reMark, ``)
-                return (await novelparse({"src": (await brackettool(await brackettool(w0, marksPreposition, `delete-together`), marksEnclosure, `delete`)).replace(reMarklessKeyword, `<span class="mark">$1</span>`), "newLineMode": `unprocessed`, "rubyMode": `parse`, "parenthesis": `normal`, "comment": `delete-togehter`})).replace(/　 /, ``)
-              })
-            )
-            keywordList[i].attribute = mark[i][1]
-          }
-          return await keywordList
-        }
-        async function getMarkListForPreposition(mark) {
-          let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`)
-          let reRemoveMark = new RegExp(esc(marksPreposition.reduce((a, c) => a.concat(c), []).join(`|`)), `g`)
-          let textArray = text
-          .split(/\r?\n/)
-          .filter(rly => reFilter.test(rly))
-          .map(rly => {
-            return [
-              rly
-              .match(reFilter)[0]
-              .replace(reRemoveMark, ``),
-              rly
-              .replace(reFilter, ``)
-              .replace(reRemoveMark, ``)
-              .replace(/^　/, ``)
-            ]
+  if (q && /^[^/]+$/.test(q)) {
+    reListUrls
+    .then(rly => {
+      if (q && rly.test(q)) {
+        let targetPage = listPage
+        .filter(e => e.active)
+        .filter(e => e.path === q.match(/([^/]*)$/)[0])[0]
+        displayList(targetPage)
+        document.querySelector(`title`).innerText = targetPage.name
+        async function displayList(arg) {
+          let mark = arg.mark || []
+          let type = arg.markupType || ``
+          let listName = arg.name || ``
+          let htmlClass = arg.var[0] || ``
+          let tableClass = arg.var[1] || ``
+          let tableID = arg.var[2] || ``
+          let tableHeading = arg.var[3] || ``
+          let prefix = Number(arg.var[4]) || 0
+          let postfix = Number(arg.var[5]) || 0
+    
+          html.classList.add(htmlClass)
+          let indexContents = await fetch(`${baseUrl}/${indvIndexFile}`)
+          .then(async rly => {
+            if (rly.ok) {
+              return await rly.text()
+            }
+            else {
+              return false
+            }
           })
-          let index = Array.from(new Set(textArray.map(rly => rly[0])))
-          return await Promise.all(
-            index
-            .map(async rly0 => {
-              return [
-                rly0,
-                await novelparse({
-                  "src": textArray
-                  .filter(rly1 => rly1[0] === rly0)
-                  .map(rly2 => rly2[1].replace(/^　*/, ``))
-                  .join(`<br>`),
-                  "newLineMode": `unprocessed`,
-                  "rubyMode": `parse`,
-                  "parenthesis": `normal`,
-                  "comment": `delete-together`
+          let header = `<header><h1>${(indexContents.match(/# .*/))[0].replace(/^# /, ``)}</h1><h2>${listName}</h2><p class="return"><a href="?q=${dn}">戻る</a></p></header>`
+          let footer = `<footer><p class="return"><a href="?q=${dn}">戻る</a></p></footer>`
+          let text = (
+            await Promise.all(
+              indexContents
+              .match(reTextBlob)[0]
+              .match(/(?:([\-+*]|\d+ \.) )(.+?)(?= *[:：])/g)
+              .map(e => e.replace(/([\-+*]|\d+ \.) /, ``))
+              .map(async rly => {
+                return fetch(`${baseUrl}/${rly}`)
+                .then(async rly => {
+                  if (rly.ok) {
+                    return await rly.text()
+                  }
+                  else {
+                    return false
+                  }
                 })
+              })
+            )
+          )
+          .join(``)
+          if (type === `enclosure`) {
+            activeContainer.innerHTML = header + (
+              await Promise.all(
+                (
+                  await getMarkListForEnclosure(mark, prefix, postfix))
+                  .filter(rly => rly.description[0] !== undefined)
+                  .map(async rly => {
+                    let tableContents = []
+                    for (let i in rly.keyword) {
+                      tableContents.push([rly.description[i]])
+                    }
+                    let partialHeader = `<section><h3>${rly.attribute}</h3>`
+                    let partialMain = `<main>${await maketable(tableContents, ``, tableClass, tableID)}</main>`
+                    let partialFooter = `</section>`
+                    return partialHeader + partialMain + partialFooter
+                  }
+                )
+              )
+            ).join(``) + footer
+          }
+          if (type === `preposition`) {
+            let contents = await getMarkListForPreposition(mark)
+            activeContainer.innerHTML = 
+            `${header}
+            <main>
+              <ol>${contents.map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
+              ${maketable(contents.map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
+            </main>
+            ${footer}`
+          }
+          async function getMarkListForEnclosure(mark, prefix, postfix) {
+            let singleLineText = text.replace(/\r|\n/g, ``)
+            let keywordList = []
+            let reBCISrc = Array.from(
+              new Set(
+                marksPreposition
+                .map(rly => rly[1])
+              )
+            ).join(``)
+            for (let i in mark) {
+              keywordList[i] = {}
+              let importedMark = [esc(mark[i][0][0]), esc(mark[i][0][1])]
+              let reKeywordSrc = []
+              reKeywordSrc.push(`${importedMark[0]}.*?${importedMark[1]}`)
+              let reMarkSrc = []
+              reMarkSrc.push(importedMark[0])
+              reMarkSrc.push(importedMark[1])
+              reMarkSrc = Array.from(new Set(reMarkSrc))
+              let reKeyword = new RegExp(`(${reKeywordSrc.join(`|`)})`, `g`)
+              let reMark = new RegExp(`${reMarkSrc.join('|')}`, `g`)
+              let keywordSrc = Array.from(new Set(singleLineText.match(reKeyword)))
+              keywordList[i].keyword = await Promise.all(
+                keywordSrc.map(async rly => (await novelparse({"src": rly.replace(/^.|.$/g, ``), "newLineMode": `unprocessed`, "rubyMode": `parse`, "parenthesis": `normal`, "comment": `delete-together`})).replace(/　 /, ``)),
+              )
+              keywordList[i].description = await Promise.all(
+                keywordSrc
+                .map(async rly => {
+                  let reDescription = new RegExp(`.{0,${prefix}}${esc(rly)}.{0,${postfix}}(?:[^《]*?》)?`)
+                  let reMarklessKeyword = new RegExp(`(?!\\{[^${esc(reBCISrc)}]*)(${esc(rly.replace(reMark, ``))})`)
+                  let w0 = singleLineText
+                  .match(reDescription)[0]
+                  .replace(reMark, ``)
+                  return (await novelparse({"src": (await brackettool(await brackettool(w0, marksPreposition, `delete-together`), marksEnclosure, `delete`)).replace(reMarklessKeyword, `<span class="mark">$1</span>`), "newLineMode": `unprocessed`, "rubyMode": `parse`, "parenthesis": `normal`, "comment": `delete-togehter`})).replace(/　 /, ``)
+                })
+              )
+              keywordList[i].attribute = mark[i][1]
+            }
+            return await keywordList
+          }
+          async function getMarkListForPreposition(mark) {
+            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`)
+            let reRemoveMark = new RegExp(esc(marksPreposition.reduce((a, c) => a.concat(c), []).join(`|`)), `g`)
+            let textArray = text
+            .split(/\r?\n/)
+            .filter(rly => reFilter.test(rly))
+            .map(rly => {
+              return [
+                rly
+                .match(reFilter)[0]
+                .replace(reRemoveMark, ``),
+                rly
+                .replace(reFilter, ``)
+                .replace(reRemoveMark, ``)
+                .replace(/^　/, ``)
               ]
             })
-          )
+            let index = Array.from(new Set(textArray.map(rly => rly[0])))
+            return await Promise.all(
+              index
+              .map(async rly0 => {
+                return [
+                  rly0,
+                  await novelparse({
+                    "src": textArray
+                    .filter(rly1 => rly1[0] === rly0)
+                    .map(rly2 => rly2[1].replace(/^　*/, ``))
+                    .join(`<br>`),
+                    "newLineMode": `unprocessed`,
+                    "rubyMode": `parse`,
+                    "parenthesis": `normal`,
+                    "comment": `delete-together`
+                  })
+                ]
+              })
+            )
+          }
         }
       }
-    }
-  })
-
+    })
+  }
 
 
 
@@ -1397,8 +1340,37 @@ window.onload = async () => {
       return r.replace(/\\(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "$1")
     }
   }
-}
 
+
+
+
+
+  /*
+      ###        ######     ########    ####     #######     ##    ## 
+     ## ##      ##    ##       ##        ##     ##     ##    ###   ## 
+    ##   ##     ##             ##        ##     ##     ##    ####  ## 
+   ##     ##    ##             ##        ##     ##     ##    ## ## ## 
+   #########    ##             ##        ##     ##     ##    ##  #### 
+   ##     ##    ##    ##       ##        ##     ##     ##    ##   ### 
+   ##     ##     ######        ##       ####     #######     ##    ## 
+  */
+  /*
+
+    スクロール
+
+  */
+  let windowHeight = window.innerHeight
+  window.onscroll = () => {
+    getScrollValue()
+  }
+  document.onscroll = () => {
+    getScrollValue()
+  }
+  window.addEventListener(`unload`, () => {
+    localStorage.setItem(`scrollValueY`, scrollValueY)
+    localStorage.setItem(`scrollValueX`, scrollValueX)
+  })
+}
 
 
 
@@ -1413,25 +1385,6 @@ window.onload = async () => {
  ##     ##    ##    ##       ##        ##     ##     ##    ##   ### 
  ##     ##     ######        ##       ####     #######     ##    ## 
 */
-/*
-
-  スクロール
-
-*/
-let windowHeight = window.innerHeight
-window.onscroll = () => {
-  getScrollValue()
-}
-document.onscroll = () => {
-  getScrollValue()
-}
-window.addEventListener(`unload`, () => {
-  localStorage.setItem(`scrollValueY`, scrollValueY)
-  localStorage.setItem(`scrollValueX`, scrollValueX)
-})
-
-
-
 /*
 
   戻る
