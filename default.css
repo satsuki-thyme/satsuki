@@ -140,7 +140,7 @@ body {
 #active-container header p {
   margin: 0;
 }
-.internet #active-container header {
+.internet header {
   padding-top: 0;
 }
 #active-container header h1 {
@@ -267,7 +267,7 @@ body {
   height: 0;
 }
 #copyright {
-  margin-top: 50px;
+  margin: 0;
 }
 /*
   ######      #######     ##     ##    ##     ##     #######     ##    ## 
@@ -285,6 +285,13 @@ header#site-header {
 }
 .internet header#site-header {
   display: initial;
+}
+footer#site-footer {
+  padding-bottom: 10px;
+  text-align: center;
+}
+#active-container > footer {
+  padding-bottom: 80px;
 }
 #site-logo {
   width: 240px;
@@ -334,7 +341,7 @@ header#site-header {
   ##     ##   ###    ##     ##    ##           ##   ##  
  ####    ##    ##    ########     ########    ##     ## 
 */
-.index #active-container {
+.index {
   flex-direction: column;
   flex-wrap: nowrap;
 }
@@ -530,8 +537,8 @@ header#site-header {
 .text #char-num {
   display: none;
 }
-.text #active-container table.relation-link,
-.text #active-container table.relation-link td {
+.text table.relation-link,
+.text table.relation-link td {
   border-width: 0;
 }
 /*
@@ -543,7 +550,7 @@ header#site-header {
  ##     ##    ##     ##    ##    ## 
  ########      #######      ######  
 */
-.doc #active-container {
+.doc {
   flex-direction: column;
 }
 .doc aside {
@@ -656,55 +663,41 @@ header#site-header {
   vertical-align: middle;
   line-height: 1.8;
 }
-.doc #active-container .nav-outer + .nav-inner,
-.doc #active-container .nav-inner + .nav-outer {
-  margin-top: 10px;
-}
-.doc #active-container .nav-inner {
-  text-align: center;
-}
-.doc #active-container .nav-inner table,
-.doc #active-container .nav-inner tr,
-.doc #active-container .nav-inner td {
-  padding: 0;
-  border-width: 0;
-}
-.doc #active-container .nav-inner table {
+.doc nav {
   width: 100%;
-  margin: auto;
-  font-size: 85%;
+  line-height: 1.5em;
+  vertical-align: middle;
 }
-.doc #active-container .nav-inner td {
-  padding: 0;
+.doc nav div {
+  float: left;
 }
-.doc #active-container .nav-inner td:nth-child(2) {
-  width: 6em;
-  text-align: center;
-}
-.doc #active-container .nav-inner td:first-child,
-.doc #active-container .nav-inner td:last-child {
-  max-width: calc(50% - 6em);
-}
-.doc #active-container .nav-inner td:first-child {
+.doc nav .left {
   text-align: right;
 }
-.doc #active-container .nav-inner td:last-child {
+.doc nav .center {
+  width: 8em;
+}
+.doc nav .right {
   text-align: left;
 }
-.doc #active-container .nav-inner .nav-separater {
-  padding: 0 5px;
+.doc nav .left,
+.doc nav .right {
+  width: calc(50% - 4em);
 }
-.doc #active-container .user-cnt-tasklist {
+.doc nav .nav-separater {
+  padding: 0 1em;
+}
+.doc .user-cnt-tasklist {
   list-style: none;
   text-indent: -1.5em;
 }
-.doc #active-container .user-cnt-table-right {
+.doc .user-cnt-table-right {
   text-align: right;
 }
-.doc #active-container .user-cnt-table-center {
+.doc .user-cnt-table-center {
   text-align: center;
 }
-.doc #active-container .user-cnt-table-left {
+.doc .user-cnt-table-left {
   text-align: left;
 }
 .doc .user-cnt-arrow {
@@ -735,7 +728,7 @@ header#site-header {
  ##           ##     ##    ##       ##    
  ########    ####     ######        ##    
 */
-.list #active-container {
+.list {
   flex-direction: column;
   flex-wrap: nowrap;
 }
