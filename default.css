@@ -94,7 +94,7 @@ a:visited {
     border-color: var(--dark-2);
   }
 }
-.internet.text .control-panel {
+.text.internet .control-panel {
   height: 0;
   visibility: hidden;
 }
@@ -140,7 +140,7 @@ body {
 #active-container header p {
   margin: 0;
 }
-.internet header {
+.internet header#site-header {
   padding-top: 0;
 }
 #active-container header h1 {
@@ -344,6 +344,10 @@ footer#site-footer {
 .index {
   flex-direction: column;
   flex-wrap: nowrap;
+}
+.index.internet #active-container > header {
+  height: 0;
+  visibility: hidden;
 }
 .index #upper-area {
   width: 100%;

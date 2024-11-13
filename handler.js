@@ -9,6 +9,12 @@
 */
 /*
 
+  インターネットURLに固定する
+
+*/
+let fixToInternetURL = false
+/*
+
   設定値
 
 */
@@ -24,6 +30,7 @@ let listDir = `list`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
 let markupFile = `markup.json`
+let internetServer = `https://satsuki.me`
 
 
 
@@ -44,7 +51,7 @@ location.search
 let q = search.get(`q`)
 let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
 let laterInsertionDn = ``
-let server = location.origin
+let server = fixToInternetURL === false ? location.origin : internetServer
 let textDir = {
   "http://localhost:8080": localTextDir,
   "http://satsuki.c": localTextDir,
@@ -215,11 +222,12 @@ let PrevFile = ``
 
 /*
 
-  要素の取得
+  その他
 
 */
 let html = document.querySelector(`html`)
-if (server === `https://satsuki.me`) {
+
+if (server === internetServer) {
   html.classList.add(`internet`)
 }
 
