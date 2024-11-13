@@ -256,9 +256,7 @@ body {
 #active-container,
 #static-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
+  flex-direction: column;
   align-items: center;
 }
 #static-container {
@@ -361,34 +359,39 @@ header#site-header {
  ##    ##    ##     ##      ## ##      ##          ##    ## 
   ######      #######        ###       ########    ##     ##
 */
-.cover #active-container {
-  flex-direction: column;
-  flex-wrap: wrap;
-}
 .cover main {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-around;
   align-items: flex-start;
   align-content: flex-start;
-  justify-content: center;
 }
-.cover main > section {
+.cover main section > div:has(> section) {
+  display: flex;
+  justify-content: space-around;
+}
+.cover main section:has(> h1):has(> div),
+.cover main section:has(> h2):has(> div),
+.cover main section:has(> h3):has(> div),
+.cover main section:has(> h4):has(> div),
+.cover main section:has(> h5):has(> div),
+.cover main section:has(> h6):has(> div) {
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   align-items: flex-start;
-  align-content: flex-start;
-  justify-content: center;
 }
-.cover main > section > div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  align-content: flex-start;
-  justify-content: center;
+.cover main > section,
+.cover main div > section {
+  flex-grow: 1;
+}
+.cover main div > section + section {
+  margin-left: 30px;
 }
 .cover section {
   margin: 25px 0;
+}
+.cover section > div {
+  flex-grow: 1;
 }
 .cover h2 + div > section,
 .cover h3 + div > section,
@@ -406,7 +409,8 @@ header#site-header {
 }
 .cover #list ul {
   width: fit-content;
-  margin: auto;
+  margin: 0;
+  padding-left: 2em;
 }
 .cover table {
   margin: auto;
