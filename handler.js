@@ -12,7 +12,7 @@
   インターネットURLに固定する
 
 */
-let fixToInternetURL = true
+let fixToInternetURL = false
 /*
 
   設定値
@@ -20,7 +20,6 @@ let fixToInternetURL = true
 */
 let githubRawFront = `//raw.githubusercontent.com/satsuki-thyme`
 let githubRawBack = `master`
-let githubPagesSite = `//satsuki-thyme.github.io`
 let internetSiteRepo = `satsuki`
 let localTextDir = `scribe/novel`
 let basePage = `index.html`
@@ -288,11 +287,7 @@ function loadFiles() {
     .push(
       new Promise(resolve => {
         let e = document.createElement(`link`)
-        e.href = {
-          "http://localhost:8080": `${libDir}/${i.repo}/${i.file}`,
-          "http://satsuki.c": `${libDir}/${i.repo}/${i.file}`,
-          "https://satsuki.me": `${githubPagesSite}/${i.repo}/${i.file}`
-        }[server]
+        e.href = `${libDir}/${i.repo}/${i.file}`
         e.rel = `stylesheet`
         document.head.appendChild(e)
         e.onload = () => {
@@ -306,11 +301,7 @@ function loadFiles() {
     .push(
       new Promise(resolve => {
         let e = document.createElement(`script`)
-        e.src = {
-          "http://localhost:8080": `${libDir}/${i.repo}/${i.file}`,
-          "http://satsuki.c": `${libDir}/${i.repo}/${i.file}`,
-          "https://satsuki.me": `${githubPagesSite}/${i.repo}/${i.file}`
-        }[server]
+        e.src = `${libDir}/${i.repo}/${i.file}`
         e.async = true
         document.head.appendChild(e)
         e.onload = () => {
