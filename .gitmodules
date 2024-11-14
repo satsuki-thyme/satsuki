@@ -1,6 +1,3 @@
-[submodule "yamlparse.js"]
-	path = lib/yamlparse.js
-	url = https://github.com/satsuki-thyme/yamlparse.js
 [submodule "lib/brackettool.js"]
 	path = lib/brackettool.js
 	url = https://github.com/satsuki-thyme/brackettool.js
@@ -19,3 +16,6 @@
 [submodule "lib/wordcount.js"]
 	path = lib/wordcount.js
 	url = https://github.com/satsuki-thyme/wordcount.js
+[submodule "lib/yamlparse.js"]
+	path = lib/yamlparse.js
+	url = https://github.com/satsuki-thyme/yamlparse.js
