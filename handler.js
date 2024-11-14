@@ -290,9 +290,7 @@ function loadFiles() {
         e.href = `${libDir}/${i.repo}/${i.file}`
         e.rel = `stylesheet`
         document.head.appendChild(e)
-        console.log(0)
         e.onload = () => {
-          console.log(1)
           resolve()
         }
       })
@@ -306,9 +304,7 @@ function loadFiles() {
         e.src = `${libDir}/${i.repo}/${i.file}`
         e.async = true
         document.head.appendChild(e)
-        console.log(2)
         e.onload = () => {
-          console.log(3)
           resolve()
         }
       })
