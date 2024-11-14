@@ -12,15 +12,16 @@
   インターネットURLに固定する
 
 */
-let fixToInternetURL = false
+let fixToInternetURL = true
 /*
 
   設定値
 
 */
-let githubFront = `//raw.githubusercontent.com/satsuki-thyme/`
-let githubBack = `master`
-let githubPageRepo = `satsuki`
+let githubRawFront = `//raw.githubusercontent.com/satsuki-thyme`
+let githubRawBack = `master`
+let githubPagesSite = `//satsuki-thyme.github.io`
+let internetSiteRepo = `satsuki`
 let localTextDir = `scribe/novel`
 let basePage = `index.html`
 let indexFile = `index.json`
@@ -55,12 +56,12 @@ let server = fixToInternetURL === false ? location.origin : internetServer
 let textDir = {
   "http://localhost:8080": localTextDir,
   "http://satsuki.c": localTextDir,
-  "https://satsuki.me": `${githubFront}${githubPageRepo}/${githubBack}`
+  "https://satsuki.me": `${githubRawFront}/${internetSiteRepo}/${githubRawBack}`
 }[server]
 let baseURL = {
   "http://localhost:8080": `${textDir}/${dn}`,
   "http://satsuki.c": `${textDir}/${dn}`,
-  "https://satsuki.me": `${githubFront}${dn}/${githubBack}`
+  "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
 }[server]
 
 // 変数 dn の算出語に決定
@@ -290,7 +291,7 @@ function loadFiles() {
         e.href = {
           "http://localhost:8080": `${libDir}/${i.repo}/${i.file}`,
           "http://satsuki.c": `${libDir}/${i.repo}/${i.file}`,
-          "https://satsuki.me": `${githubFront}${i.repo}/${githubBack}/${i.file}`
+          "https://satsuki.me": `${githubPagesSite}/${i.repo}/${i.file}`
         }[server]
         e.rel = `stylesheet`
         document.head.appendChild(e)
@@ -308,7 +309,7 @@ function loadFiles() {
         e.src = {
           "http://localhost:8080": `${libDir}/${i.repo}/${i.file}`,
           "http://satsuki.c": `${libDir}/${i.repo}/${i.file}`,
-          "https://satsuki.me": `${githubFront}${i.repo}/${githubBack}/${i.file}`
+          "https://satsuki.me": `${githubPagesSite}/${i.repo}/${i.file}`
         }[server]
         e.async = true
         document.head.appendChild(e)
@@ -414,7 +415,7 @@ loadFiles()
               let baseURLArrayNoIncludeDn = {
                 "http://localhost:8080": `${textDir}/${laterInsertionDn}`,
                 "http://satsuki.c": `${textDir}/${laterInsertionDn}`,
-                "https://satsuki.me": `${githubFront}${laterInsertionDn}/${githubBack}`
+                "https://satsuki.me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
               }
               return fetch(`${baseURLArrayNoIncludeDn[server]}/${indvIndexFile}`)
               .then(async rly1 => {

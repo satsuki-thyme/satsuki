@@ -1,0 +1,44 @@
+.yaml div.key-group,
+.yaml div.value-group {
+  padding-left: 1em;
+  line-height: 1.5em;
+}
+.yaml div.key-group + div,
+.yaml div.value-group + div {
+  margin-top: 0.3em;
+}
+.yaml pre.comment-group {
+  margin: 0;
+  font-family: monospace;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.yaml span.bullet {
+  display: inline-block;
+  margin-right: -0.2em;
+}
+.yaml span.bullet + span.value {
+  display: inline-block;
+  width: calc(100% - 0.8em);
+  margin-left: 0.2em;
+}
+.yaml span.key {
+  color: #f92672;
+}
+.yaml span.value {
+  color: #e6d874;
+}
+.yaml span.colon,
+.yaml span.bullet {
+  font-family: monospace;
+  color: #f8f8f2;
+}
+.yaml span.number {
+  color: #ae81ff;
+}
+.yaml span.vertical-bar {
+  color: #f92672;
+}
+.yaml span.comment {
+  color: #88846f;
+}
