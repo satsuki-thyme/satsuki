@@ -79,7 +79,7 @@ if (q && reDnExists.test(q)) {
       return await rly.json()
     }
     else {
-      fetch(defaultMarkupFileDir + `/` + markupFile)
+      return fetch(defaultMarkupFileDir + `/` + markupFile)
       .then(async rly => {
         if (rly.ok) {
           return await rly.json()
@@ -812,7 +812,7 @@ loadFiles()
                 if (/^#+ .+/.test(indexArray[i])) {
                   propArray[i].elemType = `heading`
                 }
-                if (/^[\-+*] .+/.test(indexArray[i])) {
+                if (inToc && /^[\-+*] .+/.test(indexArray[i])) {
                   propArray[i].elemType = `item`
                 }
                 if (
@@ -934,7 +934,13 @@ loadFiles()
         bracketModeSelector.forEach(rly => {
           rly.onchange = async () => {
             bracketMode = rly.checked === true ? rly.value : false
-            textArea.innerHTML = textForCopy = await novelparse({"src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum), "newLineMode": newLineMode, "rubyMode": rubyMode, "parenthesis": `normal`, "comment": `delete-together`})
+            textArea.innerHTML = textForCopy = await novelparse({
+              "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+              "newLineMode": newLineMode,
+              "rubyMode": rubyMode,
+              "parenthesis": `normal`,
+              "comment": `delete-together`
+            })
             getContentsSize()
             getScrollValue()
           }
@@ -942,14 +948,26 @@ loadFiles()
         rubyModeSwitch.forEach(rly => {
           rly.onchange = async () => {
             rubyMode = rly.checked === true ? rly.value : false
-            textArea.innerHTML = textForCopy = await novelparse({"src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum), "newLineMode": newLineMode, "rubyMode": rubyMode, "parenthesis": `normal`, "comment": `delete-together`})
+            textArea.innerHTML = textForCopy = await novelparse({
+              "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+              "newLineMode": newLineMode,
+              "rubyMode": rubyMode,
+              "parenthesis": `normal`,
+              "comment": `delete-together`
+            })
             getContentsSize()
             getScrollValue()
           }
         })
         newLineModeSwitch.onchange = async () => {
           newLineMode = newLineModeSwitch.checked === true ? `few` : `normal`
-          textArea.innerHTML = textForCopy = await novelparse({"src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum), "newLineMode": newLineMode, "rubyMode": rubyMode, "parenthesis": `normal`, "comment": `delete-together`})
+          textArea.innerHTML = textForCopy = await novelparse({
+            "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+            "newLineMode": newLineMode,
+            "rubyMode": rubyMode,
+            "parenthesis": `normal`,
+            "comment": `delete-together`
+          })
           getContentsSize()
           getScrollValue()
         }
@@ -1020,7 +1038,7 @@ loadFiles()
               async function textLength() {
                 if (/\$text_length/.test(w)) {
                   return await wordcount(await brackettool(await brackettool(text, marksPreposition, `delete-together`), marksEnclosure, `delete`))
-            }
+                }
                 else {
                   return false
                 }
@@ -1072,6 +1090,7 @@ loadFiles()
             <div class="switch-set ruby-mode">
               <span class="heading">ルビ</span>
               <label><input type="radio" name="ruby-mode" value="parse" checked><span class="label">解釈</span></label>
+              <label><input type="radio" name="ruby-mode" value="open"><span class="label">開く</span></label>
               <label><input type="radio" name="ruby-mode" value="raw"><span class="label">非解釈</span></label>
               <label><input type="radio" name="ruby-mode" value="delete"><span class="label">削除</span></label>
             </div>
@@ -1393,7 +1412,13 @@ loadFiles()
     let kanaRatio = `-`
     let letterRatio = `-`
     let linesRatio = `-`
-    return await wordcount(await novelparse({"src": await brackettool(await brackettool(src, marksPreposition, `delete-together`), marksEnclosure, `delete`), "newLineMode": `raw`, "rubyMode": `delete`, "parenthesis": `normal`, "comment": `delete-together`}))
+    return await wordcount(await novelparse({
+      "src": await brackettool(await brackettool(src, marksPreposition, `delete-together`), marksEnclosure, `delete`),
+      "newLineMode": `raw`,
+      "rubyMode": `delete`,
+      "parenthesis": `normal`,
+      "comment": `delete-together`
+    }))
     .then(rly => {
       if (rly.total > 0) {
         kanjiRatio = Math.round(rly.kanji / rly.total * 10)
@@ -1543,7 +1568,7 @@ window.addEventListener(`mousedown`, function(e0) {
   if (e0.button === 0) {
     let t = Date.now()
     window.addEventListener(`mousedown`, function(e1) {
-      if (e1.button === 0 && Date.now() - t < 1000) {
+      if (e1.button === 0 && Date.now() - t < 300) {
         location.reload()
       }
       else {
@@ -1552,6 +1577,6 @@ window.addEventListener(`mousedown`, function(e0) {
     })
     return setTimeout(() => {
       return true
-    }, 1000)
+    }, 200)
   }
 })
