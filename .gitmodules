@@ -1,0 +1,21 @@
+[submodule "yamlparse.js"]
+	path = lib/yamlparse.js
+	url = https://github.com/satsuki-thyme/yamlparse.js
+[submodule "lib/brackettool.js"]
+	path = lib/brackettool.js
+	url = https://github.com/satsuki-thyme/brackettool.js
+[submodule "lib/comparearray.js"]
+	path = lib/comparearray.js
+	url = https://github.com/satsuki-thyme/comparearray.js
+[submodule "lib/mdparse.js"]
+	path = lib/mdparse.js
+	url = https://github.com/satsuki-thyme/mdparse.js
+[submodule "lib/novelparse.js"]
+	path = lib/novelparse.js
+	url = https://github.com/satsuki-thyme/novelparse.js
+[submodule "lib/replacetool.js"]
+	path = lib/replacetool.js
+	url = https://github.com/satsuki-thyme/replacetool.js
+[submodule "lib/wordcount.js"]
+	path = lib/wordcount.js
+	url = https://github.com/satsuki-thyme/wordcount.js
