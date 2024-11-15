@@ -525,7 +525,7 @@ loadFiles()
                   rly[j].contents += `<section>`
                   return rly
                 }
-                if (src[i].elemType === `item`) {
+                if (src[i].elemType === `listItem`) {
                   return new Promise(resolve => {
                     if (
                       i === 0
@@ -533,7 +533,7 @@ loadFiles()
                       (
                         i > 0
                         &&
-                        src[i - 1].elemType !== `item`
+                        src[i - 1].elemType !== `listItem`
                       )
                     ) {
                       rly[j].tableElem = []
@@ -548,7 +548,7 @@ loadFiles()
                         (
                           i < src.length - 1
                           &&
-                          src[i + 1].elemType !== `item`
+                          src[i + 1].elemType !== `listItem`
                         )
                         ||
                         (
@@ -558,24 +558,24 @@ loadFiles()
                         rly[j].tableElem.push([``, src[i].name].concat(src[i].count))
                       }
                       else {
-                        rly[j].tableElem.push([ep, `<a href="${basePage}?q=${dn}/${src[i].path}">${src[i].name}</a>`].concat(src[i].count))
+                        rly[j].tableElem.push([ep, `<a href="${basePage}?q=${dn}/${src[i].path}">${src[i].contents}</a>`].concat(src[i].count))
                       }
                       ep++
                     }
                     else {
                       rly[j].dataType = `nonText`
-                      rly[j].tableElem.push([`<a href="${basePage}?q=${dn}/${src[i].path}">${src[i].name}</a>`])
+                      rly[j].tableElem.push([`<a href="${basePage}?q=${dn}/${src[i].path}">${src[i].contents}</a>`])
                     }
                     return rly
                   })
                 }
                 if (src[i].elemType === `paragraph`) {
-                  rly[j].contents += `<p>${src[i].name}</p>`
+                  rly[j].contents += `<p>${src[i].contents}</p>`
                   return rly
                 }
                 if (src[i].elemType === `heading`) {
                   existHeading = true
-                  rly[j].contents += `<section><h${src[i].headingLv}>${src[i].name}</h${src[i].headingLv}><div>`
+                  rly[j].contents += `<section><h${src[i].headingLv}>${src[i].contents}</h${src[i].headingLv}><div>`
                   return rly
                 }
               })
@@ -595,12 +595,12 @@ loadFiles()
               .then(rly => {
                 if (i < src.length - 1) {
                   if (
-                    src[i].elemType !== `item`
+                    src[i].elemType !== `listItem`
                     ||
                     (
-                      src[i].elemType === `item`
+                      src[i].elemType === `listItem`
                       &&
-                      src[i + 1].elemType !== `item`
+                      src[i + 1].elemType !== `listItem`
                     )
                   ) {
                     j++
@@ -660,7 +660,7 @@ loadFiles()
               0,
               {
                 "fieldType": `toc`,
-                "elemType": `item`,
+                "elemType": `listItem`,
                 "text": true,
                 "headingLv": rly[textPos].headingLv,
                 "name": `<span>合</span>計`,
@@ -673,7 +673,7 @@ loadFiles()
           async function countText(indexBlobArray) {
             return await Promise.all(
               indexBlobArray
-              .filter(e => e.elemType === `item` && e.text)
+              .filter(e => e.elemType === `listItem` && e.text)
               .map(e => {
                 return fetch(`${baseURL}/${e.path}`)
                 .then(async rly => {
@@ -694,7 +694,7 @@ loadFiles()
               let i = 0
               return indexBlobArray
               .map(e => {
-                if (e.elemType === `item` && e.text) {
+                if (e.elemType === `listItem` && e.text) {
                   e.count = rly[i].count
                   i++
                 }
@@ -712,15 +712,22 @@ loadFiles()
                   w.fieldType = propArray[i].fieldType
                   w.elemType = propArray[i].elemType
                   w.text = propArray[i].text
-                  if (w.elemType === `item`) {
+                  // 目次のリストアイテム
+                  if (w.fieldType === `toc` && w.elemType === `listItem`) {
                     w.path = e.match(/^(?:[\-+*] )(.*?)(?=[ \t]*[:：])/)[1]
-                    w.name = e.match(/^(?:.*?:[ \t]*)(.*)/)[1]
+                    w.contents = e.match(/^(?:.*?:[ \t]*)(.*)/)[1]
                     w.headingLv = prevHeadingLv
                   }
+                  // 目次以外のコンテンツ
+                  if (w.fieldType === `nonToc`) {
+                    w.contents = e
+                  }
+                  // 見出し
                   if (w.elemType === `heading`) {
                     w.headingLv = prevHeadingLv = e.match(/^#+/)[0].length
-                    w.name = e.match(/^(?:#+ )(.*)/)[1]
+                    w.contents = e.match(/^(?:#+ )(.*)/)[1]
                   }
+                  // 段落
                   if (w.elemType === `paragraph` || w.elemType === false) {
                     w.headingLv = prevHeadingLv
                   }
@@ -748,8 +755,8 @@ loadFiles()
               })
               .filter(e => e)
             )
-            let reToc1 = new RegExp(`^#{${tocSharp}} (${tocHeadingInIndex})`)
-            let reNonToc = new RegExp(`^#{1,${tocSharp}} (?!.*(${tocHeadingInIndex})).*`)
+            let reHeadingToc = new RegExp(`^#{${tocSharp}} (${tocHeadingInIndex})`)
+            let reHeadingNonToc = new RegExp(`^#{1,${tocSharp}} (?!.*(${tocHeadingInIndex})).*`)
             let textSharp = Math.min(
               ...indexArray
               .map(e => {
@@ -768,45 +775,54 @@ loadFiles()
               fn()
               function fn() {
                 /*
-                  field type
+                  field type // 目次ブローブか否か
                 */
-                if (reToc1.test(indexArray[i])) {
+                // 目次
+                if (reHeadingToc.test(indexArray[i])) {
                   inToc = true
                   propArray[i] = {}
                   propArray[i].fieldType = `toc`
                 }
-                if (reNonToc.test(indexArray[i])) {
+                // 目次以外
+                if (reHeadingNonToc.test(indexArray[i])) {
                   inToc = false
                   propArray[i] = {}
                   propArray[i].fieldType = `nonToc`
                 }
+                // 前のタイプを継承
                 if (
                   i > 0
                   &&
-                  !reToc1.test(indexArray[i])
+                  !reHeadingToc.test(indexArray[i])
                   &&
-                  !reNonToc.test(indexArray[i])
+                  !reHeadingNonToc.test(indexArray[i])
                 ) {
                   propArray[i] = {}
                   propArray[i].fieldType = propArray[i - 1].fieldType
                 }
+                // 最初の行で目次の見出しでない
                 if (
                   i === 0
                   &&
-                  !reToc1.test(indexArray[i])
+                  !reHeadingToc.test(indexArray[i])
+                  &&
+                  !reHeadingNonToc.test(indexArray[i])
                 ) {
                   propArray[i] = {}
                   propArray[i].fieldType = `nonToc`
                 }
                 /*
-                  element type
+                  element type // 見出し、リストアイテム、段落
                 */
+                // 見出し
                 if (/^#+ .+/.test(indexArray[i])) {
                   propArray[i].elemType = `heading`
                 }
+                // リストアイテム
                 if (inToc && /^[\-+*] .+/.test(indexArray[i])) {
-                  propArray[i].elemType = `item`
+                  propArray[i].elemType = `listItem`
                 }
+                // 段落
                 if (
                   !/^#+ .+/.test(indexArray[i])
                   &&
@@ -820,16 +836,19 @@ loadFiles()
                   propArray[i].elemType = false
                 }
                 /*
-                  text
+                  text // 本文ブローブか否か
                 */
+                // 本文ブローブ
                   if (reText1.test(indexArray[i])) {
                   propArray[i].text = true
                   inText = true
                 }
+                // 非本文ブローブ
                 if (reNonText.test(indexArray[i])) {
                   propArray[i].text = false
                   inText = false
                 }
+                // 本文ブローブの継承
                 if (
                   !reText1.test(indexArray[i])
                   &&
@@ -1221,11 +1240,11 @@ loadFiles()
         .filter(e => e.active)
         .filter(e => e.path === q.match(/([^/]*)$/)[0])[0]
         displayList(targetPage)
-        document.querySelector(`title`).innerText = targetPage.name
+        document.querySelector(`title`).innerText = targetPage.contents
         async function displayList(arg) {
           let mark = arg.mark || []
           let type = arg.markupType || ``
-          let listName = arg.name || ``
+          let listName = arg.contents || ``
           let htmlClass = arg.var[0] || ``
           let tableClass = arg.var[1] || ``
           let tableID = arg.var[2] || ``
