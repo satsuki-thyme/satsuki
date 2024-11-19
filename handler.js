@@ -1591,3 +1591,26 @@ window.addEventListener(`mousedown`, function(e0) {
     }, 200)
   }
 })
+/*
+
+  キー操作
+
+*/
+window.onkeydown = e => {
+  if (e.code === `Enter`) {
+    let bodyHeight = document.querySelector(`body`).getBoundingClientRect().height
+    let scrollHeight = bodyHeight - window.innerHeight
+    let scrollPos = document.scrollingElement.scrollTop
+    let scrollTrg = 0
+    scrollTrg =
+    scrollPos === 0 ? scrollHeight :
+    scrollPos < scrollHeight / 2 ? 0 :
+    scrollPos >= scrollHeight / 2 && scrollPos !== scrollHeight ? scrollHeight :
+    0
+    document.scrollingElement.scroll({
+      top: scrollTrg,
+      left: 0,
+      behavior: `smooth`
+    })
+  }
+}
