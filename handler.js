@@ -480,12 +480,14 @@ loadFiles()
             let mainFront = `<main>`
             let mainBack = `</main>`
             let footer = `<footer><div class="return-to-index"><a href="${basePage}">インデックスページへ戻る</a></div></footer>`
-            let listLink = `<section id="list"><h2>リスト</h2><ul>${
-              markup
-              .filter(e => e.active)
-              .map(rly => `<li><a href="?q=${dn}/${listDir}/${rly.path}">${rly.name}</a></li>`)
-              .join(``)
-            }</ul></section>`
+            let listLink = `<section id="list"><div><h3>リスト</h3><div>${
+              maketable(
+                markup
+                .filter(e => e.active)
+                .map(rly => [`<a href="?q=${dn}/${listDir}/${rly.path}">${rly.name}</a>`]),
+                ``
+              )
+            }</div></div></section>`
             let text = rly.filter(e => e.text).map(e => e.contents).join(``)
             let doc = rly.filter(e => !e.text).map(e => e.contents).join(``)
             return [header + mainFront + text + listLink + doc + mainBack + footer, title]
@@ -575,7 +577,7 @@ loadFiles()
                 }
                 if (src[i].elemType === `heading`) {
                   existHeading = true
-                  rly[j].contents += `<section><h${src[i].headingLv}>${src[i].contents}</h${src[i].headingLv}><div>`
+                  rly[j].contents += `<section><div><h${src[i].headingLv}>${src[i].contents}</h${src[i].headingLv}><div>`
                   return rly
                 }
               })
@@ -584,11 +586,11 @@ loadFiles()
                   let diff = src[i].headingLv - src[i + 1].headingLv
                   closeSection -= diff
                   if (diff >= 0) {
-                    rly[j].contents += `</div>` + `</section>`.repeat(diff + 1)
+                    rly[j].contents += `</div>` + `</div></section>`.repeat(diff + 1)
                   }
                 }
                 if (i === src.length - 1) {
-                  rly[j].contents += `</div>` + `</section>`.repeat(closeSection)
+                  rly[j].contents += `</div>` + `</div></section>`.repeat(closeSection)
                 }
                 return rly
               })
