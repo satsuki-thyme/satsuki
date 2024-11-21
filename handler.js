@@ -9,10 +9,17 @@
 */
 /*
 
-  インターネットURLに固定する
+  スイッチ
 
 */
+// インターネットURLに固定する
 let fixToInternetURL = false
+
+// 文字数のローカルストレージを初期化する
+let characterCountLogInitializeSwitch = false
+
+
+
 /*
 
   設定値
@@ -30,6 +37,7 @@ let listDir = `list`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
 let markupFile = `markup.json`
+let localSever = `http://satsuki.c`
 let internetServer = `https://satsuki.me`
 
 
@@ -217,6 +225,7 @@ let scrollValueX = Number(localStorage.getItem(`scrollValueX`)) || 0
 let scrollRange = 0
 let PrevOp = ``
 let PrevFile = ``
+let characterCountLogTable = null
 
 
 
@@ -329,8 +338,8 @@ loadFiles()
   /*
     要素の取得
   */
-  let activeContainer = document.querySelector(`#active-container`)
-  /*
+    let activeContainer = document.querySelector(`#active-container`)
+    /*
    ####    ##    ##    ########     ########    ##     ## 
     ##     ###   ##    ##     ##    ##           ##   ##  
     ##     ####  ##    ##     ##    ##            ## ##   
@@ -346,15 +355,22 @@ loadFiles()
     html.classList.add(`index`)
     activeContainer.innerHTML = 
     `<header>
-      <div id="status-switch">
-        <label><input type="radio" name="status-switch" value="active" checked>制作中</label>
-        <label><input type="radio" name="status-switch" value="archive">アーカイブ</label>
-        <label><input type="radio" name="status-switch" value="both">両方</label>
-      </div>
+      <h1>作品リスト</h1>
     </header>
-    <main></main>`
-    let contents = document.querySelector(`main`)
+    <main>
+      <section>
+        <div id="status-switch">
+          <label><input type="radio" name="status-switch" value="active" checked>制作中</label>
+          <label><input type="radio" name="status-switch" value="archive">アーカイブ</label>
+          <label><input type="radio" name="status-switch" value="both">両方</label>
+        </div>
+        <div id="op-list"></div>
+      </section>
+      <section id="character-count-log-table"></section>
+    </main>`
+    let contents = document.querySelector(`#op-list`)
     let statusSwitch = Array.from(document.querySelectorAll(`[name="status-switch"]`))
+    characterCountLogTable = document.querySelector(`#character-count-log-table`)
     /*
       実行
     */
@@ -456,14 +472,14 @@ loadFiles()
   */
   if (q && /^[^/]+$/.test(q)) {
     html.classList.add(`cover`)
-    genOpusCover()
+    genCover()
     .then(rly => {
       activeContainer.innerHTML = rly[0]
       document.querySelector(`title`).innerText = rly[1]
       getContentsSize()
       getScrollValue()
     })
-    async function genOpusCover() {
+    async function genCover() {
       let message = {
         "failedToFetchingReadme": "${indvIndexFile} の読み込みに失敗しました。",
         "failedToFetchingFile": "本文ファイルの取得に失敗しました。"
@@ -673,7 +689,7 @@ loadFiles()
             return rly
           })
           async function countText(indexBlobArray) {
-            return await Promise.all(
+            return Promise.all(
               indexBlobArray
               .filter(e => e.elemType === `listItem` && e.text)
               .map(e => {
@@ -1529,6 +1545,197 @@ loadFiles()
 
 
 
+  /*
+
+    文字数記録
+
+  */
+ if (!q && server === localSever) {
+  characterCountLog()
+  function characterCountLog() {
+    let now = new Date(Date.now())
+    let time24Later = new Date(now.getTime() + 60 * 60 * 24 * 1000)
+    let untileMidnight = new Date(time24Later.getFullYear(), time24Later.getMonth(), time24Later.getDate()).getTime() - now.getTime()
+    let unrecord = false
+    let array = localStorage.getItem(`characterCountLog`)
+    if (characterCountLogInitializeSwitch) {
+      localStorage.removeItem(`characterCountLog`)
+      array = null
+      record()
+    }
+    if (array !== null) {
+      array = JSON.parse(array)
+    }
+    else {
+      array = [
+        {
+          "date": `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
+          "textTotal": 0,
+          "docTotal": 0,
+          "textDiff": 0,
+          "docDiff": 0
+        }
+      ]
+    }
+    write()
+    setTimeout(() => {
+      unrecord = true
+    }, untileMidnight - 1000)
+    setTimeout(() => {
+      if (unrecord) {
+        record()
+        write()
+        characterCountLog()
+        unrecord = false
+      }
+    }, untileMidnight)
+    async function record() {
+      /*
+        インデックスの読み込みと、個別インデックスの処理
+      */
+      fetch(`${textDir}/${indexFile}`)
+      .then(async rly => {
+        if (rly.ok) {
+          return Promise.all(
+            (await rly.json())
+            .map(e => {
+              return fetch(`${textDir}/${e.dn}/${indvIndexFile}`)
+              .then(async rly => {
+                if (rly.ok) {
+                  let tocBlob = (await rly.text())
+                  .match(reTocBlob)[0]
+                  let textBlobArray = (tocBlob
+                  .match(reTextBlob) || [false])
+                  let docBlob = false
+                  let sharpLen = 0
+                  if (textBlobArray && textBlobArray[2] !== undefined) {
+                    sharpLen = textBlobArray[2].length
+                    docBlob = (tocBlob
+                    .match(new RegExp(`(^|\\r?\\n)(#{${sharpLen}}) (?!.*${textHeadingInIndex}).*\\r?\\n([\\s\\S]*?)(#{${sharpLen - 1}}(?!#)|$(?!\\r?\\n))`)) || [false])[0]
+                  }
+                  else {
+                    docBlob = tocBlob
+                  }
+                  return [
+                    e.dn,
+                    pickup(textBlobArray[0]),
+                    pickup(docBlob)
+                  ]
+                  function pickup(blob) {
+                    if (blob) {
+                      return blob
+                      .split(/\r?\n|\r(?!\n)/)
+                      .map(e => (e.match(/^(?=[\-+*]|\d\.).*? (.*?)(?= *[:：])/) || [false, false])[1])
+                      .filter(e => e)
+                    }
+                    else {
+                      return false
+                    }
+                  }
+                }
+                else {
+                  console.log(`miss fetch`)
+                }
+              })
+            })
+          )
+        }
+        else {
+          console.log(`miss fetch`)
+        }
+      })
+      /*
+        ファイルの読み込みと、文字数カウント
+      */
+      .then(async rly => {
+        let textLen = await Promise.all(
+          rly
+          .map(async e => await count(e[0], e[1]))
+        )
+        .then(rly => rly.reduce((a, c) => a + c, 0))
+        let docLen = await Promise.all(
+          rly
+          .map(async e => await count(e[0], e[2]))
+        )
+        .then(rly => rly.reduce((a, c) => a + c, 0))
+        return [textLen, docLen]
+        function count(dn, dirAndFileArray) {
+          if (dirAndFileArray) {
+            return Promise.all(
+              dirAndFileArray
+              .map(e => {
+                if (e) {
+                  return fetch(`${textDir}/${dn}/${e}`)
+                  .then(async rly => {
+                    if (rly.ok) {
+                      return await novelparse({
+                        "src": await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`), marksEnclosure, `delete`, `hole`),
+                        "newLineMode": `raw`,
+                        "rubyMode": `delete`,
+                        "parenthesis": `normal`,
+                        "comment": `delete-together`
+                      })
+                    }
+                    else {
+                      console.log(`miss fetch`)
+                    }
+                  })
+                }
+                else {
+                  return false
+                }
+              })
+            )
+            .then(rly => {
+              return rly
+              .filter(e => e)
+              .map(e => e.replace(/[\r\n 　]/g, ``).length)
+              .reduce((a, c) => a + c, 0)
+            })
+          }
+          else {
+            return 0
+          }
+        }
+      })
+      /*
+        ローカルストレージへの書き込み
+      */
+      .then(rly => {
+        // 処理
+        let w = array[array.length - 1]
+        array.push(
+          {
+            "date": `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
+            "textTotal": rly[0],
+            "docTotal": rly[1],
+            "textDiff": rly[0] - w.textTotal,
+            "docDiff": rly[1] - w.docTotal
+          }
+        )
+        // ローカルストレージへの書き込み
+        localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+
+        // 書き出し
+        write()
+      })
+    }
+    function write() {
+      let data = [`合計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]
+      .concat(
+        array
+        .slice(0)
+        .reverse()
+        .splice(0, array.length - 2)
+        .map(e => [e.date, e.textDiff, e.docDiff])
+      )
+      characterCountLogTable.innerHTML = `<h2>文字数</h2><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
+    }
+  }
+ }
+
+
+
 
 
   /*
@@ -1593,6 +1800,9 @@ window.addEventListener(`mousedown`, function(e0) {
     }, 200)
   }
 })
+
+
+
 /*
 
   キー操作
