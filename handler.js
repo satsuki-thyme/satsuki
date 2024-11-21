@@ -1555,7 +1555,8 @@ loadFiles()
   function characterCountLog() {
     let now = new Date(Date.now())
     let time24Later = new Date(now.getTime() + 60 * 60 * 24 * 1000)
-    let untileMidnight = new Date(time24Later.getFullYear(), time24Later.getMonth(), time24Later.getDate()).getTime() - now.getTime()
+    // 20xx-xx-xx 23:59 までの時間
+    let untileMidnight = new Date(time24Later.getFullYear(), time24Later.getMonth(), time24Later.getDate()).getTime() - now.getTime() - 60 * 1000
     let unrecord = false
     let array = localStorage.getItem(`characterCountLog`)
     if (characterCountLogInitializeSwitch) {
@@ -1580,7 +1581,7 @@ loadFiles()
     write()
     setTimeout(() => {
       unrecord = true
-    }, untileMidnight - 1000)
+    }, untileMidnight)
     setTimeout(() => {
       if (unrecord) {
         record()
@@ -1588,7 +1589,7 @@ loadFiles()
         characterCountLog()
         unrecord = false
       }
-    }, untileMidnight)
+    }, untileMidnight + 60 * 1000)
     async function record() {
       /*
         インデックスの読み込みと、個別インデックスの処理
@@ -1721,7 +1722,7 @@ loadFiles()
       })
     }
     function write() {
-      let data = [`合計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]
+      let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
       .concat(
         array
         .slice(0)
