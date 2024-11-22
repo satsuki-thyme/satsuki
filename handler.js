@@ -225,10 +225,10 @@ let scrollValueX = Number(localStorage.getItem(`scrollValueX`)) || 0
 let scrollRange = 0
 let PrevOp = ``
 let PrevFile = ``
-let characterCountLogField = null
+let characterCountLogTable = null
 let uploadDownloadField = null
 let downloadButton = null
-let uploadButton = null
+let uploadButton = ``
 
 
 
@@ -369,11 +369,14 @@ loadFiles()
         </div>
         <div id="op-list-table"></div>
       </section>
-      <section id="character-count-log-field"></section>
+      <section id="character-count-log-field">
+        <div id="character-count-log-table"></div>
+        <div id="upload-download-field"><h2>アップロード・ダウンロード</h2><input type="file" name="upload-button" accept=".json" id="upload-button"><a id="download-button" download="chacacterCountLog.json">Download</a></div>
+      </section>
     </main>`
     let contents = document.querySelector(`#op-list-table`)
     let statusSwitch = Array.from(document.querySelectorAll(`[name="status-switch"]`))
-    characterCountLogField = document.querySelector(`#character-count-log-field`)
+    characterCountLogTable = document.querySelector(`#character-count-log-table`)
     /*
       実行
     */
@@ -1617,7 +1620,7 @@ if (!q && server === localSever) {
                   if (textBlobArray && textBlobArray[2] !== undefined) {
                     sharpLen = textBlobArray[2].length
                     docBlob = (tocBlob
-                    .match(new RegExp(`(^|\\r?\\n)(#{${sharpLen}}) (?!.*${textHeadingInIndex}).*\\r?\\n([\\s\\S]*?)(#{${sharpLen - 1}}(?!#)|$(?!\\r?\\n))`)) || [false])[0]
+                    .match(new RegExp(`(^|\\r?\\n)(#{${sharpLen}}) (?!.*${textHeadingInIndex}).*\\r?\\n([\\s\\S]*?)[^#](#{${sharpLen - 1}}(?!#)|$(?!\\r?\\n))`)) || [false])[0]
                   }
                   else {
                     docBlob = tocBlob
@@ -1741,9 +1744,7 @@ if (!q && server === localSever) {
       .splice(0, array.length - 2)
       .map(e => [e.date, e.textDiff, e.docDiff])
     )
-    characterCountLogField.innerHTML = `<div id="character-count-log-table"><h2>文字数</h2><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div></div><div id="upload-download-field"><h2>アップロード・ダウンロード</h2><input id="upload-button" type="file" name="upload-button" value="Upload"><a id="download-button" download="chacacterCountLog.json">Download</a></div>`
-    uploadDownloadField = document.querySelector(`#upload-download-field`)
-    uploadButton = document.querySelector(`#upload-button`)
+    characterCountLogTable.innerHTML = `<h2>文字数</h2><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
     downloadButton = document.querySelector(`#download-button`)
     downloadButton.href = URL.createObjectURL(new Blob([JSON.stringify(array).replace(/$/, `\n`)], {type: `text/plain`}))
   }
@@ -1755,6 +1756,7 @@ if (!q && server === localSever) {
     文字数カウンターのデータのアップロード
 
   */
+  uploadButton = document.querySelector(`#upload-button`)
   let fr = new FileReader()
   uploadButton.onchange = e => {
     if (e) {
@@ -1763,7 +1765,7 @@ if (!q && server === localSever) {
     fr.onload = () => {
       array = JSON.parse(fr.result)
       localStorage.setItem(`characterCountLog`, JSON.stringify(array))
-      write()
+      characterCountLog()
     }
   }
 }
