@@ -349,41 +349,73 @@ footer#site-footer {
   padding-bottom: 15px;
 }
 .index.internet #status-switch,
-.index.internet #character-count-log-table {
+.index.internet #character-count-log-field {
   height: 0;
   visibility: hidden;
 }
-.index #active-container > main > section:nth-child(2) {
+.index.internet #active-container > main > section:nth-child(2) {
   display: none;
 }
 .index #active-container > main {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.index #active-container > main > section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .index #active-container > main > section + section {
   margin-top: 30px;
 }
-.index #op-list td:first-child {
+.index #active-container > main > #op-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.index #active-container > main > #character-count-log-field {
+  display: flex;
+  justify-content: space-around;
+}
+.index #active-container > main > #character-count-log-field > h2 {
+  line-height: 1;
+}
+.index #active-container > main > #character-count-log-field > div {
   text-align: center;
 }
-.index #character-count-log-table table tbody td:nth-child(1) {
+.index #active-container > main > #character-count-log-field > div + div {
+  margin-left: 30px;
+}
+.index #op-list-table td:first-child {
   text-align: center;
 }
-.index #character-count-log-table table tbody td:nth-child(2),
-.index #character-count-log-table table tbody td:nth-child(3) {
+.index #character-count-log-field table tbody td:nth-child(1) {
+  text-align: center;
+}
+.index #character-count-log-field table tbody td:nth-child(2),
+.index #character-count-log-field table tbody td:nth-child(3) {
   text-align: right;
 }
-.index #character-count-log-table table tbody td:nth-child(1) span {
+.index #character-count-log-field table tbody td:nth-child(1) span {
   letter-spacing: 1.5em;
 }
-.index #character-count-log-table table tbody {
+.index #character-count-log-field table tbody {
   user-select: all;
+}
+.index #upload-download-field {
+  margin-top: 20px;
+}
+.index #upload-download-field > h2 {
+  font-size: 18px;
+}
+.index #upload-download-field #upload-download-button {
+  display: flex;
+}
+.index #upload-download-field #upload-button {
+  align-self: flex-start;
+  font-size: 10px;
+}
+.index #upload-download-field #download-button {
+  align-self: flex-end;
+  margin-top: -23px;
+  margin-bottom: 12px;
+  font-size: 12px;
 }
 /*
   ######      #######     ##     ##    ########    ######## 

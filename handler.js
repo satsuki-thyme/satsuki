@@ -225,7 +225,10 @@ let scrollValueX = Number(localStorage.getItem(`scrollValueX`)) || 0
 let scrollRange = 0
 let PrevOp = ``
 let PrevFile = ``
-let characterCountLogTable = null
+let characterCountLogField = null
+let uploadDownloadField = null
+let downloadButton = null
+let uploadButton = null
 
 
 
@@ -358,19 +361,19 @@ loadFiles()
       <h1>作品リスト</h1>
     </header>
     <main>
-      <section>
+      <section id="op-field">
         <div id="status-switch">
           <label><input type="radio" name="status-switch" value="active" checked>制作中</label>
           <label><input type="radio" name="status-switch" value="archive">アーカイブ</label>
           <label><input type="radio" name="status-switch" value="both">両方</label>
         </div>
-        <div id="op-list"></div>
+        <div id="op-list-table"></div>
       </section>
-      <section id="character-count-log-table"></section>
+      <section id="character-count-log-field"></section>
     </main>`
-    let contents = document.querySelector(`#op-list`)
+    let contents = document.querySelector(`#op-list-table`)
     let statusSwitch = Array.from(document.querySelectorAll(`[name="status-switch"]`))
-    characterCountLogTable = document.querySelector(`#character-count-log-table`)
+    characterCountLogField = document.querySelector(`#character-count-log-field`)
     /*
       実行
     */
@@ -1550,7 +1553,8 @@ loadFiles()
     文字数記録
 
   */
- if (!q && server === localSever) {
+if (!q && server === localSever) {
+  let array = null
   characterCountLog()
   function characterCountLog() {
     let now = new Date(Date.now())
@@ -1558,7 +1562,7 @@ loadFiles()
     // 20xx-xx-xx 23:59 までの時間
     let untileMidnight = new Date(time24Later.getFullYear(), time24Later.getMonth(), time24Later.getDate()).getTime() - now.getTime() - 60 * 1000
     let unrecord = false
-    let array = localStorage.getItem(`characterCountLog`)
+    array = localStorage.getItem(`characterCountLog`)
     if (characterCountLogInitializeSwitch) {
       localStorage.removeItem(`characterCountLog`)
       array = null
@@ -1578,6 +1582,7 @@ loadFiles()
         }
       ]
     }
+    record()
     write()
     setTimeout(() => {
       unrecord = true
@@ -1705,9 +1710,14 @@ loadFiles()
       .then(rly => {
         // 処理
         let w = array[array.length - 1]
+        let today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+        while (w.date === today) {
+          array.pop()
+          w = array[array.length - 1]
+        }
         array.push(
           {
-            "date": `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
+            "date": today,
             "textTotal": rly[0],
             "docTotal": rly[1],
             "textDiff": rly[0] - w.textTotal,
@@ -1721,19 +1731,42 @@ loadFiles()
         write()
       })
     }
-    function write() {
-      let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
-      .concat(
-        array
-        .slice(0)
-        .reverse()
-        .splice(0, array.length - 2)
-        .map(e => [e.date, e.textDiff, e.docDiff])
-      )
-      characterCountLogTable.innerHTML = `<h2>文字数</h2><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
+  }
+  function write() {
+    let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
+    .concat(
+      array
+      .slice(0)
+      .reverse()
+      .splice(0, array.length - 2)
+      .map(e => [e.date, e.textDiff, e.docDiff])
+    )
+    characterCountLogField.innerHTML = `<div id="character-count-log-table"><h2>文字数</h2><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div></div><div id="upload-download-field"><h2>アップロード・ダウンロード</h2><input id="upload-button" type="file" name="upload-button" value="Upload"><a id="download-button" download="chacacterCountLog.json">Download</a></div>`
+    uploadDownloadField = document.querySelector(`#upload-download-field`)
+    uploadButton = document.querySelector(`#upload-button`)
+    downloadButton = document.querySelector(`#download-button`)
+    downloadButton.href = URL.createObjectURL(new Blob([JSON.stringify(array).replace(/$/, `\n`)], {type: `text/plain`}))
+  }
+
+
+
+  /*
+
+    文字数カウンターのデータのアップロード
+
+  */
+  let fr = new FileReader()
+  uploadButton.onchange = e => {
+    if (e) {
+      fr.readAsText(e.target.files[0])
+    }
+    fr.onload = () => {
+      array = JSON.parse(fr.result)
+      localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+      write()
     }
   }
- }
+}
 
 
 
