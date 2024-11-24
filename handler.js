@@ -371,7 +371,7 @@ loadFiles()
       </section>
       <section id="character-count-log-field">
         <div id="character-count-log-table"></div>
-        <div id="upload-download-field"><h2>アップロード・ダウンロード</h2><input type="file" name="upload-button" accept=".json" id="upload-button"><a id="download-button" download="chacacterCountLog.json">Download</a></div>
+        <div id="upload-download-field"><p>アップロード・ダウンロード</p><input type="file" name="upload-button" accept=".json" id="upload-button"><a id="download-button" download="chacacterCountLog.json">Download</a></div>
       </section>
     </main>`
     let contents = document.querySelector(`#op-list-table`)
@@ -1551,25 +1551,68 @@ loadFiles()
 
 
 
-  /*
+/*
 
-    文字数記録
+  文字数記録
 
-  */
+*/
 if (!q && server === localSever) {
   let array = null
   characterCountLog()
   function characterCountLog() {
+    // 今
     let now = new Date(Date.now())
-    let time24Later = new Date(now.getTime() + 60 * 60 * 24 * 1000)
-    // 20xx-xx-xx 23:59 までの時間
-    let untileMidnight = new Date(time24Later.getFullYear(), time24Later.getMonth(), time24Later.getDate()).getTime() - now.getTime() - 60 * 1000
-    let unrecord = false
+    /*
+      実行時間
+    */
+    let executionTime = `23:59` // 通常は 23:59 と設定しておく
+    /*
+      今日の実行までの時間
+    */
+    let timeToExecution =
+    // 今日の実行日時
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      Number(executionTime.slice(0, 2).replace(/:/, ``)),
+      Number(executionTime.slice(-2).replace(/:/, ``))
+    ).getTime()
+    // 今の日時
+    - now.getTime()
+    // 翌日の 00:00 の日時
+    let tomorrow = new Date(
+      new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      ).getTime()
+      + 60 * 60 * 24 * 1000
+    )
+    /*
+      翌日の実行までの時間
+    */
+    let timeToTomorrowExecution =
+    // 翌日の実行日時
+    new Date(
+      tomorrow.getFullYear(),
+      tomorrow.getMonth(),
+      tomorrow.getDate(),
+      Number(executionTime.slice(0, 2).replace(/:/, ``)),
+      Number(executionTime.slice(-2).replace(/:/, ``))
+    ).getTime()
+    // 今の日時
+    - now.getTime()
+    timeToExecution = timeToExecution > 0 ? timeToExecution : timeToTomorrowExecution
+
+
+    /*
+      ローカルストレージからの読み出し、または配列の初期化処理
+    */
     array = localStorage.getItem(`characterCountLog`)
     if (characterCountLogInitializeSwitch) {
       localStorage.removeItem(`characterCountLog`)
       array = null
-      record()
     }
     if (array !== null) {
       array = JSON.parse(array)
@@ -1577,7 +1620,7 @@ if (!q && server === localSever) {
     else {
       array = [
         {
-          "date": `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
+          "date": ``,//`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
           "textTotal": 0,
           "docTotal": 0,
           "textDiff": 0,
@@ -1585,20 +1628,20 @@ if (!q && server === localSever) {
         }
       ]
     }
-    record()
-    write()
+    procCount()
+
+
+    /*
+      タイマー
+    */
     setTimeout(() => {
-      unrecord = true
-    }, untileMidnight)
-    setTimeout(() => {
-      if (unrecord) {
-        record()
-        write()
-        characterCountLog()
-        unrecord = false
-      }
-    }, untileMidnight + 60 * 1000)
-    async function record() {
+      procCount()
+      characterCountLog()
+    }, timeToExecution)
+
+
+
+    async function procCount() {
       /*
         インデックスの読み込みと、個別インデックスの処理
       */
@@ -1619,8 +1662,8 @@ if (!q && server === localSever) {
                   let sharpLen = 0
                   if (textBlobArray && textBlobArray[2] !== undefined) {
                     sharpLen = textBlobArray[2].length
-                    docBlob = (tocBlob
-                    .match(new RegExp(`(^|\\r?\\n)(#{${sharpLen}}) (?!.*${textHeadingInIndex}).*\\r?\\n([\\s\\S]*?)[^#](#{${sharpLen - 1}}(?!#)|$(?!\\r?\\n))`)) || [false])[0]
+                    docBlob = tocBlob
+                    .replace(reTextBlob, ``)
                   }
                   else {
                     docBlob = tocBlob
@@ -1653,6 +1696,9 @@ if (!q && server === localSever) {
           console.log(`miss fetch`)
         }
       })
+
+
+
       /*
         ファイルの読み込みと、文字数カウント
       */
@@ -1670,20 +1716,18 @@ if (!q && server === localSever) {
         return [textLen, docLen]
         function count(dn, dirAndFileArray) {
           if (dirAndFileArray) {
+            /*
+              各ファイルの文章の処理
+            */
             return Promise.all(
               dirAndFileArray
               .map(e => {
                 if (e) {
+                  // 個別ファイルの処理
                   return fetch(`${textDir}/${dn}/${e}`)
                   .then(async rly => {
                     if (rly.ok) {
-                      return await novelparse({
-                        "src": await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`), marksEnclosure, `delete`, `hole`),
-                        "newLineMode": `raw`,
-                        "rubyMode": `delete`,
-                        "parenthesis": `normal`,
-                        "comment": `delete-together`
-                      })
+                      return await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`), marksEnclosure, `delete`, `hole`)
                     }
                     else {
                       console.log(`miss fetch`)
@@ -1695,6 +1739,12 @@ if (!q && server === localSever) {
                 }
               })
             )
+
+
+
+            /*
+              各ファイルの文字数の合計
+            */
             .then(rly => {
               return rly
               .filter(e => e)
@@ -1707,34 +1757,57 @@ if (!q && server === localSever) {
           }
         }
       })
+
+
+
       /*
-        ローカルストレージへの書き込み
+        集計その他
       */
       .then(rly => {
-        // 処理
-        let w = array[array.length - 1]
         let today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
-        while (w.date === today) {
-          array.pop()
-          w = array[array.length - 1]
-        }
-        array.push(
-          {
-            "date": today,
-            "textTotal": rly[0],
-            "docTotal": rly[1],
-            "textDiff": rly[0] - w.textTotal,
-            "docDiff": rly[1] - w.docTotal
+        // 配列に同じ日の集計があれば削除する
+        new Promise(resolve => {
+          fn()
+          function fn() {
+            if (array.length > 0 && array[array.length - 1].date === today) {
+              array.pop()
+              fn()
+            }
+            else {
+              resolve(array[array.length - 1])
+            }
           }
-        )
-        // ローカルストレージへの書き込み
-        localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+        })
 
-        // 書き出し
-        write()
+        // 集計結果を配列に追加
+        .then(rly1 => {
+          array.push(
+            {
+              "date": today,
+              "textTotal": rly[0],
+              "docTotal": rly[1],
+              "textDiff": rly[0] - rly1.textTotal,
+              "docDiff": rly[1] - rly1.docTotal
+            }
+          )
+
+          // ローカルストレージへの書き込み
+          localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+  
+          // 書き出し
+          write()
+        })
       })
     }
   }
+
+
+
+  /*
+
+    書き出し
+
+  */
   function write() {
     let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
     .concat(
@@ -1744,7 +1817,7 @@ if (!q && server === localSever) {
       .splice(0, array.length - 2)
       .map(e => [e.date, e.textDiff, e.docDiff])
     )
-    characterCountLogTable.innerHTML = `<h2>文字数</h2><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
+    characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
     downloadButton = document.querySelector(`#download-button`)
     downloadButton.href = URL.createObjectURL(new Blob([JSON.stringify(array).replace(/$/, `\n`)], {type: `text/plain`}))
   }

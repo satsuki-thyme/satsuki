@@ -385,6 +385,10 @@ footer#site-footer {
 .index #op-list-table td:first-child {
   text-align: center;
 }
+.index #character-count-log-field p {
+  margin: 10px;
+  font-size: 18px;
+}
 .index #character-count-log-field table tbody td:nth-child(1) {
   text-align: center;
 }
@@ -395,14 +399,8 @@ footer#site-footer {
 .index #character-count-log-field table tbody td:nth-child(1) span {
   letter-spacing: 1.5em;
 }
-.index #character-count-log-field table tbody {
+.index #character-count-log-table {
   user-select: all;
-}
-.index #upload-download-field {
-  margin-top: 20px;
-}
-.index #upload-download-field > h2 {
-  font-size: 18px;
 }
 .index #upload-download-field #upload-download-button {
   display: flex;
