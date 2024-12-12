@@ -80,34 +80,57 @@ let reTextPage = new RegExp(`^${dn}/(?!.*${listDir}).*`)
 let markup = []
 let reListURLs = null
 let reDnExists = new RegExp(`^${dn}`)
-if (q && reDnExists.test(q)) {
-  reListURLs = fetch(indivMarkupFileDir + `/` + markupFile)
-  .then(async rly => {
-    if (rly.ok) {
-      return await rly.json()
-    }
-    else {
-      return fetch(defaultMarkupFileDir + `/` + markupFile)
+let marksPOK = null
+let marksEOK = null
+makeReListURLs()
+function makeReListURLs() {
+  if (q && reDnExists.test(q)) {
+    reListURLs = loadMarkupFile(indivMarkupFileDir + `/` + markupFile)
+    .then(rly => {
+      return rly
+    })
+    .catch(() => {
+      return loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+      .then(rly => {
+        return rly
+      })
+      .catch(() => {
+        return false
+      })
+    })
+    .then(rly => {
+      return makeRegExp(rly)
+    })
+  }
+  if (!q) {
+    reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+    .then(rly => {
+      return makeRegExp(rly)
+    })
+  }
+  function loadMarkupFile(URL) {
+    return new Promise((resolve, reject) => {
+      fetch(URL)
       .then(async rly => {
         if (rly.ok) {
-          return await rly.json()
+          resolve(await rly.json())
         }
         else {
-          return false
+          reject(false)
         }
       })
-    }
-  })
-  .then(rly => {
-    markup = rly
-    marksE(rly)
-    marksP(rly)
+    })
+  }
+  function makeRegExp(src) {
+    markup = src
+    marksE(src)
+    marksP(src)
     return new RegExp(`^.+?/(${
-      rly
+      src
       .map(rly => listDir + `/` + rly.path)
       .join(`|`)
     })$`)
-  })
+  }
 }
 
 
@@ -194,16 +217,22 @@ let infoContentsFile = {
 let marksPreposition = []
 let marksEnclosure = []
 function marksP(src) {
-  marksPreposition = src
-  .filter(rly => rly.markupType === `preposition`)
-  .map(rly => rly.mark)
-  .reduce((a, c) => a.concat([c]), [])
+  marksPOK = new Promise(resolve => {
+    marksPreposition = src
+    .filter(rly => rly.markupType === `preposition`)
+    .map(rly => rly.mark)
+    .reduce((a, c) => a.concat([c]), [])
+    resolve(marksPreposition)
+  })
 }
 function marksE(src) {
-  marksEnclosure = src
-  .filter(rly => rly.markupType === `enclosure` && rly.delete)
-  .map(rly => rly.mark.map(rly => rly[0]))
-  .reduce((a, c) => a.concat(c.map(rly => rly)), [])
+  marksEOK = new Promise(resolve => {
+    marksEnclosure = src
+    .filter(rly => rly.markupType === `enclosure` && rly.delete)
+    .map(rly => rly.mark.map(rly => rly[0]))
+    .reduce((a, c) => a.concat(c.map(rly => rly)), [])
+    resolve(marksEnclosure)
+  })
 }
 
 
@@ -255,6 +284,7 @@ if (server === internetServer) {
  ##          ##     ##    ##     ##    ##     ##       ##           ##     ##          ##          ##    ## 
  ########     #######     ##     ##    ########        ##          ####    ########    ########     ######  
 */
+let loadFilesOK = null
 function loadFiles() {
   let CSSFiles = [
     {
@@ -327,16 +357,19 @@ function loadFiles() {
       resolve()
     })
   })
-  return Promise.all([
+  loadFilesOK = Promise.all([
     Promise.all(CSSPromiseArray),
     Promise.all(scriptPromiseArray),
     DOMContentPromise
   ])
 }
 
-
-
 loadFiles()
+Promise.all([
+  loadFilesOK,
+  marksPOK,
+  marksEOK
+])
 .then(() => {
   /*
     要素の取得
@@ -1551,297 +1584,371 @@ loadFiles()
 
 
 
+  /*
+
+    ゼロフィル
+
+  */
+  function zeroFill(src, zeroDigits) {
+    return (`0`.repeat(zeroDigits) + src).slice(-zeroDigits)
+  }
+
+
+
+  /*
+
+    JSONを読めるように整形する
+
+  */
+  async function readableJSON(src) {
+    let inQuote = false
+    let JSONArray = src.split(``)
+    let readableArray = []
+    let indent = 0
+    let i = 0
+    return new Promise(resolve => {
+      fn()
+      function fn() {
+        if (inQuote === false && JSONArray[i] === `"`) {
+          inQuote = true
+        }
+        if (inQuote === true && JSONArray[i] === `"`) {
+          inQuote = false
+        }
+        if (!inQuote && /\{|\[/.test(JSONArray[i])) {
+          indent += 4
+          readableArray.push(JSONArray[i] + `\n` + ` `.repeat(indent))
+        }
+        if (!inQuote && /\}|\]/.test(JSONArray[i])) {
+          indent -= 4
+          readableArray.push(`\n` + ` `.repeat(indent) + JSONArray[i])
+        }
+        if (!inQuote && JSONArray[i] === `,`) {
+          readableArray.push(JSONArray[i] + `\n` + ` `.repeat(indent))
+        }
+        if (inQuote || (!inQuote && !/\{|\[|\}|\]|,/.test(JSONArray[i]))) {
+          readableArray.push(JSONArray[i])
+        }
+        if (i < JSONArray.length - 1) {
+          i++
+          fn()
+        }
+        else {
+          resolve(readableArray.join(``))
+        }
+      }
+    })
+  }
+
+
 /*
-
-  文字数記録
-
+  ######    ##   ##     #####     ######         ###    ##    ##    ##    ###    ###        ##          ######      ######  
+ ##         ##   ##    ##   ##    ##   ##        ####   ##    ##    ##    ####  ####        ##         ##    ##    ##       
+ ##         #######    #######    ######         ## ##  ##    ##    ##    ## #### ##        ##         ##    ##    ##   ### 
+ ##         ##   ##    ##   ##    ##   ##        ##  ## ##    ##    ##    ##  ##  ##        ##         ##    ##    ##    ## 
+  ######    ##   ##    ##   ##    ##   ##        ##   ####     ######     ##      ##        #######     ######      ######  
 */
-if (!q && server === localSever) {
-  let array = null
-  characterCountLog()
-  function characterCountLog() {
-    // 今
-    let now = new Date(Date.now())
-    /*
-      実行時間
-    */
-    let executionTime = `23:59` // 通常は 23:59 と設定しておく
-    /*
-      今日の実行までの時間
-    */
-    let timeToExecution =
-    // 今日の実行日時
-    new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      Number(executionTime.slice(0, 2).replace(/:/, ``)),
-      Number(executionTime.slice(-2).replace(/:/, ``))
-    ).getTime()
-    // 今の日時
-    - now.getTime()
-    // 翌日の 00:00 の日時
-    let tomorrow = new Date(
+Promise.all([
+  loadFilesOK,
+  marksPOK,
+  marksEOK
+])
+.then(() => {
+  if (!q && server === localSever) {
+    let array = null
+    characterCountLog()
+    function characterCountLog() {
+      // 今
+      let now = new Date(Date.now())
+      /*
+        実行時間
+      */
+      let executionTime = `23:59` // 通常は 23:59 と設定しておく
+      /*
+        今日の実行までの時間
+      */
+      let timeToExecution =
+      // 今日の実行日時
       new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate()
+        now.getDate(),
+        Number(executionTime.slice(0, 2).replace(/:/, ``)),
+        Number(executionTime.slice(-2).replace(/:/, ``))
       ).getTime()
-      + 60 * 60 * 24 * 1000
-    )
-    /*
-      翌日の実行までの時間
-    */
-    let timeToTomorrowExecution =
-    // 翌日の実行日時
-    new Date(
-      tomorrow.getFullYear(),
-      tomorrow.getMonth(),
-      tomorrow.getDate(),
-      Number(executionTime.slice(0, 2).replace(/:/, ``)),
-      Number(executionTime.slice(-2).replace(/:/, ``))
-    ).getTime()
-    // 今の日時
-    - now.getTime()
-    timeToExecution = timeToExecution > 0 ? timeToExecution : timeToTomorrowExecution
-
-
-    /*
-      ローカルストレージからの読み出し、または配列の初期化処理
-    */
-    array = localStorage.getItem(`characterCountLog`)
-    if (characterCountLogInitializeSwitch) {
-      localStorage.removeItem(`characterCountLog`)
-      array = null
-    }
-    if (array !== null) {
-      array = JSON.parse(array)
-    }
-    else {
-      array = [
-        {
-          "date": ``,//`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
-          "textTotal": 0,
-          "docTotal": 0,
-          "textDiff": 0,
-          "docDiff": 0
-        }
-      ]
-    }
-    procCount()
-
-
-    /*
-      タイマー
-    */
-    setTimeout(() => {
-      procCount()
-      characterCountLog()
-    }, timeToExecution)
-
-
-
-    async function procCount() {
+      // 今の日時
+      - now.getTime()
+      // 翌日の 00:00 の日時
+      let tomorrow = new Date(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        ).getTime()
+        + 60 * 60 * 24 * 1000
+      )
       /*
-        インデックスの読み込みと、個別インデックスの処理
+        翌日の実行までの時間
       */
-      fetch(`${textDir}/${indexFile}`)
-      .then(async rly => {
-        if (rly.ok) {
-          return Promise.all(
-            (await rly.json())
-            .map(e => {
-              return fetch(`${textDir}/${e.dn}/${indvIndexFile}`)
-              .then(async rly => {
-                if (rly.ok) {
-                  let tocBlob = (await rly.text())
-                  .match(reTocBlob)[0]
-                  let textBlobArray = (tocBlob
-                  .match(reTextBlob) || [false])
-                  let docBlob = false
-                  let sharpLen = 0
-                  if (textBlobArray && textBlobArray[2] !== undefined) {
-                    sharpLen = textBlobArray[2].length
-                    docBlob = tocBlob
-                    .replace(reTextBlob, ``)
+      let timeToTomorrowExecution =
+      // 翌日の実行日時
+      new Date(
+        tomorrow.getFullYear(),
+        tomorrow.getMonth(),
+        tomorrow.getDate(),
+        Number(executionTime.slice(0, 2).replace(/:/, ``)),
+        Number(executionTime.slice(-2).replace(/:/, ``))
+      ).getTime()
+      // 今の日時
+      - now.getTime()
+      timeToExecution = timeToExecution > 0 ? timeToExecution : timeToTomorrowExecution
+
+
+      /*
+        ローカルストレージからの読み出し、または配列の初期化処理
+      */
+      array = localStorage.getItem(`characterCountLog`)
+      if (characterCountLogInitializeSwitch) {
+        localStorage.removeItem(`characterCountLog`)
+        array = null
+      }
+      if (array !== null) {
+        array = JSON.parse(array)
+      }
+      else {
+        array = [
+          {
+            "date": ``,
+            "textTotal": 0,
+            "docTotal": 0,
+            "textDiff": 0,
+            "docDiff": 0,
+            "writeDate": ``
+          }
+        ]
+      }
+      procCount()
+
+
+      /*
+        タイマー
+      */
+      setTimeout(() => {
+        procCount()
+        characterCountLog()
+      }, timeToExecution)
+
+
+
+      async function procCount() {
+        /*
+          インデックスの読み込みと、個別インデックスの処理
+        */
+        fetch(`${textDir}/${indexFile}`)
+        .then(async rly => {
+          if (rly.ok) {
+            return Promise.all(
+              (await rly.json())
+              .map(e => {
+                return fetch(`${textDir}/${e.dn}/${indvIndexFile}`)
+                .then(async rly => {
+                  if (rly.ok) {
+                    let tocBlob = (await rly.text())
+                    .match(reTocBlob)[0]
+                    let textBlobArray = (tocBlob
+                    .match(reTextBlob) || [false])
+                    let docBlob = false
+                    let sharpLen = 0
+                    if (textBlobArray && textBlobArray[2] !== undefined) {
+                      sharpLen = textBlobArray[2].length
+                      docBlob = tocBlob
+                      .replace(reTextBlob, ``)
+                    }
+                    else {
+                      docBlob = tocBlob
+                    }
+                    return [
+                      e.dn,
+                      pickup(textBlobArray[0]),
+                      pickup(docBlob)
+                    ]
+                    function pickup(blob) {
+                      if (blob) {
+                        return blob
+                        .split(/\r?\n|\r(?!\n)/)
+                        .map(e => (e.match(/^(?=[\-+*]|\d\.).*? (.*?)(?= *[:：])/) || [false, false])[1])
+                        .filter(e => e)
+                      }
+                      else {
+                        return false
+                      }
+                    }
                   }
                   else {
-                    docBlob = tocBlob
+                    console.log(`miss fetch`)
                   }
-                  return [
-                    e.dn,
-                    pickup(textBlobArray[0]),
-                    pickup(docBlob)
-                  ]
-                  function pickup(blob) {
-                    if (blob) {
-                      return blob
-                      .split(/\r?\n|\r(?!\n)/)
-                      .map(e => (e.match(/^(?=[\-+*]|\d\.).*? (.*?)(?= *[:：])/) || [false, false])[1])
-                      .filter(e => e)
-                    }
-                    else {
-                      return false
-                    }
-                  }
-                }
-                else {
-                  console.log(`miss fetch`)
-                }
-              })
-            })
-          )
-        }
-        else {
-          console.log(`miss fetch`)
-        }
-      })
-
-
-
-      /*
-        ファイルの読み込みと、文字数カウント
-      */
-      .then(async rly => {
-        let textLen = await Promise.all(
-          rly
-          .map(async e => await count(e[0], e[1]))
-        )
-        .then(rly => rly.reduce((a, c) => a + c, 0))
-        let docLen = await Promise.all(
-          rly
-          .map(async e => await count(e[0], e[2]))
-        )
-        .then(rly => rly.reduce((a, c) => a + c, 0))
-        return [textLen, docLen]
-        function count(dn, dirAndFileArray) {
-          if (dirAndFileArray) {
-            /*
-              各ファイルの文章の処理
-            */
-            return Promise.all(
-              dirAndFileArray
-              .map(e => {
-                if (e) {
-                  // 個別ファイルの処理
-                  return fetch(`${textDir}/${dn}/${e}`)
-                  .then(async rly => {
-                    if (rly.ok) {
-                      return await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`), marksEnclosure, `delete`, `hole`)
-                    }
-                    else {
-                      console.log(`miss fetch`)
-                    }
-                  })
-                }
-                else {
-                  return false
-                }
+                })
               })
             )
-
-
-
-            /*
-              各ファイルの文字数の合計
-            */
-            .then(rly => {
-              return rly
-              .filter(e => e)
-              .map(e => e.replace(/[\r\n 　]/g, ``).length)
-              .reduce((a, c) => a + c, 0)
-            })
           }
           else {
-            return 0
+            console.log(`miss fetch`)
           }
-        }
-      })
+        })
 
 
 
-      /*
-        集計その他
-      */
-      .then(rly => {
-        let today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
-        // 配列に同じ日の集計があれば削除する
-        new Promise(resolve => {
-          fn()
-          function fn() {
-            if (array.length > 0 && array[array.length - 1].date === today) {
-              array.pop()
-              fn()
+        /*
+          ファイルの読み込みと、文字数カウント
+        */
+        .then(async rly => {
+          let textLen = await Promise.all(
+            rly
+            .map(async e => await count(e[0], e[1], true))
+          )
+          .then(rly => rly.reduce((a, c) => a + c, 0))
+          let docLen = await Promise.all(
+            rly
+            .map(async e => await count(e[0], e[2], false))
+          )
+          .then(rly => rly.reduce((a, c) => a + c, 0))
+          return [textLen, docLen]
+          function count(dn, dirAndFileArray, isText) {
+            if (dirAndFileArray) {
+              /*
+                各ファイルの文章の処理
+              */
+              return Promise.all(
+                dirAndFileArray
+                .map(e => {
+                  if (e) {
+                    // 個別ファイルの処理
+                    return fetch(`${textDir}/${dn}/${e}`)
+                    .then(async rly => {
+                      if (rly.ok) {
+                        if (isText) {
+                          return await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`, ``), marksEnclosure, `delete`, `hole`, ``)
+                        }
+                        else {
+                          return await rly.text()
+                        }
+                      }
+                      else {
+                        console.log(`miss fetch`)
+                      }
+                    })
+                  }
+                  else {
+                    return false
+                  }
+                })
+              )
+
+
+
+              /*
+                各ファイルの文字数の合計
+              */
+              .then(rly => {
+                return rly
+                .filter(e => e)
+                .map(e => e.replace(/[\s　]/g, ``).length)
+                .reduce((a, c) => a + c, 0)
+              })
             }
             else {
-              resolve(array[array.length - 1])
+              return 0
             }
           }
         })
 
-        // 集計結果を配列に追加
-        .then(rly1 => {
-          array.push(
-            {
-              "date": today,
-              "textTotal": rly[0],
-              "docTotal": rly[1],
-              "textDiff": rly[0] - rly1.textTotal,
-              "docDiff": rly[1] - rly1.docTotal
+
+
+        /*
+          集計その他
+        */
+        .then(rly => {
+          let today = `${now.getFullYear()}-${zeroFill(now.getMonth() + 1, 2)}-${zeroFill(now.getDate(), 2)}`
+          // 配列に同じ日の集計があれば削除する
+          new Promise(resolve => {
+            fn()
+            function fn() {
+              if (array.length > 0 && array[array.length - 1].date === today) {
+                array.pop()
+                fn()
+              }
+              else {
+                resolve(array[array.length - 1])
+              }
             }
-          )
+          })
 
-          // ローカルストレージへの書き込み
-          localStorage.setItem(`characterCountLog`, JSON.stringify(array))
-  
-          // 書き出し
-          write()
+          // 集計結果を配列に追加
+          .then(rly1 => {
+            let writeDate = new Date(Date.now())
+            array.push(
+              {
+                "date": today,
+                "textTotal": rly[0],
+                "docTotal": rly[1],
+                "textDiff": rly[0] - rly1.textTotal,
+                "docDiff": rly[1] - rly1.docTotal,
+                "writeDate": `${writeDate.getFullYear()}-${zeroFill(writeDate.getMonth() + 1, 2)}-${zeroFill(writeDate.getDate(), 2)}T${zeroFill(writeDate.getHours(), 2)}:${zeroFill(writeDate.getMinutes(), 2)}:${zeroFill(writeDate.getSeconds(), 2)}UTC+9`
+              }
+            )
+
+            // ローカルストレージへの書き込み
+            localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+    
+            // 書き出し
+            write()
+          })
         })
-      })
+      }
+    }
+
+
+
+    /*
+
+      書き出し
+
+    */
+    async function write() {
+      let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
+      .concat(
+        array
+        .slice(0)
+        .reverse()
+        .splice(0, array.length - 2)
+        .map(e => [e.date, e.textDiff, e.docDiff])
+      )
+      characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
+      downloadButton = document.querySelector(`#download-button`)
+      downloadButton.href = URL.createObjectURL(new Blob([await readableJSON(JSON.stringify(array))], {type: `text/plain`}))
+    }
+
+
+
+    /*
+
+      文字数カウンターのデータのアップロード
+
+    */
+    uploadButton = document.querySelector(`#upload-button`)
+    let fr = new FileReader()
+    uploadButton.onchange = e => {
+      if (e) {
+        fr.readAsText(e.target.files[0])
+      }
+      fr.onload = () => {
+        array = JSON.parse(fr.result)
+        localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+        characterCountLog()
+      }
     }
   }
-
-
-
-  /*
-
-    書き出し
-
-  */
-  function write() {
-    let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
-    .concat(
-      array
-      .slice(0)
-      .reverse()
-      .splice(0, array.length - 2)
-      .map(e => [e.date, e.textDiff, e.docDiff])
-    )
-    characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
-    downloadButton = document.querySelector(`#download-button`)
-    downloadButton.href = URL.createObjectURL(new Blob([JSON.stringify(array).replace(/$/, `\n`)], {type: `text/plain`}))
-  }
-
-
-
-  /*
-
-    文字数カウンターのデータのアップロード
-
-  */
-  uploadButton = document.querySelector(`#upload-button`)
-  let fr = new FileReader()
-  uploadButton.onchange = e => {
-    if (e) {
-      fr.readAsText(e.target.files[0])
-    }
-    fr.onload = () => {
-      array = JSON.parse(fr.result)
-      localStorage.setItem(`characterCountLog`, JSON.stringify(array))
-      characterCountLog()
-    }
-  }
-}
+})
 
 
 
