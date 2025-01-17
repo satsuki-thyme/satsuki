@@ -1,11 +1,11 @@
 /*
- ##     ##       ###       ########  
- ##     ##      ## ##      ##     ## 
- ##     ##     ##   ##     ##     ## 
- ##     ##    ##     ##    ########  
-  ##   ##     #########    ##   ##   
-   ## ##      ##     ##    ##    ##  
-    ###       ##     ##    ##     ## 
+ ##     ##       ###       ########
+ ##     ##      ## ##      ##     ##
+ ##     ##     ##   ##     ##     ##
+ ##     ##    ##     ##    ########
+  ##   ##     #########    ##   ##
+   ## ##      ##     ##    ##    ##
+    ###       ##     ##    ##     ##
 */
 /*
 
@@ -255,6 +255,7 @@ let scrollRange = 0
 let PrevOp = ``
 let PrevFile = ``
 let characterCountLogTable = null
+let notFoundField = null
 let uploadDownloadField = null
 let downloadButton = null
 let uploadButton = ``
@@ -276,13 +277,13 @@ if (server === internetServer) {
 
 
 /*
- ##           #######        ###       ########        ########    ####    ##          ########     ######  
- ##          ##     ##      ## ##      ##     ##       ##           ##     ##          ##          ##    ## 
- ##          ##     ##     ##   ##     ##     ##       ##           ##     ##          ##          ##       
- ##          ##     ##    ##     ##    ##     ##       ######       ##     ##          ######       ######  
- ##          ##     ##    #########    ##     ##       ##           ##     ##          ##                ## 
- ##          ##     ##    ##     ##    ##     ##       ##           ##     ##          ##          ##    ## 
- ########     #######     ##     ##    ########        ##          ####    ########    ########     ######  
+ ##           #######        ###       ########        ########    ####    ##          ########     ######
+ ##          ##     ##      ## ##      ##     ##       ##           ##     ##          ##          ##    ##
+ ##          ##     ##     ##   ##     ##     ##       ##           ##     ##          ##          ##
+ ##          ##     ##    ##     ##    ##     ##       ######       ##     ##          ######       ######
+ ##          ##     ##    #########    ##     ##       ##           ##     ##          ##                ##
+ ##          ##     ##    ##     ##    ##     ##       ##           ##     ##          ##          ##    ##
+ ########     #######     ##     ##    ########        ##          ####    ########    ########     ######
 */
 let loadFilesOK = null
 function loadFiles() {
@@ -376,20 +377,20 @@ Promise.all([
   */
     let activeContainer = document.querySelector(`#active-container`)
     /*
-   ####    ##    ##    ########     ########    ##     ## 
-    ##     ###   ##    ##     ##    ##           ##   ##  
-    ##     ####  ##    ##     ##    ##            ## ##   
-    ##     ## ## ##    ##     ##    ######         ###    
-    ##     ##  ####    ##     ##    ##            ## ##   
-    ##     ##   ###    ##     ##    ##           ##   ##  
-   ####    ##    ##    ########     ########    ##     ## 
+   ####    ##    ##    ########     ########    ##     ##
+    ##     ###   ##    ##     ##    ##           ##   ##
+    ##     ####  ##    ##     ##    ##            ## ##
+    ##     ## ## ##    ##     ##    ######         ###
+    ##     ##  ####    ##     ##    ##            ## ##
+    ##     ##   ###    ##     ##    ##           ##   ##
+   ####    ##    ##    ########     ########    ##     ##
   */
   if (!q) {
     /*
       設定
     */
     html.classList.add(`index`)
-    activeContainer.innerHTML = 
+    activeContainer.innerHTML =
     `<header>
       <h1>作品リスト</h1>
     </header>
@@ -402,6 +403,8 @@ Promise.all([
         </div>
         <div id="op-list-table"></div>
       </section>
+      <section id="not-found-field">
+      </section>
       <section id="character-count-log-field">
         <div id="character-count-log-table"></div>
         <div id="upload-download-field"><p>アップロード・ダウンロード</p><input type="file" name="upload-button" accept=".json" id="upload-button"><a id="download-button" download="chacacterCountLog.json">Download</a></div>
@@ -410,6 +413,7 @@ Promise.all([
     let contents = document.querySelector(`#op-list-table`)
     let statusSwitch = Array.from(document.querySelectorAll(`[name="status-switch"]`))
     characterCountLogTable = document.querySelector(`#character-count-log-table`)
+    notFoundField = document.querySelector(`#not-found-field`)
     /*
       実行
     */
@@ -501,13 +505,13 @@ Promise.all([
     }
   }
   /*
-   ######      #######     ##     ##    ########    ########  
-  ##    ##    ##     ##    ##     ##    ##          ##     ## 
-  ##          ##     ##    ##     ##    ##          ##     ## 
-  ##          ##     ##    ##     ##    ######      ########  
-  ##          ##     ##     ##   ##     ##          ##   ##   
-  ##    ##    ##     ##      ## ##      ##          ##    ##  
-   ######      #######        ###       ########    ##     ## 
+   ######      #######     ##     ##    ########    ########
+  ##    ##    ##     ##    ##     ##    ##          ##     ##
+  ##          ##     ##    ##     ##    ##          ##     ##
+  ##          ##     ##    ##     ##    ######      ########
+  ##          ##     ##     ##   ##     ##          ##   ##
+  ##    ##    ##     ##      ## ##      ##          ##    ##
+   ######      #######        ###       ########    ##     ##
   */
   if (q && /^[^/]+$/.test(q)) {
     html.classList.add(`cover`)
@@ -741,7 +745,7 @@ Promise.all([
                     return e
                   }
                   else {
-                    e.count = `miss fetch`
+                    e.count = 0
                     return e
                   }
                 })
@@ -932,12 +936,12 @@ Promise.all([
   }
   /*
    ########    ########    ##     ##    ########
-      ##       ##           ##   ##        ##   
-      ##       ##            ## ##         ##   
-      ##       ######         ###          ##   
-      ##       ##            ## ##         ##   
-      ##       ##           ##   ##        ##   
-      ##       ########    ##     ##       ##   
+      ##       ##           ##   ##        ##
+      ##       ##            ## ##         ##
+      ##       ######         ###          ##
+      ##       ##            ## ##         ##
+      ##       ##           ##   ##        ##
+      ##       ########    ##     ##       ##
   */
   if (q && reTextPage.test(q)) {
     html.classList.add(`doc`)
@@ -1148,7 +1152,7 @@ Promise.all([
         "failedToFetchingFile": "本文ファイルの取得に失敗しました。"
       }
       let controlPanel = {
-        "text": 
+        "text":
           `<aside class="control-panel">
             <div class="switch-set bracket-mode">
               <span class="heading">編集用括弧</span>
@@ -1280,13 +1284,13 @@ Promise.all([
     }
   }
   /*
-   ##          ####     ######     ######## 
-   ##           ##     ##    ##       ##    
-   ##           ##     ##             ##    
-   ##           ##      ######        ##    
-   ##           ##           ##       ##    
-   ##           ##     ##    ##       ##    
-   ########    ####     ######        ##    
+   ##          ####     ######     ########
+   ##           ##     ##    ##       ##
+   ##           ##     ##             ##
+   ##           ##      ######        ##
+   ##           ##           ##       ##
+   ##           ##     ##    ##       ##
+   ########    ####     ######        ##
   */
    let reListURL = new RegExp(`${dn}/list/`)
    if (q && reListURL.test(q)) {
@@ -1308,7 +1312,7 @@ Promise.all([
           let tableHeading = arg.var[3] || ``
           let prefix = Number(arg.var[4]) || 0
           let postfix = Number(arg.var[5]) || 0
-        
+
           html.classList.add(htmlClass)
           let indexContents = await fetch(`${baseURL}/${indvIndexFile}`)
           .then(async rly => {
@@ -1363,7 +1367,7 @@ Promise.all([
           }
           if (type === `preposition`) {
             let contents = await getMarkListForPreposition(mark)
-            activeContainer.innerHTML = 
+            activeContainer.innerHTML =
             `${header}
             <main>
               <ol>${contents.map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
@@ -1462,13 +1466,13 @@ Promise.all([
 
 
   /*
-   ########    ##     ##    ##    ##     ######     ########    ####     #######     ##    ## 
-   ##          ##     ##    ###   ##    ##    ##       ##        ##     ##     ##    ###   ## 
-   ##          ##     ##    ####  ##    ##             ##        ##     ##     ##    ####  ## 
-   ######      ##     ##    ## ## ##    ##             ##        ##     ##     ##    ## ## ## 
-   ##          ##     ##    ##  ####    ##             ##        ##     ##     ##    ##  #### 
-   ##          ##     ##    ##   ###    ##    ##       ##        ##     ##     ##    ##   ### 
-   ##           #######     ##    ##     ######        ##       ####     #######     ##    ## 
+   ########    ##     ##    ##    ##     ######     ########    ####     #######     ##    ##
+   ##          ##     ##    ###   ##    ##    ##       ##        ##     ##     ##    ###   ##
+   ##          ##     ##    ####  ##    ##             ##        ##     ##     ##    ####  ##
+   ######      ##     ##    ## ## ##    ##             ##        ##     ##     ##    ## ## ##
+   ##          ##     ##    ##  ####    ##             ##        ##     ##     ##    ##  ####
+   ##          ##     ##    ##   ###    ##    ##       ##        ##     ##     ##    ##   ###
+   ##           #######     ##    ##     ######        ##       ####     #######     ##    ##
   */
   /*
 
@@ -1558,7 +1562,7 @@ Promise.all([
     return `<table${insId + insClss}>${thead + tbody}</table>`
   }
 
-  
+
 
   /*
 
@@ -1642,11 +1646,11 @@ Promise.all([
 
 
 /*
-  ######    ##   ##     #####     ######         ###    ##    ##    ##    ###    ###        ##          ######      ######  
- ##         ##   ##    ##   ##    ##   ##        ####   ##    ##    ##    ####  ####        ##         ##    ##    ##       
- ##         #######    #######    ######         ## ##  ##    ##    ##    ## #### ##        ##         ##    ##    ##   ### 
- ##         ##   ##    ##   ##    ##   ##        ##  ## ##    ##    ##    ##  ##  ##        ##         ##    ##    ##    ## 
-  ######    ##   ##    ##   ##    ##   ##        ##   ####     ######     ##      ##        #######     ######      ######  
+  ######    ##   ##     #####     ######         ###    ##    ##    ##    ###    ###        ##          ######      ######
+ ##         ##   ##    ##   ##    ##   ##        ####   ##    ##    ##    ####  ####        ##         ##    ##    ##
+ ##         #######    #######    ######         ## ##  ##    ##    ##    ## #### ##        ##         ##    ##    ##   ###
+ ##         ##   ##    ##   ##    ##   ##        ##  ## ##    ##    ##    ##  ##  ##        ##         ##    ##    ##    ##
+  ######    ##   ##    ##   ##    ##   ##        ##   ####     ######     ##      ##        #######     ######      ######
 */
 Promise.all([
   loadFilesOK,
@@ -1658,50 +1662,8 @@ Promise.all([
     let array = null
     characterCountLog()
     function characterCountLog() {
-      // 今
-      let now = new Date(Date.now())
-      /*
-        実行時間
-      */
-      let executionTime = `23:59` // 通常は 23:59 と設定しておく
-      /*
-        今日の実行までの時間
-      */
-      let timeToExecution =
-      // 今日の実行日時
-      new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        Number(executionTime.slice(0, 2).replace(/:/, ``)),
-        Number(executionTime.slice(-2).replace(/:/, ``))
-      ).getTime()
-      // 今の日時
-      - now.getTime()
-      // 翌日の 00:00 の日時
-      let tomorrow = new Date(
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate()
-        ).getTime()
-        + 60 * 60 * 24 * 1000
-      )
-      /*
-        翌日の実行までの時間
-      */
-      let timeToTomorrowExecution =
-      // 翌日の実行日時
-      new Date(
-        tomorrow.getFullYear(),
-        tomorrow.getMonth(),
-        tomorrow.getDate(),
-        Number(executionTime.slice(0, 2).replace(/:/, ``)),
-        Number(executionTime.slice(-2).replace(/:/, ``))
-      ).getTime()
-      // 今の日時
-      - now.getTime()
-      timeToExecution = timeToExecution > 0 ? timeToExecution : timeToTomorrowExecution
+      let notFound = []
+
 
 
       /*
@@ -1727,20 +1689,228 @@ Promise.all([
           }
         ]
       }
-      procCount()
+
+
+
 
 
       /*
-        タイマー
+
+        初回カウント実行
+
       */
-      setTimeout(() => {
-        procCount()
-        characterCountLog()
-      }, timeToExecution)
+      procCount()
 
 
 
+
+
+      /*
+
+        タイマーでカウント実行
+
+      */
+      hourly()
+      // daily()
+
+
+
+
+
+      /*
+
+        アワリー
+
+      */
+      function hourly() {
+
+
+
+      /*
+        今
+      */
+        let now = new Date(Date.now())
+
+
+
+        /*
+          実行時間
+        */
+        let executionMinutes = 59 // 通常は 59 と設定しておく
+
+
+
+        /*
+          今時の実行までの時間
+        */
+        let timeToExecution =
+
+        // 今時の実行日時
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          now.getHours(),
+          executionMinutes
+        ).getTime()
+
+        // 今の日時
+        - now.getTime()
+
+
+
+        /*
+          次の 00 分の日時
+        */
+        let next = new Date(
+          new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            now.getHours()
+          ).getTime()
+          + 60 * 60 * 1000
+        )
+
+
+
+        /*
+          次の実行までの時間
+        */
+        let timeToNextExecution =
+
+        // 次の実行日時
+        new Date(
+          next.getFullYear(),
+          next.getMonth(),
+          next.getDate(),
+          next.getHours(),
+          executionMinutes
+        ).getTime()
+
+        // 今の日時
+        - now.getTime()
+
+
+
+        /*
+          実際の実行までの時間
+        */
+        timeToExecution = timeToExecution > 0 ? timeToExecution : timeToNextExecution
+
+
+
+        /*
+          タイマー
+        */
+        setTimeout(() => {
+          procCount()
+          hourly()
+        }, timeToExecution)
+      }
+
+
+
+
+
+      /*
+
+        デイリー
+
+      */
+      function daily() {
+
+
+
+        /*
+          今
+        */
+        let now = new Date(Date.now())
+
+
+
+        /*
+          実行時間
+        */
+        let executionTime = `23:59` // 通常は 23:59 と設定しておく
+
+
+
+        /*
+          今日の実行までの時間
+        */
+        let timeToExecution =
+
+        // 今日の実行日時
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          Number(executionTime.slice(0, 2).replace(/:/, ``)),
+          Number(executionTime.slice(-2).replace(/:/, ``))
+        ).getTime()
+
+        // 今の日時
+        - now.getTime()
+
+
+
+        /*
+          翌日の 00:00 の日時
+        */
+        let tomorrow = new Date(
+          new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+          ).getTime()
+          + 60 * 60 * 24 * 1000
+        )
+
+
+
+        /*
+          翌日の実行までの時間
+        */
+        let timeToTomorrowExecution =
+
+        // 翌日の実行日時
+        new Date(
+          tomorrow.getFullYear(),
+          tomorrow.getMonth(),
+          tomorrow.getDate(),
+          Number(executionTime.slice(0, 2).replace(/:/, ``)),
+          Number(executionTime.slice(-2).replace(/:/, ``))
+        ).getTime()
+
+        // 今の日時
+        - now.getTime()
+        timeToExecution = timeToExecution > 0 ? timeToExecution : timeToTomorrowExecution
+
+
+
+        /*
+          タイマー
+        */
+        setTimeout(() => {
+          procCount()
+          daily()
+        }, timeToExecution)
+      }
+
+
+
+
+
+      /*
+
+        文字数カウンター本体
+
+      */
       async function procCount() {
+
+
+
         /*
           インデックスの読み込みと、個別インデックスの処理
         */
@@ -1785,14 +1955,16 @@ Promise.all([
                     }
                   }
                   else {
-                    console.log(`miss fetch`)
+                    notFound.push(`${e.dn}/${indvIndexFile}`)
+                    return false
                   }
                 })
               })
             )
           }
           else {
-            console.log(`miss fetch`)
+            notFound.push(`${textDir}/${indexFile}`)
+            return false
           }
         })
 
@@ -1815,6 +1987,9 @@ Promise.all([
           return [textLen, docLen]
           function count(dn, dirAndFileArray, isText) {
             if (dirAndFileArray) {
+
+
+
               /*
                 各ファイルの文章の処理
               */
@@ -1822,6 +1997,7 @@ Promise.all([
                 dirAndFileArray
                 .map(e => {
                   if (e) {
+
                     // 個別ファイルの処理
                     return fetch(`${textDir}/${dn}/${e}`)
                     .then(async rly => {
@@ -1834,7 +2010,8 @@ Promise.all([
                         }
                       }
                       else {
-                        console.log(`miss fetch`)
+                        notFound.push(`${dn}/${e}`)
+                        return false
                       }
                     })
                   }
@@ -1851,8 +2028,14 @@ Promise.all([
               */
               .then(rly => {
                 return rly
-                .filter(e => e)
-                .map(e => e.replace(/[\s　]/g, ``).length)
+                .map(e => {
+                  if (e) {
+                    return e.replace(/[\s]/g, ``).length
+                  }
+                  else {
+                    return 0
+                  }
+                })
                 .reduce((a, c) => a + c, 0)
               })
             }
@@ -1868,7 +2051,9 @@ Promise.all([
           集計その他
         */
         .then(rly => {
+          let now = new Date(Date.now())
           let today = `${now.getFullYear()}-${zeroFill(now.getMonth() + 1, 2)}-${zeroFill(now.getDate(), 2)}`
+
           // 配列に同じ日の集計があれば削除する
           new Promise(resolve => {
             fn()
@@ -1899,34 +2084,40 @@ Promise.all([
 
             // ローカルストレージへの書き込み
             localStorage.setItem(`characterCountLog`, JSON.stringify(array))
-    
+
             // 書き出し
             write()
           })
         })
       }
+
+
+
+      /*
+        書き出し
+      */
+      async function write() {
+        let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
+        .concat(
+          array
+          .slice(0)
+          .reverse()
+          .splice(0, array.length - 2)
+          .map(e => [e.date, e.textDiff, e.docDiff])
+        )
+        let notFoundAccum = ``
+        if (notFound.length > 0) {
+          notFoundAccum = `<section><ul><li>Not Found: ${notFound.join(`</li><li>Not found: `)}</li></ul></section>`
+          notFoundField.classList.add(`not-found`)
+        }
+        characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
+        downloadButton = document.querySelector(`#download-button`)
+        downloadButton.href = URL.createObjectURL(new Blob([await readableJSON(JSON.stringify(array))], {type: `text/plain`}))
+        notFoundField.innerHTML += notFoundAccum
+      }
     }
 
 
-
-    /*
-
-      書き出し
-
-    */
-    async function write() {
-      let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
-      .concat(
-        array
-        .slice(0)
-        .reverse()
-        .splice(0, array.length - 2)
-        .map(e => [e.date, e.textDiff, e.docDiff])
-      )
-      characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
-      downloadButton = document.querySelector(`#download-button`)
-      downloadButton.href = URL.createObjectURL(new Blob([await readableJSON(JSON.stringify(array))], {type: `text/plain`}))
-    }
 
 
 
@@ -1955,13 +2146,13 @@ Promise.all([
 
 
   /*
-      ###        ######     ########    ####     #######     ##    ## 
-     ## ##      ##    ##       ##        ##     ##     ##    ###   ## 
-    ##   ##     ##             ##        ##     ##     ##    ####  ## 
-   ##     ##    ##             ##        ##     ##     ##    ## ## ## 
-   #########    ##             ##        ##     ##     ##    ##  #### 
-   ##     ##    ##    ##       ##        ##     ##     ##    ##   ### 
-   ##     ##     ######        ##       ####     #######     ##    ## 
+      ###        ######     ########    ####     #######     ##    ##
+     ## ##      ##    ##       ##        ##     ##     ##    ###   ##
+    ##   ##     ##             ##        ##     ##     ##    ####  ##
+   ##     ##    ##             ##        ##     ##     ##    ## ## ##
+   #########    ##             ##        ##     ##     ##    ##  ####
+   ##     ##    ##    ##       ##        ##     ##     ##    ##   ###
+   ##     ##     ######        ##       ####     #######     ##    ##
   */
   /*
 
@@ -1979,6 +2170,11 @@ Promise.all([
     localStorage.setItem(`scrollValueY`, scrollValueY)
     localStorage.setItem(`scrollValueX`, scrollValueX)
   })
+
+
+
+
+
   /*
 
     トップ
@@ -1992,6 +2188,8 @@ Promise.all([
     })
   }
 })
+
+
 
 
 
@@ -2016,6 +2214,8 @@ window.addEventListener(`mousedown`, function(e0) {
     }, 200)
   }
 })
+
+
 
 
 

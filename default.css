@@ -353,6 +353,9 @@ footer#site-footer {
   height: 0;
   visibility: hidden;
 }
+.index.internet #not-found-field {
+  display: none;
+}
 .index.internet #active-container > main > section:nth-child(2) {
   display: none;
 }
@@ -368,6 +371,17 @@ footer#site-footer {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.index #active-container > main > #not-found-field {
+  display: none;
+}
+.index #active-container > main > #not-found-field.not-found {
+  display: initial;
+}
+.index #active-container > main > #not-found-field ul {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
 }
 .index #active-container > main > #character-count-log-field {
   display: flex;
