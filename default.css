@@ -367,35 +367,41 @@ footer#site-footer {
 .index #active-container > main > section + section {
   margin-top: 20px;
 }
-.index #active-container > main > #op-field {
+.index #op-field {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.index #active-container > main > #not-found-field {
+.index #not-found-field {
   display: none;
 }
-.index #active-container > main > #not-found-field.not-found {
+.index #not-found-field.not-found {
   display: initial;
 }
-.index #active-container > main > #not-found-field ul {
+.index #not-found-field ul {
   margin-left: 0;
   padding-left: 0;
   list-style: none;
 }
-.index #active-container > main > #character-count-log-field {
+.index #character-count-log-field {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
 }
-.index #active-container > main > #character-count-log-field > h2 {
+.index #character-count-log-field > h2 {
   line-height: 1;
 }
-.index #active-container > main > #character-count-log-field > div {
+.index #character-count-log-field > div {
   margin-top: 30px;
   margin-left: 30px;
   margin-right: 30px;
   text-align: center;
+}
+.index #data-table.d7 tbody tr:nth-child(n + 9) {
+  display: none;
+}
+.index #data-table.d30 tbody tr:nth-child(n + 32) {
+  display: none;
 }
 .index #op-list-table td:first-child {
   text-align: center;
@@ -414,7 +420,7 @@ footer#site-footer {
 .index #character-count-log-field table tbody td:nth-child(1) span {
   letter-spacing: 1.5em;
 }
-.index #character-count-log-table {
+.index #data-table tbody {
   user-select: all;
 }
 .index #upload-download-field #upload-download-button {

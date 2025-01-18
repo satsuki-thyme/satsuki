@@ -2110,10 +2110,25 @@ Promise.all([
           notFoundAccum = `<section><ul><li>Not Found: ${notFound.join(`</li><li>Not found: `)}</li></ul></section>`
           notFoundField.classList.add(`not-found`)
         }
-        characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p><div>` + maketable(data, [`日付`, `本文`, `その他`]) + `</div>`
+        characterCountLogTable.innerHTML = `<p>小説制作 文字数ログ</p>
+        <div id="status-switch">
+          <label><input type="radio" name="period-switch" value="d7" checked>7日</label>
+          <label><input type="radio" name="period-switch" value="d30">30日</label>
+          <label><input type="radio" name="period-switch" value="all">全期間</label>
+        </div>
+        <div>
+          ${maketable(data, [`日付`, `本文`, `その他`], `d7`, `data-table`)}
+        </div>`
         downloadButton = document.querySelector(`#download-button`)
         downloadButton.href = URL.createObjectURL(new Blob([await readableJSON(JSON.stringify(array))], {type: `text/plain`}))
         notFoundField.innerHTML += notFoundAccum
+        let dataTable = document.querySelector(`#data-table`)
+        document.querySelectorAll(`#status-switch input`).forEach(e => {
+          e.onchange = () => {
+            console.log(e.value)
+            dataTable.classList = e.value
+          }
+        })
       }
     }
 
