@@ -1188,7 +1188,6 @@ Promise.all([
           let prevLink = ``
           let nextLink = ``
           text = (await rly.text())
-          .replace(/(^|[\r\n])(#+ .*|[ \t]*([\-+*]|\d+\.) .*)/g, ``)
           if (fileType === `markdown`) {
             outputText = await replacetool(await fetch(`lib/common/markup-special-notation.json`).then(async rly => await rly.json()), await mdparse(text, {"permissive": true, "section": true}))
           }
