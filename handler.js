@@ -2003,7 +2003,11 @@ Promise.all([
                     .then(async rly => {
                       if (rly.ok) {
                         if (isText) {
-                          return await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`, ``), marksEnclosure, `delete`, `hole`, ``)
+                          return await novelparse({
+                            "src": await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`, ``), marksEnclosure, `delete`, `hole`, ``),
+                            "newLineMode": `raw`,
+                            "rubyMode": `delete`
+                          })
                         }
                         else {
                           return await rly.text()
