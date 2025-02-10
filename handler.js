@@ -1076,7 +1076,7 @@ Promise.all([
                 "episode_num": currNum + 1,
                 "subtitle": subtitle,
                 "description": await description(),
-                "link_URL": `https://satsuki.me/?${dn}/${dirAndFile}`,
+                "link_url": `https://satsuki.me/index.html?q=${dn}/${dirAndFile}`,
                 "text_follow_option": textFollowOption(),
                 "text_no_ruby": await textNoRuby(),
                 "text_length": (await textLength()).total
@@ -1116,7 +1116,7 @@ Promise.all([
                 }
               }
               for (let i in Object.keys(conversionTable)) {
-                let re = new RegExp(`\\$${Object.keys(conversionTable)[i]}(?=$|[^0-9a-zA-Z_])`, `g`)
+                let re = new RegExp(`\\$${Object.keys(conversionTable)[i]}(?=\\r|\\n|$|[^\\d\\w_])`, `g`)
                 w = w.replace(re, `${conversionTable[Object.keys(conversionTable)[i]]}`)
               }
               return w
@@ -1657,7 +1657,7 @@ Promise.all([
   marksEOK
 ])
 .then(() => {
-  if (!q && server === localSever) {
+  if (server === localSever) {
     let array = null
     characterCountLog()
     function characterCountLog() {
@@ -2089,7 +2089,9 @@ Promise.all([
             localStorage.setItem(`characterCountLog`, JSON.stringify(array))
 
             // 書き出し
-            write()
+            if (!q) {
+              write()
+            }
           })
         })
       }
@@ -2144,16 +2146,18 @@ Promise.all([
       文字数カウンターのデータのアップロード
 
     */
-    uploadButton = document.querySelector(`#upload-button`)
-    let fr = new FileReader()
-    uploadButton.onchange = e => {
-      if (e) {
-        fr.readAsText(e.target.files[0])
-      }
-      fr.onload = () => {
-        array = JSON.parse(fr.result)
-        localStorage.setItem(`characterCountLog`, JSON.stringify(array))
-        characterCountLog()
+    if (!q) {
+      uploadButton = document.querySelector(`#upload-button`)
+      let fr = new FileReader()
+      uploadButton.onchange = e => {
+        if (e) {
+          fr.readAsText(e.target.files[0])
+        }
+        fr.onload = () => {
+          array = JSON.parse(fr.result)
+          localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+          characterCountLog()
+        }
       }
     }
   }
