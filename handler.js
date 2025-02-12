@@ -1605,7 +1605,7 @@ Promise.all([
   */
   async function readableJSON(src) {
     let inQuote = false
-    let JSONArray = src.split(``)
+    let JSONArray = src.split(`,`)
     let readableArray = []
     let indent = 0
     let i = 0
@@ -2130,7 +2130,6 @@ Promise.all([
         let dataTable = document.querySelector(`#data-table`)
         document.querySelectorAll(`#status-switch input`).forEach(e => {
           e.onchange = () => {
-            console.log(e.value)
             dataTable.classList = e.value
           }
         })
