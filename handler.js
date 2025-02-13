@@ -2248,13 +2248,13 @@ window.addEventListener(`mousedown`, function(e0) {
 window.onkeydown = e => {
   if (e.code === `Enter`) {
     let bodyHeight = document.querySelector(`body`).getBoundingClientRect().height
-    let scrollHeight = bodyHeight - window.innerHeight
+    let scrollHeight = Math.ceil(bodyHeight - window.innerHeight)
     let scrollPos = document.scrollingElement.scrollTop
     let scrollTrg = 0
     scrollTrg =
-    scrollPos === 0 ? scrollHeight :
+    scrollPos === 0 ? scrollHeight + 1 :
     scrollPos < scrollHeight / 2 ? 0 :
-    scrollPos >= scrollHeight / 2 && scrollPos !== scrollHeight ? scrollHeight :
+    scrollPos >= scrollHeight / 2 && scrollPos !== scrollHeight ? scrollHeight + 1 :
     0
     document.scrollingElement.scroll({
       top: scrollTrg,
