@@ -376,6 +376,7 @@ Promise.all([
   marksEOK
 ])
 .then(() => {
+  console.log(marksPreposition)
   /*
     要素の取得
   */
