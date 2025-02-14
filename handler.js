@@ -27,7 +27,7 @@ let characterCountLogInitializeSwitch = false
 */
 let githubRawFront = `//raw.githubusercontent.com/satsuki-thyme`
 let githubRawBack = `master`
-let internetSiteRepo = `satsuki`
+let internetSiteRepo = `satsuki-thyme`
 let localTextDir = `scribe/novel`
 let basePage = `index.html`
 let indexFile = `index.json`
