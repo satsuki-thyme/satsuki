@@ -85,12 +85,13 @@ let marksEOK = null
 makeReListURLs()
 function makeReListURLs() {
   if (q && reDnExists.test(q)) {
+    let w = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
     reListURLs = loadMarkupFile(indivMarkupFileDir + `/` + markupFile)
     .then(rly => {
       return rly
     })
     .catch(() => {
-      return loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+      return w
       .then(rly => {
         return rly
       })
@@ -376,7 +377,6 @@ Promise.all([
   marksEOK
 ])
 .then(() => {
-  console.log(marksPreposition)
   /*
     要素の取得
   */
