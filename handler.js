@@ -85,19 +85,16 @@ let marksEOK = null
 makeReListURLs()
 function makeReListURLs() {
   if (q && reDnExists.test(q)) {
-    let w = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
     reListURLs = loadMarkupFile(indivMarkupFileDir + `/` + markupFile)
     .then(rly => {
       return rly
     })
-    .catch(() => {
-      return w
-      .then(rly => {
-        return rly
-      })
-      .catch(() => {
-        return false
-      })
+    .then(rly => {
+      return makeRegExp(rly)
+    })
+    reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+    .then(rly => {
+      return rly
     })
     .then(rly => {
       return makeRegExp(rly)
