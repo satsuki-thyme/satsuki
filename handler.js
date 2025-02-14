@@ -92,6 +92,9 @@ function makeReListURLs() {
     .then(rly => {
       return makeRegExp(rly)
     })
+    .catch(() => {
+      return ``
+    })
     reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
     .then(rly => {
       return rly
@@ -99,11 +102,17 @@ function makeReListURLs() {
     .then(rly => {
       return makeRegExp(rly)
     })
+    .catch(() => {
+      return ``
+    })
   }
   if (!q) {
     reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
     .then(rly => {
       return makeRegExp(rly)
+    })
+    .catch(() => {
+      return ``
     })
   }
   function loadMarkupFile(URL) {
