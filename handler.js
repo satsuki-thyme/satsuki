@@ -321,6 +321,10 @@ function loadFiles() {
     {
       "file": `wordcount.js`,
       "repo": `wordcount.js`
+    },
+    {
+      "file": `yamlparse.js`,
+      "repo": `yamlparse.js`
     }
   ]
   let CSSPromiseArray = []
