@@ -1,0 +1,78 @@
+[
+  {
+    "active": true,
+    "name": "キャラクター",
+    "markupType": "preposition",
+    "mark": ["{", "}"],
+    "path": "character-list",
+    "var": ["list", "", "character-list", ["名前", "性質・情報"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "台詞",
+    "markupType": "preposition",
+    "mark": ["<", ">"],
+    "path": "foreshadowing-list",
+    "var": ["list", "", "foreshadowing-list", ["識別名", "内容"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "魔物",
+    "markupType": "preposition",
+    "mark": ["[", "]"],
+    "path": "monster-list",
+    "var": ["list", "", "monster-list", ["名前", "性質・情報"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "物事",
+    "markupType": "preposition",
+    "mark": ["(", ")"],
+    "path": "thing-list",
+    "var": ["list", "", "thing-list", ["名前", "性質・情報"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "魔法",
+    "markupType": "preposition",
+    "mark": ["$", "$"],
+    "path": "magic-keyless-list",
+    "var": ["list", "", "magic-keyless-list", ["名前", "性質・情報"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "その他",
+    "markupType": "preposition",
+    "mark": ["=", "="],
+    "path": "others-list",
+    "var": ["list", "", "others-list", ["名前", "性質・情報"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "魔法",
+    "markupType": "enclosure",
+    "delete": false,
+    "mark": [
+      [["〈", "〉"], ""]
+    ],
+    "path": "magic-list",
+    "var": ["list", "", "magic-list", ["魔法名", "説明"], 0, 200]
+  },
+  {
+    "active": true,
+    "name": "ピックアップ",
+    "markupType": "enclosure",
+    "delete": true,
+    "mark": [
+      [["!", "!"], "個人・団体の名称"],
+      [["%", "%"], "地名"],
+      [["&", "&"], "主体"],
+      [["@", "@"], "物事"],
+      [["?", "?"], "物価"],
+      [["^", "^"], ""],
+      [["~", "~"], ""]
+    ],
+    "path": "mark-list",
+    "var": ["list", "", "mark-list", ["ピックアップ語", "ピックアップ語前後の記述"], 100, 100]
+  }
+]
