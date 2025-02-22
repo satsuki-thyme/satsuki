@@ -17,19 +17,27 @@
   },
   {
     "active": true,
-    "name": "魔物",
+    "name": "主体",
     "markupType": "preposition",
     "mark": ["[", "]"],
-    "path": "monster-list",
-    "var": ["list", "", "monster-list", ["名前", "性質・情報"], 0, 0]
+    "path": "subject-list",
+    "var": ["list", "", "subject-list", ["名前", "性質・情報"], 0, 0]
   },
   {
     "active": true,
     "name": "物事",
     "markupType": "preposition",
     "mark": ["(", ")"],
-    "path": "thing-list",
-    "var": ["list", "", "thing-list", ["名前", "性質・情報"], 0, 0]
+    "path": "things-list",
+    "var": ["list", "", "things-list", ["名前", "性質・情報"], 0, 0]
+  },
+  {
+    "active": true,
+    "name": "場所",
+    "markupType": "preposition",
+    "mark": ["%", "%"],
+    "path": "place-list",
+    "var": ["list", "", "place-list", ["名前", "性質・情報"], 0, 0]
   },
   {
     "active": true,
@@ -65,14 +73,9 @@
     "delete": true,
     "mark": [
       [["!", "!"], "個人・団体の名称"],
-      [["%", "%"], "地名"],
-      [["&", "&"], "主体"],
-      [["@", "@"], "物事"],
-      [["?", "?"], "物価"],
-      [["^", "^"], ""],
-      [["~", "~"], ""]
+      [["?", "?"], "物価"]
     ],
     "path": "mark-list",
-    "var": ["list", "", "mark-list", ["ピックアップ語", "ピックアップ語前後の記述"], 100, 100]
+    "var": ["list", "", "mark-list", ["語", "前後の記述"], 100, 100]
   }
 ]
