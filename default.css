@@ -121,10 +121,10 @@ body {
   font-family: Helvetica, Arial, "ヒラギノ角ゴシック", "游ゴシック", "メイリオ";
   font-size: 17.5px;
 }
-#active-container header,
-#active-container footer,
-#active-container main,
-#static-container aside {
+html:not(.vertical) #active-container header,
+html:not(.vertical) #active-container footer,
+html:not(.vertical) #active-container main,
+html:not(.vertical) #static-container aside {
   width: 100%;
   max-width: 665px;
   box-sizing: border-box;
@@ -622,9 +622,20 @@ footer#site-footer {
 .text #char-num {
   display: none;
 }
-.text table.relation-link,
-.text table.relation-link td {
-  border-width: 0;
+/*
+ ##    ######################### ###### ##### ##      
+ ##    ####     ##   ##  ##   ####     ##   ####      
+ ##    #######  ######   ##   ####     #########      
+  ##  ## ##     ##   ##  ##   ####     ##   ####      
+   ####  #########   ##  ##   ## ########   ######### 
+*/
+.vertical body {
+  writing-mode: vertical-rl;
+}
+.vertical #container,
+.vertical #active-container,
+.vertical #text-area {
+  width: 100%;
 }
 /*
  ########      #######      ######  
@@ -646,7 +657,6 @@ footer#site-footer {
 }
 .doc main {
   order: 2;
-  max-width: 600px;
   padding: 50px 10px;
 }
 .doc footer {
@@ -752,19 +762,15 @@ footer#site-footer {
   margin: 0;
 }
 .doc nav {
-  width: 100%;
-  height: 30px;
   line-height: 1.5em;
   vertical-align: middle;
 }
 .doc nav div {
   float: left;
+  padding: 3px;
 }
 .doc nav .left {
   text-align: right;
-}
-.doc nav .center {
-  width: 8em;
 }
 .doc nav .right {
   text-align: left;
@@ -774,7 +780,7 @@ footer#site-footer {
   width: calc(50% - 4em);
 }
 .doc nav .nav-separater {
-  padding: 0 1em;
+  padding: 1em;
 }
 .doc .user-cnt-tasklist {
   list-style: none;

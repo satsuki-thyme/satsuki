@@ -149,6 +149,7 @@ function makeReListURLs() {
 */
 let rubyMode = localStorage.getItem(`rubyMode`) !== null ? localStorage.getItem(`rubyMode`) : `parse`
 let newLineMode = localStorage.getItem(`newLineMode`) !== null ? localStorage.getItem(`newLineMode`) : `few`
+let orientationMode = localStorage.getItem(`orientationMode`) !== null ? localStorage.getItem(`orientationMode`) : `horizontal`
 let infoContents = localStorage.getItem(`infoContents`) !== null ? localStorage.getItem(`infoContents`) : `normal`
 let bracketMode = localStorage.getItem(`bracketMode`) !== null ? localStorage.getItem(`bracketMode`) : `delete`
 
@@ -992,6 +993,7 @@ Promise.all([
         let bracketModeSelector = document.querySelectorAll(`[name="bracket-mode"]`)
         let rubyModeSwitch = document.querySelectorAll(`[name="ruby-mode"]`)
         let newLineModeSwitch = document.querySelector(`[name="new-line-mode"]`)
+        let orientationModeSwitch = document.querySelector(`[name="orientation-mode"]`)
         let textSelectButton = document.querySelector(`[name="text-select"]`)
         let infoContentsSwitch = document.querySelectorAll(`[name="info-contents"]`)
         /*
@@ -1006,6 +1008,13 @@ Promise.all([
           rly.checked = rubyMode === rly.value ? true : false
         })
         newLineModeSwitch.checked = newLineMode === `few` ? true : false
+        if (orientationMode === `horizontal`) {
+          orientationModeSwitch.checked = false
+        }
+        else {
+          orientationModeSwitch.checked = true
+          html.classList.add(`vertical`)
+        }
         infoContentsSwitch.forEach(rly => {
           rly.checked = infoContents === rly.value ? true : false
         })
@@ -1051,6 +1060,19 @@ Promise.all([
             "parenthesis": `normal`,
             "comment": `delete-together`
           })
+          getContentsSize()
+          getScrollValue()
+        }
+        orientationModeSwitch.onchange = async () => {
+          orientationMode = orientationModeSwitch.checked === false ? `horizontal` : `vertical`
+          if (orientationModeSwitch.checked === false) {
+            orientationMode = `horizontal`
+            html.classList.remove(`vertical`)
+          }
+          else {
+            orientationMode = `vertical`
+            html.classList.add(`vertical`)
+          }
           getContentsSize()
           getScrollValue()
         }
@@ -1153,6 +1175,7 @@ Promise.all([
         localStorage.setItem(`bracketMode`, bracketMode)
         localStorage.setItem(`rubyMode`, rubyMode)
         localStorage.setItem(`newLineMode`, newLineMode)
+        localStorage.setItem(`orientationMode`, orientationMode)
         localStorage.setItem(`infoContents`, infoContents)
         localStorage.setItem(`PrevOp`, PrevOp)
         localStorage.setItem(`PrevFile`, PrevFile)
@@ -1179,6 +1202,9 @@ Promise.all([
             </div>
             <div class="switch-set new-line-mode">
               <label><input type="checkbox" name="new-line-mode" checked><span class="label">改行減少</span></label>
+            </div>
+            <div class="switch-set orientation-mode">
+              <label><input type="checkbox" name="orientation-mode"><span class="label">縦</span></label>
             </div>
             <div class="switch-set text-select">
               <input type="button" name="text-select" value="本文選択">
