@@ -23,7 +23,17 @@
     <link rel="icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/attachment/satsuki-thyme-square-fw-white-bg-green-vertical-position-180s.png">
     <link rel="stylesheet" href="default.css">
-    <script src="handler.js" type="module"></script>
+    <script>
+      let fixToInternetURL = false
+      let e = document.createElement(`script`)
+      e.src = {
+        "http://localhost:8080": `handler.js`,
+        "http://satsuki.c": `handler.js`,
+        "https://satsuki.me": `handler.min.js`
+      }[fixToInternetURL === false ? location.origin : `https://satsuki.me`]
+      e.type = `module`
+      document.head.appendChild(e)
+    </script>
   </head>
   <body>
     <header id="site-header">

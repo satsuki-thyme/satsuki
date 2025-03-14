@@ -365,15 +365,9 @@ function loadFiles() {
       })
     )
   }
-  let DOMContentPromise = new Promise(resolve => {
-    window.addEventListener(`DOMContentLoaded`, () => {
-      resolve()
-    })
-  })
   loadFilesOK = Promise.all([
     Promise.all(CSSPromiseArray),
-    Promise.all(scriptPromiseArray),
-    DOMContentPromise
+    Promise.all(scriptPromiseArray)
   ])
 }
 
