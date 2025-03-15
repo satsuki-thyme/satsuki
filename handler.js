@@ -2283,7 +2283,7 @@ window.onkeydown = e => {
     let scrollPos = document.scrollingElement.scrollTop
     let scrollTrg = 0
     scrollTrg =
-    scrollPos === 0 ? scrollHeight + 1 :
+    scrollPos === 0 ? scrollHeight + 100 :
     scrollPos < scrollHeight / 2 ? 0 :
     scrollPos >= scrollHeight / 2 && scrollPos !== scrollHeight ? scrollHeight + 1 :
     0
