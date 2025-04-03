@@ -30,13 +30,13 @@ let githubRawBack = `master`
 let internetSiteRepo = `satsuki`
 let localTextDir = `scribe/novel`
 let basePage = `index.html`
-let indexFile = `index.json`
+let indexFile = `etc/index.json`
 let indvIndexFile = `README.md`
 let libDir = `lib`
 let listDir = `list`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
-let markupFile = `markup.json`
+let markupFile = `etc/markup.json`
 let localSever = `http://satsuki.c`
 let internetServer = `https://satsuki.me`
 
