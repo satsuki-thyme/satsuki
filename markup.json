@@ -49,22 +49,19 @@
   },
   {
     "active": true,
-    "name": "その他",
+    "name": "魔物",
     "markupType": "preposition",
-    "mark": ["=", "="],
-    "path": "others-list",
-    "var": ["list", "", "others-list", ["名前", "性質・情報"], 0, 0]
+    "mark": ["[", "]"],
+    "path": "monster-list",
+    "var": ["list", "", "monster-list", ["魔物名", "性質・情報"], 0, 0]
   },
   {
     "active": true,
-    "name": "魔法",
-    "markupType": "enclosure",
-    "delete": false,
-    "mark": [
-      [["〈", "〉"], ""]
-    ],
-    "path": "magic-list",
-    "var": ["list", "", "magic-list", ["魔法名", "説明"], 0, 200]
+    "name": "その他",
+    "markupType": "preposition",
+    "mark": ["@", "@"],
+    "path": "others-list",
+    "var": ["list", "", "others-list", ["名前", "性質・情報"], 0, 0]
   },
   {
     "active": true,
