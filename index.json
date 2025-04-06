@@ -1,5 +1,13 @@
 [
   {
+    "dn": "seed",
+    "active": false
+  },
+  {
+    "dn": "common-1",
+    "active": false
+  },
+  {
     "dn": "opss",
     "active": true
   },
