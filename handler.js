@@ -655,7 +655,7 @@ Promise.all([
                   }
                 }
                 if (i === src.length - 1) {
-                  rly[j].contents += `</div>` + `</div></section>`.repeat(closeSection)
+                  rly[j].contents += `</div>` + `</div></section>`.repeat(-closeSection)
                 }
                 return rly
               })
