@@ -986,7 +986,7 @@ Promise.all([
         // get element
         let bracketModeSelector = document.querySelectorAll(`[name="bracket-mode"]`)
         let rubyModeSwitch = document.querySelectorAll(`[name="ruby-mode"]`)
-        let newLineModeSwitch = document.querySelector(`[name="new-line-mode"]`)
+        let newLineModeSwitch = document.querySelectorAll(`[name="new-line-mode"]`)
         let orientationModeSwitch = document.querySelector(`[name="orientation-mode"]`)
         let textSelectButton = document.querySelector(`[name="text-select"]`)
         let infoContentsSwitch = document.querySelectorAll(`[name="info-contents"]`)
@@ -1001,7 +1001,9 @@ Promise.all([
         rubyModeSwitch.forEach(rly => {
           rly.checked = rubyMode === rly.value ? true : false
         })
-        newLineModeSwitch.checked = newLineMode === `few` ? true : false
+        newLineModeSwitch.forEach(rly => {
+          rly.checked = newLineMode === rly.value ? true : false
+        })
         if (orientationMode === `horizontal`) {
           orientationModeSwitch.checked = false
         }
@@ -1045,18 +1047,20 @@ Promise.all([
             getScrollValue()
           }
         })
-        newLineModeSwitch.onchange = async () => {
-          newLineMode = newLineModeSwitch.checked === true ? `few` : `normal`
-          textArea.innerHTML = textForCopy = await novelparse({
-            "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
-            "newLineMode": newLineMode,
-            "rubyMode": rubyMode,
-            "parenthesis": `normal`,
-            "comment": `delete-together`
-          })
-          getContentsSize()
-          getScrollValue()
-        }
+        newLineModeSwitch.forEach(rly => {
+          rly.onchange = async () => {
+            newLineMode = rly.checked === true ? rly.value : false
+            textArea.innerHTML = textForCopy = await novelparse({
+              "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+              "newLineMode": newLineMode,
+              "rubyMode": rubyMode,
+              "parenthesis": `normal`,
+              "comment": `delete-together`
+            })
+            getContentsSize()
+            getScrollValue()
+          }
+        })
         orientationModeSwitch.onchange = async () => {
           orientationMode = orientationModeSwitch.checked === false ? `horizontal` : `vertical`
           if (orientationModeSwitch.checked === false) {
@@ -1195,7 +1199,10 @@ Promise.all([
               <label><input type="radio" name="ruby-mode" value="delete"><span class="label">削除</span></label>
             </div>
             <div class="switch-set new-line-mode">
-              <label><input type="checkbox" name="new-line-mode" checked><span class="label">改行減少</span></label>
+              <span class="heading">改行</span>
+              <label><input type="radio" name="new-line-mode" value="few" checked><span class="label">減少</span></label>
+              <label><input type="radio" name="new-line-mode" value="paper"><span class="label">紙書</span></label>
+              <label><input type="radio" name="new-line-mode" value="raw"><span class="label">不変</span></label>
             </div>
             <div class="switch-set orientation-mode">
               <label><input type="checkbox" name="orientation-mode"><span class="label">縦</span></label>
