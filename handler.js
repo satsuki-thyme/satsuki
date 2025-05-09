@@ -171,8 +171,10 @@ let localizationArray = [
 // インデックスページ
 let tocHeadingInIndex = `文書|目次`
 let textHeadingInIndex = `本文`
+let rejectHeadingInIndex = `マインドマップ`
 let reTocBlob = new RegExp(`(^|\\r?\\n)(?<sharp>#+) (${tocHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>(?!#)|$(?!\\r?\\n))`)
 let reTextBlob = new RegExp(`(^|\\r?\\n)(?<sharp>#+) (${textHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>(?!#)|$(?!\\r?\\n))`)
+let reRejectBlob = new RegExp(`(^|\\r?\\n)(?<sharp>#+) (${rejectHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>(?!#)|$(?!\\r?\\n))`)
 
 // カバーページ
 let textHeadingInCover = [
@@ -837,7 +839,7 @@ Promise.all([
               .filter(e => e)
             )
             let reText1 = new RegExp(`^#{${textSharp}} (${textHeadingInIndex})`)
-            let reNonText = new RegExp(`^#{1,${textSharp}} (?!.*(${textHeadingInIndex})).*`)
+            let reNonText = new RegExp(`^#{1,${textSharp}} (?!.*(${textHeadingInIndex}))(?!.*(${rejectHeadingInIndex})).*`)
             return new Promise(resolve => {
               fn()
               function fn() {
@@ -1970,6 +1972,7 @@ Promise.all([
                       sharpLen = textBlobArray[2].length
                       docBlob = tocBlob
                       .replace(reTextBlob, ``)
+                      .replace(reRejectBlob, ``)
                     }
                     else {
                       docBlob = tocBlob
