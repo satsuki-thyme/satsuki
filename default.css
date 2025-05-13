@@ -417,7 +417,7 @@ footer#site-footer {
 .index #character-count-log-field table tbody td:nth-child(1) span {
   letter-spacing: 1.5em;
 }
-.index #data-table tbody {
+.index #data-table tr {
   user-select: all;
 }
 .index #upload-download-field #upload-download-button {
