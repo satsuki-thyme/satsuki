@@ -30,6 +30,7 @@ let githubRawBack = `master`
 let internetSiteRepo = `satsuki`
 let localTextDir = `scribe/novel`
 let basePage = `index.html`
+let indexFile = `etc/index.json`
 let indvIndexFile = `README.md`
 let libDir = `lib`
 let listDir = `list`
@@ -59,11 +60,6 @@ let q = search.get(`q`)
 let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
 let laterInsertionDn = ``
 let server = fixToInternetURL === false ? location.origin : internetServer
-let indexFile = {
-  "http://localhost:8080": `etc/index.json`,
-  "http://satsuki.c": `etc/index.json`,
-  "https://satsuki.me": `index.json`
-}[server]
 let textDir = {
   "http://localhost:8080": localTextDir,
   "http://satsuki.c": localTextDir,
