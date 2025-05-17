@@ -46,11 +46,11 @@
     <span></span>
   </body>
   <script>
-    let elm_textarea = document.getElementsByTagName("textarea")[0]
-    let elm_span = document.getElementsByTagName("span")[0]
+    let elm_textarea = document.getElementsByTagName(`textarea`)[0]
+    let elm_span = document.getElementsByTagName(`span`)[0]
     let fontSizeDef = 140 // およその font-size
-    window.addEventListener("DOMContentLoaded", () => {
-      elm_textarea.textContent = localStorage.getItem("contents")
+    window.addEventListener(`DOMContentLoaded`, () => {
+      elm_textarea.textContent = localStorage.getItem(`contents`)
       setFontSize()
       setletterSpacing()
     })
@@ -59,10 +59,11 @@
       setletterSpacing()
     }
     window.onunload = () => {
-      localStorage.setItem("contents", elm_textarea.value)
+      localStorage.setItem(`contents`, elm_textarea.value)
     }
     elm_textarea.onkeyup = () => {
       setletterSpacing()
+      localStorage.setItem(`contents`, elm_textarea.value)
     }
     /*
 
@@ -93,8 +94,8 @@
       let windowWidth = window.innerWidth
       let frameWidth = Number(window.getComputedStyle(elm_textarea).paddingRight.slice(0, -2)) + Number(window.getComputedStyle(elm_textarea).paddingLeft.slice(0, -2))
       let word = elm_textarea.value
-        if (word === "") {
-          word = "　"
+        if (word === ``) {
+          word = `　`
         }
       elm_span.innerText = word
       let letterNum = Math.floor((windowWidth - frameWidth) / (fontSize))
