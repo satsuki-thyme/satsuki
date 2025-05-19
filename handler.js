@@ -319,7 +319,7 @@ function loadFiles() {
       "repo": `brackettool.js`
     },
     {
-      "file": `comparearray${min}.js`,
+      "file": `comparearray.js`,
       "repo": `comparearray.js`
     },
     {
