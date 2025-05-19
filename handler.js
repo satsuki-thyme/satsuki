@@ -37,8 +37,8 @@ let listDir = `list`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
 let markupFile = `etc/markup.json`
-let localSever = `http://satsuki.c`
-let internetServer = `https://satsuki.me`
+let localSever = `c`
+let internetServer = `me`
 
 
 
@@ -60,15 +60,17 @@ let q = search.get(`q`)
 let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
 let laterInsertionDn = ``
 let server = fixToInternetURL === false ? location.origin : internetServer
+server = {
+  "http://satsuki.c": `c`,
+  "https://satsuki.me" : `me`
+}[server]
 let textDir = {
-  "http://localhost:8080": localTextDir,
-  "http://satsuki.c": localTextDir,
-  "https://satsuki.me": `${githubRawFront}/${internetSiteRepo}/${githubRawBack}`
+  "c": localTextDir,
+  "me": `${githubRawFront}/${internetSiteRepo}/${githubRawBack}`
 }[server]
 let baseURL = {
-  "http://localhost:8080": `${textDir}/${dn}`,
-  "http://satsuki.c": `${textDir}/${dn}`,
-  "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
+  "c": `${textDir}/${dn}`,
+  "me": `${githubRawFront}/${dn}/${githubRawBack}`
 }[server]
 
 // 変数 dn の算出語に決定
@@ -296,44 +298,48 @@ if (server === internetServer) {
  ########     #######     ##     ##    ########        ##          ####    ########    ########     ######
 */
 let loadFilesOK = null
+let min = {
+  "c": ``,
+  "me": `.min`
+}[server]
 function loadFiles() {
   let CSSFiles = [
     {
-      "file": `markup-special-notation.css`,
+      "file": `markup-special-notation${min}.css`,
       "repo": `common`
     },
     {
-      "file": `yaml.css`,
+      "file": `yaml${min}.css`,
       "repo": `yamlparse.js`
     }
   ]
   let scriptFiles = [
     {
-      "file": `brackettool.js`,
+      "file": `brackettool${min}.js`,
       "repo": `brackettool.js`
     },
     {
-      "file": `comparearray.js`,
+      "file": `comparearray${min}.js`,
       "repo": `comparearray.js`
     },
     {
-      "file": `mdparse.js`,
+      "file": `mdparse${min}.js`,
       "repo": `mdparse.js`
     },
     {
-      "file": `novelparse.js`,
+      "file": `novelparse${min}.js`,
       "repo": `novelparse.js`
     },
     {
-      "file": `replacetool.js`,
+      "file": `replacetool${min}.js`,
       "repo": `replacetool.js`
     },
     {
-      "file": `wordcount.js`,
+      "file": `wordcount${min}.js`,
       "repo": `wordcount.js`
     },
     {
-      "file": `yamlparse.js`,
+      "file": `yamlparse${min}.js`,
       "repo": `yamlparse.js`
     }
   ]
@@ -471,9 +477,8 @@ Promise.all([
             filteredIndex.map(rly0 => {
               laterInsertionDn = rly0
               let baseURLArrayNoIncludeDn = {
-                "http://localhost:8080": `${textDir}/${laterInsertionDn}`,
-                "http://satsuki.c": `${textDir}/${laterInsertionDn}`,
-                "https://satsuki.me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
+                "c": `${textDir}/${laterInsertionDn}`,
+                "me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
               }
               return fetch(`${baseURLArrayNoIncludeDn[server]}/${indvIndexFile}`)
               .then(async rly1 => {
