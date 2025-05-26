@@ -28,6 +28,7 @@
         outline: none;
         overflow: auto;
         resize: none;
+        caret-color: #888888;
       }
       span {
         word-wrap: none;
@@ -40,67 +41,67 @@
         }
       }
     </style>
+    <script>
+      window.addEventListener(`DOMContentLoaded`, () => {
+        let elm_textarea = document.getElementsByTagName(`textarea`)[0]
+        let elm_span = document.getElementsByTagName(`span`)[0]
+        let fontSizeDefault = 140 // およその font-size
+        elm_textarea.textContent = localStorage.getItem(`contents`)
+        setFontSize()
+        setletterSpacing()
+        window.onresize = () => {
+          setFontSize()
+          setletterSpacing()
+        }
+        window.onunload = () => {
+          localStorage.setItem(`contents`, elm_textarea.value)
+        }
+        elm_textarea.onkeyup = () => {
+          setletterSpacing()
+          localStorage.setItem(`contents`, elm_textarea.value)
+        }
+        /*
+
+          font-size と line-height
+
+        */
+        function setFontSize() {
+          let defeatValue = 0.972 // CSS に敗北した穴埋め
+          let lineHeight = 1.1  // 固定値
+          let windowHeight = window.innerHeight
+          let paddingHeight = Number(window.getComputedStyle(elm_textarea).paddingTop.slice(0, -2)) + Number(window.getComputedStyle(elm_textarea).paddingBottom.slice(0, -2))
+          let lineNum = Math.floor((windowHeight - paddingHeight) / (fontSizeDefault * lineHeight))
+          if (windowHeight - fontSizeDefault * lineHeight * lineNum < 10) {
+            lineNum = lineNum - 1
+          }
+          fontSize = (windowHeight - paddingHeight) / (lineNum * lineHeight)
+          elm_textarea.style.lineHeight = `${(windowHeight - paddingHeight) / (lineNum) * defeatValue}px`
+          elm_textarea.style.fontSize = `${fontSize}px`
+          elm_span.style.fontSize = `${fontSize}px`
+        }
+        /*
+
+          letter-spacing
+
+        */
+        function setletterSpacing() {
+          let scrollBar = 20 // 固定値
+          let windowWidth = window.innerWidth
+          let frameWidth = Number(window.getComputedStyle(elm_textarea).paddingRight.slice(0, -2)) + Number(window.getComputedStyle(elm_textarea).paddingLeft.slice(0, -2))
+          let word = elm_textarea.value
+            if (word === ``) {
+              word = `　`
+            }
+          elm_span.innerText = word
+          let letterNum = Math.floor((windowWidth - frameWidth) / (fontSize))
+          let letterSpacing = ((windowWidth - frameWidth - scrollBar) / letterNum - elm_span.offsetWidth / word.length) * 0.5 * 0.25
+          elm_textarea.style.letterSpacing = `${letterSpacing}px`
+        }
+      })
+    </script>
   </head>
   <body>
     <textarea></textarea>
     <span></span>
   </body>
-  <script>
-    let elm_textarea = document.getElementsByTagName(`textarea`)[0]
-    let elm_span = document.getElementsByTagName(`span`)[0]
-    let fontSizeDef = 140 // およその font-size
-    window.addEventListener(`DOMContentLoaded`, () => {
-      elm_textarea.textContent = localStorage.getItem(`contents`)
-      setFontSize()
-      setletterSpacing()
-    })
-    window.onresize = () => {
-      setFontSize()
-      setletterSpacing()
-    }
-    window.onunload = () => {
-      localStorage.setItem(`contents`, elm_textarea.value)
-    }
-    elm_textarea.onkeyup = () => {
-      setletterSpacing()
-      localStorage.setItem(`contents`, elm_textarea.value)
-    }
-    /*
-
-      font-size と line-height
-
-    */
-    function setFontSize() {
-      let fontSizeTolerance = 0.99 // 固定値
-      let lineHeight = 1.1  // 固定値
-      let windowHeight = window.innerHeight
-      let frameHeight = Number(window.getComputedStyle(elm_textarea).paddingTop.slice(0, -2)) + Number(window.getComputedStyle(elm_textarea).paddingBottom.slice(0, -2))
-      let lineNum = (windowHeight - frameHeight) / (fontSizeDef * lineHeight)
-      if (windowHeight - fontSizeDef * lineHeight * lineNum < 10) {
-        lineNum = lineNum - 1
-      }
-      fontSize = (windowHeight - frameHeight) / Math.floor(lineNum) / lineHeight * fontSizeTolerance
-      elm_textarea.style.lineHeight = `${lineHeight}em`
-      elm_textarea.style.fontSize = `${fontSize}px`
-      elm_span.style.fontSize = `${fontSize}px`
-    }
-    /*
-
-      letter-spacing
-
-    */
-    function setletterSpacing() {
-      let scrollBar = 20 // 固定値
-      let windowWidth = window.innerWidth
-      let frameWidth = Number(window.getComputedStyle(elm_textarea).paddingRight.slice(0, -2)) + Number(window.getComputedStyle(elm_textarea).paddingLeft.slice(0, -2))
-      let word = elm_textarea.value
-        if (word === ``) {
-          word = `　`
-        }
-      elm_span.innerText = word
-      let letterNum = Math.floor((windowWidth - frameWidth) / (fontSize))
-      let letterSpacing = ((windowWidth - frameWidth - scrollBar) / letterNum - elm_span.offsetWidth / word.length) * 0.5 * 0.25
-      elm_textarea.style.letterSpacing = `${letterSpacing}px`
-    }
-  </script>
 </html>
