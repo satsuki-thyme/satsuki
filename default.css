@@ -855,6 +855,10 @@ footer#site-footer {
   width: 100%;
   margin: auto;
 }
+.list table th,
+.list table td {
+  word-break: keep-all;
+}
 .list .mark {
   color: #ff2;
 }
