@@ -28,7 +28,7 @@ let characterCountLogInitializeSwitch = false
 let githubRawFront = `//raw.githubusercontent.com/satsuki-thyme`
 let githubRawBack = `master`
 let internetSiteRepo = `satsuki`
-let localTextDir = `scribe/novel`
+let localTextDir = `my-drive/scribe/novel`
 let basePage = `index.html`
 let indexFile = `etc/index.json`
 let indvIndexFile = `README.md`
@@ -218,6 +218,17 @@ let infoContentsFile = {
   "x": `x.txt`,
   "line-tori": `line-tori.txt`,
   "line-saejima": `line-saejima.txt`
+}
+
+
+
+/*
+
+  文字数換算
+
+*/
+let spcFileExtArray = {
+  "smmx": 0.1
 }
 
 
@@ -1821,12 +1832,15 @@ Promise.all([
   }
 
 
+
 /*
-  ######    ##   ##     #####     ######         ###    ##    ##    ##    ###    ###        ##          ######      ######
- ##         ##   ##    ##   ##    ##   ##        ####   ##    ##    ##    ####  ####        ##         ##    ##    ##
- ##         #######    #######    ######         ## ##  ##    ##    ##    ## #### ##        ##         ##    ##    ##   ###
- ##         ##   ##    ##   ##    ##   ##        ##  ## ##    ##    ##    ##  ##  ##        ##         ##    ##    ##    ##
-  ######    ##   ##    ##   ##    ##   ##        ##   ####     ######     ##      ##        #######     ######      ######
+  ######  ##     ##    ###    ########     ##    ## ##     ## ##     ## 
+ ##    ## ##     ##   ## ##   ##     ##    ###   ## ##     ## ###   ### 
+ ##       ##     ##  ##   ##  ##     ##    ####  ## ##     ## #### #### 
+ ##       ######### ##     ## ########     ## ## ## ##     ## ## ### ## 
+ ##       ##     ## ######### ##   ##      ##  #### ##     ## ##     ## 
+ ##    ## ##     ## ##     ## ##    ##     ##   ### ##     ## ##     ## 
+  ######  ##     ## ##     ## ##     ##    ##    ##  #######  ##     ## 
 */
 Promise.all([
   loadFilesOK,
@@ -2176,28 +2190,31 @@ Promise.all([
                   if (e) {
 
                     // 個別ファイルの処理
-                    return fetch(`${textDir}/${dn}/${e}`)
+                    return fetch(!/^\//.test(e) ? `${textDir}/${dn}/${e}` : `my-drive/${e}`)
                     .then(async rly => {
                       if (rly.ok) {
                         if (isText) {
-                          return await novelparse({
-                            "src": await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`, ``), marksEnclosure, `delete`, `hole`, ``),
-                            "newLineMode": `raw`,
-                            "rubyMode": `delete`
-                          })
+                          return [
+                            await novelparse({
+                              "src": await brackettool(await brackettool(await rly.text(), marksPreposition, `delete-together`, `hole`, ``), marksEnclosure, `delete`, `hole`, ``),
+                              "newLineMode": `raw`,
+                              "rubyMode": `delete`
+                            }),
+                            e.match(/[^.]*$/)[0]
+                          ]
                         }
                         else {
-                          return await rly.text()
+                          return [await rly.text(), e.match(/[^.]*$/)[0]]
                         }
                       }
                       else {
                         notFound.push(`${dn}/${e}`)
-                        return false
+                        return [false, false]
                       }
                     })
                   }
                   else {
-                    return false
+                    return [false, false]
                   }
                 })
               )
@@ -2210,8 +2227,9 @@ Promise.all([
               .then(rly => {
                 return rly
                 .map(e => {
-                  if (e) {
-                    return e.replace(/[\s]/g, ``).length
+                  if (e[0]) {
+                    let len = e[0].replace(/[\s]/g, ``).length
+                    return spcFileExtArray[e[1]] === undefined ? len : Math.round(len * spcFileExtArray[e[1]])
                   }
                   else {
                     return 0
