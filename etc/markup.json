@@ -5,6 +5,7 @@
     "markupType": "preposition",
     "mark": ["{", "}"],
     "path": "character-list",
+    "pagination": false,
     "var": ["list", "", "character-list", ["名前", "性質・情報"], 0, 0]
   },
   {
@@ -13,6 +14,7 @@
     "markupType": "preposition",
     "mark": ["<", ">"],
     "path": "foreshadowing-list",
+    "pagination": true,
     "var": ["list", "", "foreshadowing-list", ["識別名", "内容"], 0, 0]
   },
   {
@@ -21,6 +23,7 @@
     "markupType": "preposition",
     "mark": ["[", "]"],
     "path": "subject-list",
+    "pagination": false,
     "var": ["list", "", "subject-list", ["名前", "性質・情報"], 0, 0]
   },
   {
@@ -29,6 +32,7 @@
     "markupType": "preposition",
     "mark": ["(", ")"],
     "path": "things-list",
+    "pagination": false,
     "var": ["list", "", "things-list", ["名前", "性質・情報"], 0, 0]
   },
   {
@@ -37,6 +41,7 @@
     "markupType": "preposition",
     "mark": ["%", "%"],
     "path": "place-list",
+    "pagination": false,
     "var": ["list", "", "place-list", ["名前", "性質・情報"], 0, 0]
   },
   {
@@ -45,6 +50,7 @@
     "markupType": "preposition",
     "mark": ["$", "$"],
     "path": "magic-keyless-list",
+    "pagination": false,
     "var": ["list", "", "magic-keyless-list", ["名前", "性質・情報"], 0, 0]
   },
   {
@@ -53,6 +59,7 @@
     "markupType": "preposition",
     "mark": ["[", "]"],
     "path": "monster-list",
+    "pagination": false,
     "var": ["list", "", "monster-list", ["魔物名", "性質・情報"], 0, 0]
   },
   {
@@ -61,6 +68,7 @@
     "markupType": "preposition",
     "mark": ["@", "@"],
     "path": "others-list",
+    "pagination": false,
     "var": ["list", "", "others-list", ["名前", "性質・情報"], 0, 0]
   },
   {
@@ -73,6 +81,7 @@
       [["?", "?"], "物価"]
     ],
     "path": "mark-list",
+    "pagination": false,
     "var": ["list", "", "mark-list", ["語", "前後の記述"], 100, 100]
   }
 ]

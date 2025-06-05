@@ -49,6 +49,7 @@ let internetServer = `me`
 */
 // URL 関連
 let search = new Map()
+let laterInsertionDn = ``
 location.search
 .slice(1)
 .split(`&`)
@@ -58,7 +59,7 @@ location.search
 })
 let q = search.get(`q`)
 let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
-let laterInsertionDn = ``
+search.set(`page`, search.get(`page`) || 1)
 let server = fixToInternetURL === false ? location.origin : internetServer
 server = {
   "http://satsuki.c": `c`,
@@ -1356,6 +1357,8 @@ Promise.all([
           let tableHeading = arg.var[3] || ``
           let prefix = Number(arg.var[4]) || 0
           let postfix = Number(arg.var[5]) || 0
+          let pagination = arg.pagination || false
+          let listPath = arg.path || ``
 
           html.classList.add(htmlClass)
           let indexContents = await fetch(`${baseURL}/${indvIndexFile}`)
@@ -1369,57 +1372,150 @@ Promise.all([
           })
           let header = `<header><h1>${(indexContents.match(/# .*/))[0].replace(/^# /, ``)}</h1><h2>${listName}</h2><p class="return"><a href="?q=${dn}">戻る</a></p></header>`
           let footer = `<footer><p class="return"><a href="?q=${dn}">戻る</a></p></footer>`
-          let text = (
-            await Promise.all(
-              indexContents
-              .match(reTextBlob)[0]
-              .match(/(?:([\-+*]|\d+ \.) )(.+?)(?= *[:：])/g)
-              .map(e => e.replace(/([\-+*]|\d+ \.) /, ``))
-              .map(async rly => {
-                return fetch(`${baseURL}/${rly}`)
-                .then(async rly => {
-                  if (rly.ok) {
-                    return await rly.text()
-                  }
-                  else {
-                    return false
-                  }
-                })
+          Promise.all(
+            indexContents
+            .match(reTextBlob)[0]
+            .match(/(?:([\-+*]|\d+ \.) )(.+?)(?= *[:：])/g)
+            .map(e => e.replace(/([\-+*]|\d+ \.) /, ``))
+            .map(async (rly, i) => {
+              return fetch(`${baseURL}/${rly}`)
+              .then(async rly => {
+                if (rly.ok) {
+                  return [await rly.text(), i]
+                }
+                else {
+                  return false
+                }
               })
-            )
+            })
           )
-          .join(``)
-          if (type === `enclosure`) {
-            activeContainer.innerHTML = header + (
-              await Promise.all(
-                (
-                  await getMarkListForEnclosure(mark, prefix, postfix))
-                  .filter(rly => rly.description[0] !== undefined)
-                  .map(async rly => {
-                    let tableContents = []
-                    for (let i in rly.keyword) {
-                      tableContents.push([rly.description[i]])
-                    }
-                    let partialHeader = `<section><h3>${rly.attribute}</h3>`
-                    let partialMain = `<main>${await maketable(tableContents, ``, tableClass, tableID)}</main>`
-                    let partialFooter = `</section>`
-                    return partialHeader + partialMain + partialFooter
-                  }
+          .then(async rly => {
+            if (pagination) {
+              /*
+               ######## ##    ##  ######  ##        #######   ######  ##     ## ########  ######## 
+               ##       ###   ## ##    ## ##       ##     ## ##    ## ##     ## ##     ## ##       
+               ##       ####  ## ##       ##       ##     ## ##       ##     ## ##     ## ##       
+               ######   ## ## ## ##       ##       ##     ##  ######  ##     ## ########  ######   
+               ##       ##  #### ##       ##       ##     ##       ## ##     ## ##   ##   ##       
+               ##       ##   ### ##    ## ##       ##     ## ##    ## ##     ## ##    ##  ##       
+               ######## ##    ##  ######  ########  #######   ######   #######  ##     ## ######## 
+              */
+              if (type === `enclosure`) {
+                Promise.all(
+                  rly
+                  .map(rly => {
+                    return [getMarkListForEnclosure(rly[0], mark, prefix, postfix), i]
+                  })
+                  .filter(rly => rly[0] !== ``)
                 )
-              )
-            ).join(``) + footer
-          }
-          if (type === `preposition`) {
-            let contents = await getMarkListForPreposition(mark)
-            activeContainer.innerHTML =
-            `${header}
-            <main>
-              <ol>${contents.map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
-              ${maketable(contents.map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
-            </main>
-            ${footer}`
-          }
-          async function getMarkListForEnclosure(mark, prefix, postfix) {
+                .then(rly => {
+                  Promise.all(
+                    rly
+                    .map(async rly => {
+                      [
+                        header + (
+                          await Promise.all(
+                            rly[0]
+                            .filter(rly => rly.description[0] !== undefined)
+                            .map(async rly => {
+                              let tableContents = []
+                              for (let i in rly.keyword) {
+                                tableContents.push([rly.description[i]])
+                              }
+                              let partialHeader = `<section><h3>${rly.attribute}</h3>`
+                              let partialMain = `<main>${await maketable(tableContents, ``, tableClass, tableID)}</main>`
+                              let partialFooter = `</section>`
+                              return partialHeader + partialMain + partialFooter
+                            })
+                          )
+                        ).join(``) + footer,
+                        rly[1]
+                      ]
+                    })
+                  )
+                  .then(rly => {
+                    console.log(rly)
+                  })
+                })
+              }
+              /*
+               ########  ########  ######## ########   #######   ######  #### ######## ####  #######  ##    ##
+               ##     ## ##     ## ##       ##     ## ##     ## ##    ##  ##     ##     ##  ##     ## ###   ##
+               ##     ## ##     ## ##       ##     ## ##     ## ##        ##     ##     ##  ##     ## ####  ##
+               ########  ########  ######   ########  ##     ##  ######   ##     ##     ##  ##     ## ## ## ##
+               ##        ##   ##   ##       ##        ##     ##       ##  ##     ##     ##  ##     ## ##  ####
+               ##        ##    ##  ##       ##        ##     ## ##    ##  ##     ##     ##  ##     ## ##   ###
+               ##        ##     ## ######## ##         #######   ######  ####    ##    ####  #######  ##    ##
+              */
+              if (type === `preposition`) {
+                let contentsArray = await Promise.all(
+                  rly
+                  .map(async (rly, i) => {
+                    return [await getMarkListForPreposition(rly[0], mark), i]
+                  })
+                  .filter(rly => rly[0] !== ``)
+                )
+                let href = `?q=${dn}/list/${listPath}`
+                console.log(
+                )
+                let prev = Number(search.get(`page`)) === 1 ? `` : `<a href="${href}&page=${Number(search.get(`page`)) - 1}">前ページ</a>`
+                let next = Number(search.get(`page`)) === contentsArray.length ? `` : `<a href="${href}&page=${Number(search.get(`page`)) + 1}">次ページ</a>`
+                let separater = Number(search.get(`page`)) === 1 || Number(search.get(`page`)) === contentsArray.length ? `` : ` | `
+                let paging = `<header><h2>第 ${contentsArray[Number(search.get(`page`)) - 1][1] + 1} 話</h2><p>ページ: ${search.get(`page`)} / ${contentsArray.length}</p><nav>${contentsArray.map((rly, i) => {
+                  return (i !== Number(search.get(`page`)) - 1 ? `<a href="${href}&page=${rly[1] + 1}">${rly[1] + 1}</a>` : i + 1)
+                }).join(` | `)}</nav><nav><p class="page">${prev}${separater}${next}</p></nav></header>`
+                activeContainer.innerHTML = header + paging +
+                `<main>
+                  <ol>${contentsArray[Number(search.get(`page`)) - 1][0].map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
+                  ${maketable(contentsArray[Number(search.get(`page`)) - 1][0].map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
+                </main>`
+                + footer
+              }
+            }
+            else {
+              text = rly.join(``)
+              if (type === `enclosure`) {
+                activeContainer.innerHTML = header + (
+                  await Promise.all(
+                    (
+                      await getMarkListForEnclosure(text, mark, prefix, postfix))
+                      .filter(rly => rly.description[0] !== undefined)
+                      .map(async rly => {
+                        let tableContents = []
+                        for (let i in rly.keyword) {
+                          tableContents.push([rly.description[i]])
+                        }
+                        let partialHeader = `<section><h3>${rly.attribute}</h3>`
+                        let partialMain = `<main>${await maketable(tableContents, ``, tableClass, tableID)}</main>`
+                        let partialFooter = `</section>`
+                        return partialHeader + partialMain + partialFooter
+                      }
+                    )
+                  )
+                ).join(``) + footer
+              }
+              if (type === `preposition`) {
+                let contents = await getMarkListForPreposition(text, mark)
+                activeContainer.innerHTML =
+                `${header}
+                <main>
+                  <ol>${contents.map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
+                  ${maketable(contents.map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
+                </main>
+                ${footer}`
+              }
+            }
+          })
+          /*
+           ######## ##    ##  ######  ##        #######   ######  ##     ## ########  ######## 
+           ##       ###   ## ##    ## ##       ##     ## ##    ## ##     ## ##     ## ##       
+           ##       ####  ## ##       ##       ##     ## ##       ##     ## ##     ## ##       
+           ######   ## ## ## ##       ##       ##     ##  ######  ##     ## ########  ######   
+           ##       ##  #### ##       ##       ##     ##       ## ##     ## ##   ##   ##       
+           ##       ##   ### ##    ## ##       ##     ## ##    ## ##     ## ##    ##  ##       
+           ######## ##    ##  ######  ########  #######   ######   #######  ##     ## ######## 
+          */
+          async function getMarkListForEnclosure(text, mark, prefix, postfix) {
             let singleLineText = text.replace(/\r|\n/g, ``)
             let keywordList = []
             let reBCISrc = Array.from(
@@ -1428,6 +1524,7 @@ Promise.all([
                 .map(rly => rly[1])
               )
             ).join(``)
+            let promiseArray = []
             for (let i in mark) {
               keywordList[i] = {}
               let importedMark = [esc(mark[i][0][0]), esc(mark[i][0][1])]
@@ -1439,11 +1536,11 @@ Promise.all([
               reMarkSrc = Array.from(new Set(reMarkSrc))
               let reKeyword = new RegExp(`(${reKeywordSrc.join(`|`)})`, `g`)
               let reMark = new RegExp(`${reMarkSrc.join('|')}`, `g`)
-              let keywordSrc = Array.from(new Set(singleLineText.match(reKeyword)))
-              keywordList[i].keyword = await Promise.all(
+              let keywordSrc = Array.from(new Set((singleLineText.match(reKeyword)) || [``]))
+              keywordList[i].keyword = Promise.all(
                 keywordSrc.map(async rly => (await novelparse({"src": rly.replace(/^.|.$/g, ``), "newLineMode": `unprocessed`, "rubyMode": `parse`, "parenthesis": `normal`, "comment": `delete-together`})).replace(/　 /, ``)),
               )
-              keywordList[i].description = await Promise.all(
+              keywordList[i].description = Promise.all(
                 keywordSrc
                 .map(async rly => {
                   let reDescription = new RegExp(`.{0,${prefix}}${esc(rly)}.{0,${postfix}}(?:[^《]*?》)?`)
@@ -1460,16 +1557,44 @@ Promise.all([
                   })).replace(/　 /, ``)
                 })
               )
+              Promise.all(
+                keywordList[i].keyword,
+                keywordList[i].description
+              )
+              .then(rly => {
+                promiseArray.push(rly)
+              })
               keywordList[i].attribute = mark[i][1]
             }
-            return await keywordList
+            return Promise.all(promiseArray)
+            .then(rly => {
+              return rly
+              .map(rly, i => {
+                rly += keywowrdList[i]
+              })
+            })
           }
-          async function getMarkListForPreposition(mark) {
+          /*
+           ########  ########  ######## ########   #######   ######  #### ######## ####  #######  ##    ## 
+           ##     ## ##     ## ##       ##     ## ##     ## ##    ##  ##     ##     ##  ##     ## ###   ## 
+           ##     ## ##     ## ##       ##     ## ##     ## ##        ##     ##     ##  ##     ## ####  ## 
+           ########  ########  ######   ########  ##     ##  ######   ##     ##     ##  ##     ## ## ## ## 
+           ##        ##   ##   ##       ##        ##     ##       ##  ##     ##     ##  ##     ## ##  #### 
+           ##        ##    ##  ##       ##        ##     ## ##    ##  ##     ##     ##  ##     ## ##   ### 
+           ##        ##     ## ######## ##         #######   ######  ####    ##    ####  #######  ##    ## 
+          */
+          function getMarkListForPreposition(text, mark) {
             let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`)
-            let reRemoveMark = new RegExp(esc(marksPreposition.reduce((a, c) => a.concat(c), []).join(`|`)), `g`)
-            let textArray = text
-            .split(/\r?\n/)
-            .filter(rly => reFilter.test(rly))
+            let markList = marksPreposition.reduce((a, c) => a.concat(c), [])
+            let reRemoveMark = new RegExp(markList.join(`|`), `g`)
+            let reRemoveMarkTogether = new RegExp(markList, `g`)
+            let textArray = (
+              (
+                text
+                .split(/\r?\n/)
+                .filter(rly => reFilter.test(rly))
+              ) || [``]
+            )
             .map(rly => {
               return [
                 rly
@@ -1477,22 +1602,29 @@ Promise.all([
                 .replace(reRemoveMark, ``),
                 rly
                 .replace(reFilter, ``)
-                .replace(reRemoveMark, ``)
+                .replace(reRemoveMarkTogether, ``)
                 .replace(/^　/, ``)
               ]
             })
-            let index = Array.from(new Set(textArray.map(rly => rly[0])))
-            return await Promise.all(
-              index
+            return Promise.all(
+              Array.from(new Set(textArray.map(rly => rly[0])))
               .map(async rly0 => {
                 return [
                   rly0,
                   await novelparse({
-                    "src": textArray
-                    .filter(rly1 => rly1[0] === rly0)
-                    .map(rly2 => rly2[1].replace(/^　*/, ``))
-                    .join(`<br>`),
-                    "newLineMode": `unprocessed`,
+                    "src": await brackettool(
+                      await brackettool(
+                        textArray
+                        .filter(rly1 => rly1[0] === rly0)
+                        .map(rly2 => rly2[1].replace(/^　*/, ``))
+                        .join(`\n`),
+                        marksPreposition,
+                        `delete-together`
+                      ),
+                      marksEnclosure,
+                      `delete`
+                    ),
+                    "newLineMode": `few`,
                     "rubyMode": `parse`,
                     "parenthesis": `normal`,
                     "comment": `delete-together`
