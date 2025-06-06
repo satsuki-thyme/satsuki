@@ -37,8 +37,8 @@ let listDir = `list`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
 let markupFile = `etc/markup.json`
-let localSever = `c`
-let internetServer = `me`
+let localSever = `http://satsuki.c`
+let internetServer = `https://satsuki.me`
 
 
 
@@ -61,17 +61,13 @@ let q = search.get(`q`)
 let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
 search.set(`page`, search.get(`page`) || 1)
 let server = fixToInternetURL === false ? location.origin : internetServer
-server = {
-  "http://satsuki.c": `c`,
-  "https://satsuki.me" : `me`
-}[server]
 let textDir = {
-  "c": localTextDir,
-  "me": `${githubRawFront}/${internetSiteRepo}/${githubRawBack}`
+  "http://satsuki.c": localTextDir,
+  "https://satsuki.me": `${githubRawFront}/${internetSiteRepo}/${githubRawBack}`
 }[server]
 let baseURL = {
-  "c": `${textDir}/${dn}`,
-  "me": `${githubRawFront}/${dn}/${githubRawBack}`
+  "http://satsuki.c": `${textDir}/${dn}`,
+  "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
 }[server]
 
 // 変数 dn の算出語に決定
@@ -311,8 +307,8 @@ if (server === internetServer) {
 */
 let loadFilesOK = null
 let min = {
-  "c": ``,
-  "me": `.min`
+  "http://satsuki.c": ``,
+  "https://satsuki.me": `.min`
 }[server]
 function loadFiles() {
   let CSSFiles = [
@@ -489,8 +485,8 @@ Promise.all([
             filteredIndex.map(rly0 => {
               laterInsertionDn = rly0
               let baseURLArrayNoIncludeDn = {
-                "c": `${textDir}/${laterInsertionDn}`,
-                "me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
+                "http://satsuki.c": `${textDir}/${laterInsertionDn}`,
+                "https://satsuki.me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
               }
               return fetch(`${baseURLArrayNoIncludeDn[server]}/${indvIndexFile}`)
               .then(async rly1 => {
