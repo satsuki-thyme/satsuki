@@ -1788,40 +1788,48 @@ Promise.all([
 
   */
   async function readableJSON(src) {
-    let inQuote = false
-    let JSONArray = src.split(`,`)
+    let JSONArray = src.match(/(("(?=.*([^\\](\\\\)*\\),).*"|"[^,]*"|([\d-. \t]*))[ \t]*:)?[ \t]*(("(?=.*([^\\](\\\\)*\\),).*"|"[^,]*"|([\d-. \t]*))[ \t]*,)|{|},?|\[|],?/g)
     let readableArray = []
     let indent = 0
+    let indentValue = 4
     let i = 0
     return new Promise(resolve => {
       fn()
       function fn() {
-        if (inQuote === false && JSONArray[i] === `"`) {
-          inQuote = true
+        if (/\{|\[/.test(JSONArray[i])) {
+          readableArray.push(` `.repeat(indent) + JSONArray[i])
+          indent += indentValue
+          if (i < JSONArray.length - 1) {
+            i++
+            fn()
+          }
+          else {
+            resolve(readableArray.join(`\n`))
+          }
         }
-        if (inQuote === true && JSONArray[i] === `"`) {
-          inQuote = false
+        if (/}|]/.test(JSONArray[i])) {
+          indent -= indentValue
+          readableArray.push(` `.repeat(indent) + JSONArray[i])
+          if (i < JSONArray.length - 1) {
+            i++
+            fn()
+          }
+          else {
+            resolve(readableArray.join(`\n`))
+          }
         }
-        if (!inQuote && /\{|\[/.test(JSONArray[i])) {
-          indent += 4
-          readableArray.push(JSONArray[i] + `\n` + ` `.repeat(indent))
-        }
-        if (!inQuote && /\}|\]/.test(JSONArray[i])) {
-          indent -= 4
-          readableArray.push(`\n` + ` `.repeat(indent) + JSONArray[i])
-        }
-        if (!inQuote && JSONArray[i] === `,`) {
-          readableArray.push(JSONArray[i] + `\n` + ` `.repeat(indent))
-        }
-        if (inQuote || (!inQuote && !/\{|\[|\}|\]|,/.test(JSONArray[i]))) {
-          readableArray.push(JSONArray[i])
-        }
-        if (i < JSONArray.length - 1) {
-          i++
-          fn()
-        }
-        else {
-          resolve(readableArray.join(``))
+        if (!/\{|\[|}|]/.test(JSONArray[i])) {
+          if (/}|]/.test(JSONArray[i + 1])) {
+            JSONArray[i] = JSONArray[i].replace(/,$/, ``)
+          }
+          readableArray.push(` `.repeat(indent) + JSONArray[i])
+          if (i < JSONArray.length - 1) {
+            i++
+            fn()
+          }
+          else {
+            resolve(readableArray.join(`\n`))
+          }
         }
       }
     })
