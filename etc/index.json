@@ -1,5 +1,21 @@
 [
   {
+    "dn": "..",
+    "active": false
+  },
+  {
+    "dn": "../etc/configuration-setting-method",
+    "active": false
+  },
+  {
+    "dn": "../etc/plot-creation-method",
+    "active": false
+  },
+  {
+    "dn": "../etc/research-on-novel-creating",
+    "active": false
+  },
+  {
     "dn": "seed",
     "active": false
   },
@@ -309,6 +325,10 @@
   },
   {
     "dn": "op74",
+    "active": true
+  },
+  {
+    "dn": "op75",
     "active": true
   }
 ]

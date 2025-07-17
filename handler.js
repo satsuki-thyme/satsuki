@@ -70,7 +70,7 @@ let baseURL = {
   "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
 }[server]
 
-// 変数 dn の算出語に決定
+// 変数 dn の算出後に決定
 let defaultMarkupFileDir = textDir
 let indivMarkupFileDir = baseURL
 let reTextPage = new RegExp(`^${dn}/(?!.*${listDir}).*`)
@@ -138,6 +138,9 @@ function makeReListURLs() {
     })$`)
   }
 }
+// RAEDME.md からファイルを抽出
+let rejectFile = `png|svg`
+let rePickFile = new RegExp(`^(?=[\\-+*]|\\d\\.).*? (.*\\.(?!.*(${rejectFile})).*)(?= *[:：])`)
 
 
 
@@ -670,7 +673,7 @@ Promise.all([
                   }
                 }
                 if (i === src.length - 1) {
-                  rly[j].contents += `</div>` + `</div></section>`.repeat(-closeSection)
+                  rly[j].contents += `</div>` + `</div></section>`.repeat(closeSection)
                 }
                 return rly
               })
@@ -2141,7 +2144,7 @@ Promise.all([
                       if (blob) {
                         return blob
                         .split(/\r?\n|\r(?!\n)/)
-                        .map(e => (e.match(/^(?=[\-+*]|\d\.).*? (.*?)(?= *[:：])/) || [false, false])[1])
+                        .map(e => (e.match(rePickFile) || [false, false])[1])
                         .filter(e => e)
                       }
                       else {
