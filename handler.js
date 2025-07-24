@@ -1466,8 +1466,6 @@ Promise.all([
                   .filter(rly => rly[0] !== ``)
                 )
                 let href = `?q=${dn}/list/${listPath}`
-                console.log(
-                )
                 let prev = Number(search.get(`page`)) === 1 ? `` : `<a href="${href}&page=${Number(search.get(`page`)) - 1}">前ページ</a>`
                 let next = Number(search.get(`page`)) === contentsArray.length ? `` : `<a href="${href}&page=${Number(search.get(`page`)) + 1}">次ページ</a>`
                 let separater = Number(search.get(`page`)) === 1 || Number(search.get(`page`)) === contentsArray.length ? `` : ` | `
@@ -1594,28 +1592,39 @@ Promise.all([
            ##        ##     ## ######## ##         #######   ######  ####    ##    ####  #######  ##    ## 
           */
           function getMarkListForPreposition(text, mark) {
-            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`)
+            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`, `g`)
             let markList = marksPreposition.reduce((a, c) => a.concat(c), [])
-            let reRemoveMark = new RegExp(markList.join(`|`), `g`)
+            let reRemoveMark = new RegExp(Array.from(new Set(markList)).join(`|`), `g`)
             let reRemoveMarkTogether = new RegExp(markList, `g`)
-            let textArray = (
+            let textArray = []
+            let preTextArray = (
               (
                 text
-                .split(/\r?\n/)
+                .split(/\r?\n|\r(?!\n)/)
                 .filter(rly => reFilter.test(rly))
               ) || [``]
             )
             .map(rly => {
               return [
                 rly
-                .match(reFilter)[0]
-                .replace(reRemoveMark, ``),
+                .match(reFilter)
+                .map(rly => rly.replace(reRemoveMark, ``)),
                 rly
                 .replace(reFilter, ``)
                 .replace(reRemoveMarkTogether, ``)
                 .replace(/^　/, ``)
               ]
             })
+            for (let i of preTextArray) {
+              if (!Array.isArray(i[0])) {
+                textArray.push(i)
+              }
+              else {
+                for (let j of i[0]) {
+                  textArray.push([j, i[1]])
+                }
+              }
+            }
             return Promise.all(
               Array.from(new Set(textArray.map(rly => rly[0])))
               .map(async rly0 => {
