@@ -28,6 +28,10 @@
     "active": true
   },
   {
+    "dn": "../writing",
+    "active": false
+  },
+  {
     "dn": "tmp",
     "active": false
   },

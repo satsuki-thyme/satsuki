@@ -174,9 +174,9 @@ let localizationArray = [
 let tocHeadingInIndex = `文書|目次`
 let textHeadingInIndex = `本文`
 let rejectHeadingInIndex = `なし`
-let reTocBlob = new RegExp(`(^|\\r?\\n)(?<sharp>#+) (${tocHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>(?!#)|$(?!\\r?\\n))`)
-let reTextBlob = new RegExp(`(^|\\r?\\n)(?<sharp>#+) (${textHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>(?!#)|$(?!\\r?\\n))`)
-let reRejectBlob = new RegExp(`(^|\\r?\\n)(?<sharp>#+) (${rejectHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>(?!#)|$(?!\\r?\\n))`)
+let reTocBlob = new RegExp(`(^|\\r?\\n)#(?<sharp>#+) (${tocHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>#(?!#)|\\k<sharp>(?!#)|$(?!\\r?\\n))`)
+let reTextBlob = new RegExp(`(^|\\r?\\n)#(?<sharp>#+) (${textHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>#(?!#)|\\k<sharp>(?!#)|$(?!\\r?\\n))`)
+let reRejectBlob = new RegExp(`(^|\\r?\\n)#(?<sharp>#+) (${rejectHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>#(?!#)|\\k<sharp>(?!#)|$(?!\\r?\\n))`)
 
 // カバーページ
 let textHeadingInCover = [
