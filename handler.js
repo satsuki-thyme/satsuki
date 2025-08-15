@@ -174,6 +174,7 @@ let localizationArray = [
 let tocHeadingInIndex = `文書|目次`
 let textHeadingInIndex = `本文`
 let rejectHeadingInIndex = `なし`
+let rejectHeadingInIndexForDisplay = `マインドマップ`
 let reTocBlob = new RegExp(`(^|\\r?\\n)#(?<sharp>#+) (${tocHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>#(?!#)|\\k<sharp>(?!#)|$(?!\\r?\\n))`)
 let reTextBlob = new RegExp(`(^|\\r?\\n)#(?<sharp>#+) (${textHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>#(?!#)|\\k<sharp>(?!#)|$(?!\\r?\\n))`)
 let reRejectBlob = new RegExp(`(^|\\r?\\n)#(?<sharp>#+) (${rejectHeadingInIndex})([\\s\\S]*?)([^#])(\\k<sharp>#(?!#)|\\k<sharp>(?!#)|$(?!\\r?\\n))`)
@@ -789,6 +790,10 @@ Promise.all([
           }
           async function assyElem(indexArray) {
             let prevHeadingLv = 0
+            indexArray = indexArray
+            .filter((e, i) => !propArray[i].reject)
+            propArray = propArray
+            .filter(e => !e.reject)
             return (
               await Promise.all(
                 indexArray
@@ -797,6 +802,7 @@ Promise.all([
                   w.fieldType = propArray[i].fieldType
                   w.elemType = propArray[i].elemType
                   w.text = propArray[i].text
+                  w.reject = propArray[i].reject
                   // 目次のリストアイテム
                   if (w.fieldType === `toc` && w.elemType === `listItem`) {
                     w.path = e.match(/^(?:[\-+*] )(.*?)(?=[ \t]*[:：])/)[1]
@@ -826,6 +832,8 @@ Promise.all([
             let i = 0
             let inToc = false
             let inText = false
+            let inReject = false
+            let rejectSharp = 0
             let reToc0 = new RegExp(`^(?<sharp>#+) (${tocHeadingInIndex})`)
             let reText0 = new RegExp(`^(?<sharp>#+) (${textHeadingInIndex})`)
             let tocSharp = Math.min(
@@ -855,7 +863,8 @@ Promise.all([
               .filter(e => e)
             )
             let reText1 = new RegExp(`^#{${textSharp}} (${textHeadingInIndex})`)
-            let reNonText = new RegExp(`^#{1,${textSharp}} (?!.*(${textHeadingInIndex}))(?!.*(${rejectHeadingInIndex})).*`)
+            let reNonText = new RegExp(`^#{1,${textSharp}} (?!.*(${textHeadingInIndex})).*`)
+            let reReject = new RegExp(`^#{1,6} (${rejectHeadingInIndexForDisplay})`)
             return new Promise(resolve => {
               fn()
               function fn() {
@@ -940,6 +949,28 @@ Promise.all([
                   !reNonText.test(indexArray[i])
                 ) {
                   propArray[i].text = inText
+                }
+                // 除外
+                if (reReject.test(indexArray[i])) {
+                  propArray[i].reject = true
+                  inReject = true
+                  rejectSharp = indexArray[i].match(/^#+/)[0].length
+                }
+                // 除外の継承
+                else if (
+                  inReject
+                  &&
+                  (
+                    !/^#/.test(indexArray[i])
+                    ||
+                    rejectSharp < (indexArray[i].match(/^#+/) || [``])[0].length
+                  )
+                ) {
+                  propArray[i].reject = true
+                }
+                else {
+                  propArray[i].reject = false
+                  inReject = false
                 }
                 /*
                   repeat or resolve
@@ -2144,7 +2175,7 @@ Promise.all([
                       .replace(reRejectBlob, ``)
                     }
                     else {
-                      docBlob = tocBlob
+                      docBlob = tocBlob.replace(reRejectBlob, ``)
                     }
                     return [
                       e.dn,
