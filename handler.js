@@ -139,7 +139,7 @@ function makeReListURLs() {
   }
 }
 // RAEDME.md からファイルを抽出
-let rejectFile = `png|svg`
+let rejectFile = `png|svg|gsheet`
 let rePickFile = new RegExp(`^(?=[\\-+*]|\\d\\.).*? (.*\\.(?!.*(${rejectFile})).*)(?= *[:：])`)
 
 
