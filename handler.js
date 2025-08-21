@@ -2171,8 +2171,8 @@ Promise.all([
                     if (textBlobArray && textBlobArray[2] !== undefined) {
                       sharpLen = textBlobArray[2].length
                       docBlob = tocBlob
-                      .replace(reTextBlob, ``)
                       .replace(reRejectBlob, ``)
+                      .replace(reTextBlob, ``)
                     }
                     else {
                       docBlob = tocBlob.replace(reRejectBlob, ``)
