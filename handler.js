@@ -279,6 +279,7 @@ let scrollRange = 0
 let PrevOp = ``
 let PrevFile = ``
 let characterCountLogTable = null
+let toXField = null
 let notFoundField = null
 let uploadDownloadField = null
 let downloadButton = null
@@ -432,13 +433,19 @@ Promise.all([
       <section id="not-found-field">
       </section>
       <section id="character-count-log-field">
-        <div id="character-count-log-table"></div>
-        <div id="upload-download-field"><p>アップロード・ダウンロード</p><input type="file" name="upload-button" accept=".json" id="upload-button"><a id="download-button" download="chacacterCountLog.json">Download</a></div>
+        <div id="left-field">
+          <div id="character-count-log-table"></div>
+        </div>
+        <div id="right-field">
+          <div id="upload-download-field"><p>アップロード・ダウンロード</p><input type="file" name="upload-button" accept=".json" id="upload-button"><a id="download-button" download="chacacterCountLog.json">Download</a></div>
+          <div id="to-x-field"></div>
+        </div>
       </section>
     </main>`
     let contents = document.querySelector(`#op-list-table`)
     let statusSwitch = Array.from(document.querySelectorAll(`[name="status-switch"]`))
     characterCountLogTable = document.querySelector(`#character-count-log-table`)
+    toXField = document.querySelector(`#to-x-field`)
     notFoundField = document.querySelector(`#not-found-field`)
     /*
       実行
@@ -2369,6 +2376,10 @@ Promise.all([
         <div>
           ${maketable(data, [`日付`, `本文`, `その他`], `d7`, `data-table`)}
         </div>`
+        toXField.innerHTML = `<p>小説制作、今日の進捗<br>
+        日付：${data[1][0]}<br>
+        本文：${data[1][1]}<br>
+        その他：${data[1][2]}<p>`
         downloadButton = document.querySelector(`#download-button`)
         downloadButton.href = URL.createObjectURL(new Blob([await readableJSON(JSON.stringify(array))], {type: `text/plain`}))
         notFoundField.innerHTML += notFoundAccum

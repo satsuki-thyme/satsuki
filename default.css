@@ -420,6 +420,13 @@ footer#site-footer {
 .index #data-table tr {
   user-select: all;
 }
+.index #right-field div + div {
+  margin-top: 30px;
+}
+.index #to-x-field {
+  text-align: left;
+  user-select: all;
+}
 .index #upload-download-field #upload-download-button {
   display: flex;
 }
