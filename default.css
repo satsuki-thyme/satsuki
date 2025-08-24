@@ -423,7 +423,8 @@ footer#site-footer {
 .index #right-field div + div {
   margin-top: 30px;
 }
-.index #to-x-field {
+.index #to-x-field p {
+  font-size: 16px;
   text-align: left;
   user-select: all;
 }

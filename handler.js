@@ -1904,7 +1904,7 @@ Promise.all([
   marksEOK
 ])
 .then(() => {
-  if (server === localSever) {
+  if (server === localSever && !q) {
     let array = null
     characterCountLog()
     function characterCountLog() {
@@ -2341,9 +2341,7 @@ Promise.all([
             localStorage.setItem(`characterCountLog`, JSON.stringify(array))
 
             // 書き出し
-            if (!q) {
-              write()
-            }
+            write()
           })
         })
       }
@@ -2376,19 +2374,24 @@ Promise.all([
         <div>
           ${maketable(data, [`日付`, `本文`, `その他`], `d7`, `data-table`)}
         </div>`
-        toXField.innerHTML = `<p>小説制作、今日の進捗<br>
-        日付：${data[1][0]}<br>
-        本文：${data[1][1]}<br>
-        その他：${data[1][2]}<p>`
         downloadButton = document.querySelector(`#download-button`)
         downloadButton.href = URL.createObjectURL(new Blob([await readableJSON(JSON.stringify(array))], {type: `text/plain`}))
         notFoundField.innerHTML += notFoundAccum
         let dataTable = document.querySelector(`#data-table`)
+        toX()
         document.querySelectorAll(`#status-switch input`).forEach(e => {
           e.onchange = () => {
             dataTable.classList = e.value
           }
         })
+        function toX() {
+          let now = new Date(Date.now())
+          let date = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${now.getHours()}時${now.getMinutes()}`
+          toXField.innerHTML = `<p>小説制作の進捗<br>
+          日時：${date}<br>
+          本文：${data[1][1]}<br>
+          その他：${data[1][2]}<p>`
+        }
       }
     }
 
@@ -2401,18 +2404,16 @@ Promise.all([
       文字数カウンターのデータのアップロード
 
     */
-    if (!q) {
-      uploadButton = document.querySelector(`#upload-button`)
-      let fr = new FileReader()
-      uploadButton.onchange = e => {
-        if (e) {
-          fr.readAsText(e.target.files[0])
-        }
-        fr.onload = () => {
-          array = JSON.parse(fr.result)
-          localStorage.setItem(`characterCountLog`, JSON.stringify(array))
-          characterCountLog()
-        }
+    uploadButton = document.querySelector(`#upload-button`)
+    let fr = new FileReader()
+    uploadButton.onchange = e => {
+      if (e) {
+        fr.readAsText(e.target.files[0])
+      }
+      fr.onload = () => {
+        array = JSON.parse(fr.result)
+        localStorage.setItem(`characterCountLog`, JSON.stringify(array))
+        characterCountLog()
       }
     }
   }
