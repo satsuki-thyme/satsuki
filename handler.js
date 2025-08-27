@@ -2352,14 +2352,12 @@ Promise.all([
         書き出し
       */
       async function write() {
-        let data = [[`<span>合</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]]
-        .concat(
-          array
-          .slice(0)
-          .reverse()
-          .splice(0, array.length - 2)
-          .map(e => [e.date, e.textDiff, e.docDiff])
-        )
+        let data = array
+        .slice(0)
+        .reverse()
+        .splice(0, array.length - 2)
+        .map(e => [e.date, e.textDiff, e.docDiff])
+        .concat([[`<span>全</span><span>累</span>計`, array[array.length - 1].textTotal, array[array.length - 1].docTotal]])
         let notFoundAccum = ``
         if (notFound.length > 0) {
           notFoundAccum = `<section><ul><li>Not Found: ${notFound.join(`</li><li>Not found: `)}</li></ul></section>`
@@ -2386,8 +2384,8 @@ Promise.all([
         })
         function toX() {
           let now = new Date(Date.now())
-          let date = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${now.getHours()}時${now.getMinutes()}`
-          toXField.innerHTML = `<p>小説制作の進捗<br>
+          let date = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${now.getHours()}時${now.getMinutes()}分`
+          toXField.innerHTML = `<p>小説制作 今日の進捗<br>
           日時：${date}<br>
           本文：${data[1][1]}<br>
           その他：${data[1][2]}<p>`

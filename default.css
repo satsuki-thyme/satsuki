@@ -394,10 +394,10 @@ footer#site-footer {
   margin-right: 30px;
   text-align: center;
 }
-.index #data-table.d7 tbody tr:nth-child(n + 9) {
+.index #data-table.d7 tbody tr:nth-child(n + 9):not(:last-child) {
   display: none;
 }
-.index #data-table.d30 tbody tr:nth-child(n + 32) {
+.index #data-table.d30 tbody tr:nth-child(n + 32):not(:last-child) {
   display: none;
 }
 .index #op-list-table td:first-child {
@@ -415,7 +415,7 @@ footer#site-footer {
   text-align: right;
 }
 .index #character-count-log-field table tbody td:nth-child(1) span {
-  letter-spacing: 1.5em;
+  letter-spacing: 0.8em;
 }
 .index #data-table tr {
   user-select: all;
