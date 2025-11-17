@@ -1259,6 +1259,7 @@ Promise.all([
               <span class="heading">改行</span>
               <label><input type="radio" name="new-line-mode" value="few" checked><span class="label">減少</span></label>
               <label><input type="radio" name="new-line-mode" value="paper"><span class="label">紙書</span></label>
+              <label><input type="radio" name="new-line-mode" value="alternatingBlank"><span class="label">交互</span></label>
               <label><input type="radio" name="new-line-mode" value="raw"><span class="label">不変</span></label>
             </div>
             <div class="switch-set orientation-mode">
@@ -1497,26 +1498,28 @@ Promise.all([
                ##        ##     ## ######## ##         #######   ######  ####    ##    ####  #######  ##    ##
               */
               if (type === `preposition`) {
-                let contentsArray = await Promise.all(
+                Promise.all(
                   rly
                   .map(async (rly, i) => {
                     return [await getMarkListForPreposition(rly[0], mark), i]
                   })
                   .filter(rly => rly[0] !== ``)
                 )
-                let href = `?q=${dn}/list/${listPath}`
-                let prev = Number(search.get(`page`)) === 1 ? `` : `<a href="${href}&page=${Number(search.get(`page`)) - 1}">前ページ</a>`
-                let next = Number(search.get(`page`)) === contentsArray.length ? `` : `<a href="${href}&page=${Number(search.get(`page`)) + 1}">次ページ</a>`
-                let separater = Number(search.get(`page`)) === 1 || Number(search.get(`page`)) === contentsArray.length ? `` : ` | `
-                let paging = `<header><h2>第 ${contentsArray[Number(search.get(`page`)) - 1][1] + 1} 話</h2><p>ページ: ${search.get(`page`)} / ${contentsArray.length}</p><nav>${contentsArray.map((rly, i) => {
-                  return (i !== Number(search.get(`page`)) - 1 ? `<a href="${href}&page=${rly[1] + 1}">${rly[1] + 1}</a>` : i + 1)
-                }).join(` | `)}</nav><nav><p class="page">${prev}${separater}${next}</p></nav></header>`
-                activeContainer.innerHTML = header + paging +
-                `<main>
-                  <ol>${contentsArray[Number(search.get(`page`)) - 1][0].map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
-                  ${maketable(contentsArray[Number(search.get(`page`)) - 1][0].map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
-                </main>`
-                + footer
+                .then(rly => {
+                  let href = `?q=${dn}/list/${listPath}`
+                  let prev = Number(search.get(`page`)) === 1 ? `` : `<a href="${href}&page=${Number(search.get(`page`)) - 1}">前ページ</a>`
+                  let next = Number(search.get(`page`)) === rly.length ? `` : `<a href="${href}&page=${Number(search.get(`page`)) + 1}">次ページ</a>`
+                  let separater = Number(search.get(`page`)) === 1 || Number(search.get(`page`)) === rly.length ? `` : ` | `
+                  let paging = `<header><h2>第 ${rly[Number(search.get(`page`)) - 1][1] + 1} 話</h2><p>ページ: ${search.get(`page`)} / ${rly.length}</p><nav>${rly.map((rly, i) => {
+                    return (i !== Number(search.get(`page`)) - 1 ? `<a href="${href}&page=${rly[1] + 1}">${rly[1] + 1}</a>` : i + 1)
+                  }).join(` | `)}</nav><nav><p class="page">${prev}${separater}${next}</p></nav></header>`
+                  activeContainer.innerHTML = header + paging +
+                  `<main>
+                    <ol>${rly[Number(search.get(`page`)) - 1][0].map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
+                    ${maketable(rly[Number(search.get(`page`)) - 1][0].map((e, i) => [`<span id="anchor${i}" class="anchor"></span>${e[0]}`, e[1]]), tableHeading, tableClass, tableID)}
+                  </main>`
+                  + footer
+                })
               }
             }
             else {
@@ -1644,8 +1647,6 @@ Promise.all([
               ) || [``]
             )
             .map(rly => {
-              console.log(reRemoveMark)
-              console.log(rly.replace(reRemoveMark, ``))
               return [
                 rly
                 .match(reFilter)
@@ -1666,10 +1667,11 @@ Promise.all([
                 }
               }
             }
-            return Promise.all(
+            // work location
+            Promise.all(
               Array.from(new Set(textArray.map(rly => rly[0])))
               .map(async rly0 => {
-                return [
+                return await [
                   rly0,
                   await novelparse({
                     "src": await brackettool(
@@ -1692,6 +1694,9 @@ Promise.all([
                 ]
               })
             )
+            .then(rly => {
+              console.log(rly)
+            })
           }
         }
       }
