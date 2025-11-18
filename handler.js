@@ -1257,10 +1257,10 @@ Promise.all([
             </div>
             <div class="switch-set new-line-mode">
               <span class="heading">改行</span>
+              <label><input type="radio" name="new-line-mode" value="normal"><span class="label">標準</span></label>
               <label><input type="radio" name="new-line-mode" value="few" checked><span class="label">減少</span></label>
               <label><input type="radio" name="new-line-mode" value="paper"><span class="label">紙書</span></label>
               <label><input type="radio" name="new-line-mode" value="alternatingBlank"><span class="label">交互</span></label>
-              <label><input type="radio" name="new-line-mode" value="raw"><span class="label">不変</span></label>
             </div>
             <div class="switch-set orientation-mode">
               <label><input type="checkbox" name="orientation-mode"><span class="label">縦</span></label>
