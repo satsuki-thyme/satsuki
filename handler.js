@@ -1180,7 +1180,10 @@ Promise.all([
               }
               function textFollowOption() {
                 if (/\$text_follow_option/.test(w)) {
-                  return textForCopy.replace(/(<\/p>[\s\S]*?<p>)/g, `\n`).replace(/<br>/g, ``).replace(/<.*?>/g, ``)
+                  return textForCopy
+                  .replace(/(<\/p>[\s\S]*?<p>)/g, `\n`)
+                  .replace(/<br>/g, ``)
+                  .replace(/<.*?>/g, ``)
                 }
                 else {
                   return false
@@ -1260,7 +1263,7 @@ Promise.all([
               <label><input type="radio" name="new-line-mode" value="normal"><span class="label">標準</span></label>
               <label><input type="radio" name="new-line-mode" value="few" checked><span class="label">減少</span></label>
               <label><input type="radio" name="new-line-mode" value="paper"><span class="label">紙書</span></label>
-              <label><input type="radio" name="new-line-mode" value="alternatingBlank"><span class="label">交互</span></label>
+              <label><input type="radio" name="new-line-mode" value="alt"><span class="label">交互</span></label>
             </div>
             <div class="switch-set orientation-mode">
               <label><input type="checkbox" name="orientation-mode"><span class="label">縦</span></label>
