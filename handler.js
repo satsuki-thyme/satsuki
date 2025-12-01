@@ -1229,7 +1229,7 @@ Promise.all([
         set optional value
 
       */
-      window.addEventListener(`unload`, () => {
+      window.addEventListener(`pagehide`, () => {
         localStorage.setItem(`bracketMode`, bracketMode)
         localStorage.setItem(`rubyMode`, rubyMode)
         localStorage.setItem(`newLineMode`, newLineMode)
@@ -2324,7 +2324,7 @@ Promise.all([
         .then(rly => {
           let now = new Date(Date.now())
           let today = `${now.getFullYear()}-${zeroFill(now.getMonth() + 1, 2)}-${zeroFill(now.getDate(), 2)}`
-console.log(array)
+
           // 配列に同じ日の集計があれば削除する
           new Promise(resolve => {
             fn()
@@ -2458,7 +2458,7 @@ console.log(array)
   document.onscroll = () => {
     getScrollValue()
   }
-  window.addEventListener(`unload`, () => {
+  window.addEventListener(`pagehide`, () => {
     localStorage.setItem(`scrollValueY`, scrollValueY)
     localStorage.setItem(`scrollValueX`, scrollValueX)
   })
