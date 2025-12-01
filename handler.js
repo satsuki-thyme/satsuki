@@ -2229,17 +2229,25 @@ Promise.all([
           ファイルの読み込みと、文字数カウント
         */
         .then(async rly => {
-          let textLen = await Promise.all(
+          let textLen = Promise.all(
             rly
             .map(async e => await count(e[0], e[1], true))
           )
           .then(rly => rly.reduce((a, c) => a + c, 0))
-          let docLen = await Promise.all(
+          let docLen = Promise.all(
             rly
             .map(async e => await count(e[0], e[2], false))
           )
           .then(rly => rly.reduce((a, c) => a + c, 0))
-          return [textLen, docLen]
+          return Promise.all([textLen, docLen])
+          .then(e => {
+            textLen = e[0]
+            docLen = e[1]
+            return [e[0], e[1]]
+          })
+
+
+
           function count(dn, dirAndFileArray, isText) {
             if (dirAndFileArray) {
 
@@ -2316,7 +2324,7 @@ Promise.all([
         .then(rly => {
           let now = new Date(Date.now())
           let today = `${now.getFullYear()}-${zeroFill(now.getMonth() + 1, 2)}-${zeroFill(now.getDate(), 2)}`
-
+console.log(array)
           // 配列に同じ日の集計があれば削除する
           new Promise(resolve => {
             fn()
