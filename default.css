@@ -877,7 +877,7 @@ footer#site-footer {
   padding: 0.5em;
 }
 .yaml main {
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-variant-ligatures: none;
   -webkit-font-feature-settings: "liga" 0;
   font-feature-settings: "liga" 0;
