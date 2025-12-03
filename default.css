@@ -787,7 +787,7 @@ footer#site-footer {
 .doc nav .right {
   width: calc(50% - 4em);
 }
-.doc nav .nav-separater {
+.doc nav .nav-separator {
   padding: 1em;
 }
 .doc .user-cnt-tasklist {
@@ -869,4 +869,10 @@ footer#site-footer {
 }
 .list .mark {
   color: #ff2;
+}
+.list nav {
+  margin: 10px 0;
+}
+.list nav .nav-separator {
+  padding: 0.5em;
 }

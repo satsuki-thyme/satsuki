@@ -1319,7 +1319,7 @@ Promise.all([
             else {
               nextLink = `なし`
             }
-            let relationLink = `<nav><div class="left">${prevLink}</div><div class="center"><span class="nav-separater">|</span><a href="${basePage}?q=${dn}">表紙</a><span class="nav-separater">|</span></div><div class="right">${nextLink}</div></nav>`
+            let relationLink = `<nav><div class="left">${prevLink}</div><div class="center"><span class="nav-separator">|</span><a href="${basePage}?q=${dn}">表紙</a><span class="nav-separator">|</span></div><div class="right">${nextLink}</div></nav>`
             let main = `<main id="text-area">${outputText}</main>`
             let header = `<header><p class="context-level-1">${rly[3]}</p><h1>${rly[0][1]}</h1><p>文字数<span class="rot">:</span><span class="rot"> </span><span class="char-num">${rly[4][0]}</span></p>${relationLink}</header>`
             let footer = `<footer>${relationLink}<p>文字数<span class="rot">:</span><span class="rot"> </span><span class="char-num">${rly[4][0]}</span></p></footer>`
@@ -1512,10 +1512,10 @@ Promise.all([
                   let href = `?q=${dn}/list/${listPath}`
                   let prev = Number(search.get(`page`)) === 1 ? `` : `<a href="${href}&page=${Number(search.get(`page`)) - 1}">前ページ</a>`
                   let next = Number(search.get(`page`)) === rly.length ? `` : `<a href="${href}&page=${Number(search.get(`page`)) + 1}">次ページ</a>`
-                  let separater = Number(search.get(`page`)) === 1 || Number(search.get(`page`)) === rly.length ? `` : ` | `
-                  let paging = `<header><h2>第 ${rly[Number(search.get(`page`)) - 1][1] + 1} 話</h2><p>ページ: ${search.get(`page`)} / ${rly.length}</p><nav>${rly.map((rly, i) => {
-                    return (i !== Number(search.get(`page`)) - 1 ? `<a href="${href}&page=${rly[1] + 1}">${rly[1] + 1}</a>` : i + 1)
-                  }).join(` | `)}</nav><nav><p class="page">${prev}${separater}${next}</p></nav></header>`
+                  let separater = Number(search.get(`page`)) === 1 || Number(search.get(`page`)) === rly.length ? `` : `<span class="nav-separator">|</span>`
+                  let paging = `<header><h2>第 ${rly[Number(search.get(`page`)) - 1][1] + 1} 話</h2><p>ページ: ${search.get(`page`)} / ${rly.length}</p><nav><span class="nav-separator">|</span>${rly.map((rly, i) => {
+                    return (i !== Number(search.get(`page`)) - 1 ? `<a href="${href}&page=${rly[1] + 1}"> ${rly[1] + 1} </a>` : i + 1)
+                  }).join(`<span class="nav-separator">|</span>`)}<span class="nav-separator">|</span></nav><nav><p class="page">${prev}${separater}${next}</p></nav></header>`
                   activeContainer.innerHTML = header + paging +
                   `<main>
                     <ol>${rly[Number(search.get(`page`)) - 1][0].map((e, i) => `<li><a href="#anchor${i}">${e[0]}</a></li>`).join(``)}</ol>
