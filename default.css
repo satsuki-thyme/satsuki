@@ -864,7 +864,7 @@ footer#site-footer {
   margin: auto;
 }
 .list table th,
-.list table td {
+.list table td:first-child {
   word-break: keep-all;
 }
 .list .mark {
