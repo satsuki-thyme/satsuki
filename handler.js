@@ -37,7 +37,7 @@ let listDir = `list`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
 let markupFile = `etc/markup.json`
-let localSever = `http://satsuki.c`
+let localSever = `https://satsuki.c`
 let internetServer = `https://satsuki.me`
 
 
@@ -62,11 +62,11 @@ let dn = ((q || ``).match(/^[^/]+/) || [``])[0]
 search.set(`page`, search.get(`page`) || 1)
 let server = fixToInternetURL === false ? location.origin : internetServer
 let textDir = {
-  "http://satsuki.c": localTextDir,
+  "https://satsuki.c": localTextDir,
   "https://satsuki.me": `${githubRawFront}/${internetSiteRepo}/${githubRawBack}`
 }[server]
 let baseURL = {
-  "http://satsuki.c": `${textDir}/${dn}`,
+  "https://satsuki.c": `${textDir}/${dn}`,
   "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
 }[server]
 
@@ -313,7 +313,7 @@ if (server === internetServer) {
 */
 let loadFilesOK = null
 let min = {
-  "http://satsuki.c": ``,
+  "https://satsuki.c": ``,
   "https://satsuki.me": `.min`
 }[server]
 function loadFiles() {
@@ -497,7 +497,7 @@ Promise.all([
             filteredIndex.map(rly0 => {
               laterInsertionDn = rly0
               let baseURLArrayNoIncludeDn = {
-                "http://satsuki.c": `${textDir}/${laterInsertionDn}`,
+                "https://satsuki.c": `${textDir}/${laterInsertionDn}`,
                 "https://satsuki.me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
               }
               return fetch(`${baseURLArrayNoIncludeDn[server]}/${indvIndexFile}`)
@@ -560,11 +560,18 @@ Promise.all([
         "failedToFetchingReadme": "${indvIndexFile} の読み込みに失敗しました。",
         "failedToFetchingFile": "本文ファイルの取得に失敗しました。"
       }
+      //work location エピソードを結合するリンクの設置
+      // return
+      //
+      // indvIndexFile: opごとのインデックスファイル
       return await fetch(`${baseURL}/${indvIndexFile}`)
       .then(async rly => {
         if (rly.ok) {
+          // contentsAll: epごとのインデックスファイルの中身
           let contentsAll = await rly.text()
+          // procIndex(): opごとのインデックスに必要情報と本文属性の文字数を付加し、合計を挿入する
           return procIndex(contentsAll)
+          // createHTML(): テーブルの構成とその配置をする
           .then(async rly => await createHTML(rly))
           .then(rly => {
             let title = contentsAll.match(/(?:# )(.*)/)[1]
@@ -589,6 +596,8 @@ Promise.all([
           console.error(message.failedToFetchingReadme)
           return false
         }
+        // createHTML(): テーブルの構成とその配置をする
+        // src: opごとのインデックスに必要情報と本文属性の文字数を付加し、合計を挿入したもの
         async function createHTML(src) {
           src
           .shift(1)
@@ -637,6 +646,7 @@ Promise.all([
                   })
                   .then(rly => {
                     if (src[i].text) {
+                      // 本文だったら
                       rly[j].dataType = `text`
                       if (
                         (
@@ -738,16 +748,30 @@ Promise.all([
             )
           })
         }
+        // procIndex(): opごとのインデックスに必要情報と本文属性の文字数を付加し、合計を挿入する
+        // indexContents: epごとのインデックスファイルの中身
         async function procIndex(indexContents) {
+          // indexArray: epごとのインデックスファイルの中身からタイトルを削除して行ごとにスプリットしたもの
           let indexArray = indexContents
-          .replace(/^# .*\r?\n/, ``)
-          .split(/\r?\n/)
+          .replace(/^# .*(\r?\n|\r(?!\n))/, ``)
+          .split(/\r?\n|\r(?!\n)/)
+          // propArray: 各行の属性の連想配列
+          // determinProp(): 各行の属性を連想配列にする
+          // indexArray: epごとのインデックスファイルの中身からタイトルを削除して行ごとにスプリットしたもの
           let propArray = await determinProp(indexArray)
           let getheringText = ``
+          //
+          // return
+          //
+          // assyElem(): indexArrayに対してpropArray（各行の属性の連想配列）を元に必要情報を付加する
+          // indexArray: epごとのインデックスファイルの中身からタイトルを削除して行ごとにスプリットしたもの
+          // then()を経て最終的にindexArrayの本文属性に文字数を付加し、本文属性の後ろに文字数の合計を挿入したものを返す
           return await assyElem(indexArray)
+          // contText(): 本文属性に文字数を付加する
           .then(async rly => countText(rly))
           .then(async rly => {
             let textPos = rly.map(e => e.text).lastIndexOf(true)
+            // 本文属性の最後の行の後ろに文字数の合計を挿入する
             rly
             .splice(
               textPos + 1,
@@ -764,7 +788,12 @@ Promise.all([
             )
             return rly
           })
+          // contText(): indexBlobArrayの本文属性に文字数を付加する
+          // indexBlobArray: indexArrayに対してpropArray（各行の属性の連想配列）を元に必要情報を付加したもの
           async function countText(indexBlobArray) {
+            //
+            // return
+            //
             return Promise.all(
               indexBlobArray
               .filter(e => e.elemType === `listItem` && e.text)
@@ -796,12 +825,17 @@ Promise.all([
               })
             })
           }
+          // assyElem(): indexArrayに対してpropArray（各行の属性の連想配列）を元に必要情報を付加する
+          // indexArray: epごとのインデックスファイルの中身からタイトルを削除して行ごとにスプリットしたもの
           async function assyElem(indexArray) {
             let prevHeadingLv = 0
             indexArray = indexArray
             .filter((e, i) => !propArray[i].reject)
             propArray = propArray
             .filter(e => !e.reject)
+            //
+            // return
+            //
             return (
               await Promise.all(
                 indexArray
@@ -830,11 +864,16 @@ Promise.all([
                   if (w.elemType === `paragraph` || w.elemType === false) {
                     w.headingLv = prevHeadingLv
                   }
+                  //
+                  // return
+                  //
                   return w
                 })
               )
             ).filter(e => e.elemType)
           }
+          // determinProp: 各行の属性を連想配列にする
+          // indexArray: epごとのインデックスファイルの中身のタイトルを削除して行ごとにスプリットしたもの
           async function determinProp(indexArray) {
             let propArray = []
             let i = 0
@@ -873,6 +912,9 @@ Promise.all([
             let reText1 = new RegExp(`^#{${textSharp}} (${textHeadingInIndex})`)
             let reNonText = new RegExp(`^#{1,${textSharp}} (?!.*(${textHeadingInIndex})).*`)
             let reReject = new RegExp(`^#{1,6} (${rejectHeadingInIndexForDisplay})`)
+            //
+            // return
+            //
             return new Promise(resolve => {
               fn()
               function fn() {

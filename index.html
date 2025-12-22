@@ -28,7 +28,7 @@
       let e = document.createElement(`script`)
       e.src = {
         "http://localhost:8080": `handler.js`,
-        "http://satsuki.c": `handler.js`,
+        "https://satsuki.c": `handler.js`,
         "https://satsuki.me": `handler.min.js`
       }[fixToInternetURL === false ? location.origin : `https://satsuki.me`]
       e.type = `module`
