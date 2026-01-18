@@ -1679,7 +1679,7 @@ Promise.all([
            ##        ##     ## ######## ##         #######   ######  ####    ##    ####  #######  ##    ## 
           */
           function getMarkListForPreposition(text, mark) {
-            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`)
+            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`, `g`)
             let markList = marksPreposition.reduce((a, c) => a.concat(c), [])
             let reRemoveMark = new RegExp(Array.from(new Set(markList)).map(rly => esc(rly)).join(`|`), `g`)
             let reRemoveMarkTogether = new RegExp(markList, `g`)
