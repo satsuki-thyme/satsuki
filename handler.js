@@ -69,6 +69,10 @@ let baseURL = {
   "https://satsuki.c": `${textDir}/${dn}`,
   "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
 }[server]
+let publish = {
+  "https://satsuki.c": true,
+  "https://satsuki.me": false
+}[server]
 
 // 変数 dn の算出後に決定
 let defaultMarkupFileDir = textDir
@@ -473,15 +477,15 @@ Promise.all([
               index.filter(rly => {
                 if (
                   (
-                    status === `active` && rly.active
+                    status === `active` && rly.active && publish
                   )
                   ||
                   (
-                    status === `archive` && !rly.active
+                    status === `archive` && !rly.active && publish
                   )
                   ||
                   (
-                    status === `both`
+                    status === `both` && publish
                   )
                   ) {
                   return true
