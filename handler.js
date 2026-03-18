@@ -18,7 +18,7 @@ let fixToInternetURL = false
 // 文字数のローカルストレージを初期化する
 let characterCountLogInitializeSwitch = false
 
-console.log(`2026-03-18 19:03`)
+console.log(`2026-03-19 01:18`)
 
 /*
 
@@ -50,7 +50,6 @@ let internetServer = `https://satsuki.me`
 */
 // URL 関連
 let search = new Map()
-let laterInsertionDn = ``
 location.search
 .slice(1)
 .split(`&`)
@@ -501,7 +500,7 @@ Promise.all([
                   }
                 }
                 else {
-                  if (rly.active) {
+                  if (rly.active && rly.publish) {
                     return true
                   }
                   else {
@@ -512,20 +511,20 @@ Promise.all([
               .map(rly => [rly.dn])
             )
           )
+          console.log(filteredIndex)
           let tItems = await Promise.all(
             filteredIndex.map(rly0 => {
-              laterInsertionDn = rly0
               let baseURLArrayNoIncludeDn = {
-                "https://satsuki.c": `${textDir}/${laterInsertionDn}`,
-                "https://satsuki.me": `${githubRawFront}/${laterInsertionDn}/${githubRawBack}`
-              }
-              return fetch(`${baseURLArrayNoIncludeDn[server]}/${indvIndexFile}`)
+                "https://satsuki.c": `${textDir}/${rly0}`,
+                "https://satsuki.me": `${githubRawFront}/${rly0}/${githubRawBack}`
+              }[server]
+              return fetch(`${baseURLArrayNoIncludeDn}/${indvIndexFile}`)
               .then(async rly1 => {
                 if (rly1.ok) {
                   let tocBlob = await rly1.text()
                   let dn = rly0
                   let title = `<a href="${basePage}?q=${dn}">${(tocBlob.match(/^# .*/))[0].replace(/^# /, ``)}</a>`
-                  let description = await fetch(`${baseURLArrayNoIncludeDn[server]}/${descriptionDir}/${defaultDescriptionFile}`)
+                  let description = await fetch(`${baseURLArrayNoIncludeDn}/${descriptionDir}/${defaultDescriptionFile}`)
                   .then(async rly2 => {
                     if (rly2.ok) {
                       return await rly2.text()
