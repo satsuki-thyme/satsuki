@@ -477,21 +477,20 @@ Promise.all([
       .then(async rly => {
         if (rly.ok) {
           let index = await rly.json()
-          console.log(index)
           let filteredIndex = Array.from(
             new Set(
               index.filter(rly => {
                 if (
                   (
-                    status === `active` && rly.active && publish
+                    status === `active` && rly.active && rly.publish
                   )
                   ||
                   (
-                    status === `archive` && !rly.active && publish
+                    status === `archive` && !rly.active && rly.publish
                   )
                   ||
                   (
-                    status === `both` && publish
+                    status === `both` && rly.publish
                   )
                   ) {
                   return true
