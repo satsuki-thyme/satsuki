@@ -22,12 +22,6 @@
 [submodule "lib/common"]
 	path = lib/common
 	url = https://github.com/satsuki-thyme/common
-[submodule "etc"]
-	path = etc
-	url = https://github.com/satsuki-thyme/novel-etc
-[submodule "et"]
-	path = et
-	url = https://github.com/satsuki-thyme/novel-etc
 [submodule "novel-etc"]
 	path = novel-etc
 	url = https://github.com/satsuki-thyme/novel-etc
