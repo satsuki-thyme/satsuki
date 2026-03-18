@@ -80,7 +80,7 @@ let publish = {
 }[server]
 
 // 変数 dn の算出後に決定
-let defaultMarkupFileDir = textDir
+let defaultMarkupFileDir = `${githubRawFront}/${etcDir}/${githubRawBack}`
 let indivMarkupFileDir = baseURL
 let reTextPage = new RegExp(`^${dn}/(?!.*${listDir}).*`)
 
