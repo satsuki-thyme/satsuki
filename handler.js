@@ -30,13 +30,14 @@ let githubRawBack = `master`
 let internetSiteRepo = `satsuki`
 let localTextDir = `my-drive/scribe/novel`
 let basePage = `index.html`
-let indexFile = `novel-etc/index.json`
+let indexFile = `index.json`
 let indvIndexFile = `README.md`
 let libDir = `lib`
 let listDir = `list`
+let etcDir = `novel-etc`
 let descriptionDir = `description`
 let defaultDescriptionFile = `default.txt`
-let markupFile = `novel-etc/markup.json`
+let markupFile = `markup.json`
 let localSever = `https://satsuki.c`
 let internetServer = `https://satsuki.me`
 
@@ -68,6 +69,10 @@ let textDir = {
 let baseURL = {
   "https://satsuki.c": `${textDir}/${dn}`,
   "https://satsuki.me": `${githubRawFront}/${dn}/${githubRawBack}`
+}[server]
+let novelEtc = {
+  "https://satsuki.c": `${textDir}/${etcDir}`,
+  "https://satsuki.me": `${githubRawFront}/${etcDir}/${githubRawBack}`
 }[server]
 let publish = {
   "https://satsuki.c": true,
@@ -468,7 +473,7 @@ Promise.all([
       let message = {
         "failedToFetchingIndex": "index.json の読み込みに失敗しました。"
       }
-      fetch(`${textDir}/${indexFile}`)
+      fetch(`${novelEtc}/${indexFile}`)
       .then(async rly => {
         if (rly.ok) {
           let index = await rly.json()
@@ -2215,7 +2220,7 @@ Promise.all([
         /*
           インデックスの読み込みと、個別インデックスの処理
         */
-        fetch(`${textDir}/${indexFile}`)
+        fetch(`${novelEtc}/${indexFile}`)
         .then(async rly => {
           if (rly.ok) {
             return Promise.all(
@@ -2265,7 +2270,7 @@ Promise.all([
             )
           }
           else {
-            notFound.push(`${textDir}/${indexFile}`)
+            notFound.push(`${novelEtc}/${indexFile}`)
             return false
           }
         })
