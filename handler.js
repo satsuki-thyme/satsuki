@@ -482,15 +482,15 @@ Promise.all([
               index.filter(rly => {
                 if (
                   (
-                    status === `active` && rly.active && rly.publish
+                    status === `active` && rly.active && publish
                   )
                   ||
                   (
-                    status === `archive` && !rly.active && rly.publish
+                    status === `archive` && !rly.active && publish
                   )
                   ||
                   (
-                    status === `both` && rly.publish
+                    status === `both` && publish
                   )
                   ) {
                   return true
