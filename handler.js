@@ -477,6 +477,7 @@ Promise.all([
       .then(async rly => {
         if (rly.ok) {
           let index = await rly.json()
+          console.log(index)
           let filteredIndex = Array.from(
             new Set(
               index.filter(rly => {
