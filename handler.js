@@ -480,23 +480,33 @@ Promise.all([
           let filteredIndex = Array.from(
             new Set(
               index.filter(rly => {
-                if (
-                  (
-                    status === `active` && rly.active && publish
-                  )
-                  ||
-                  (
-                    status === `archive` && !rly.active && publish
-                  )
-                  ||
-                  (
-                    status === `both` && publish
-                  )
+                if (server === `https://satsuki.c`) {
+                  if (
+                    (
+                      status === `active` && rly.active
+                    )
+                    ||
+                    (
+                      status === `archive` && !rly.active
+                    )
+                    ||
+                    (
+                      status === `both`
+                    )
                   ) {
-                  return true
+                    return true
+                  }
+                  else {
+                    return false
+                  }
                 }
                 else {
-                  return false
+                  if (rly.active) {
+                    return true
+                  }
+                  else {
+                    return false
+                  }
                 }
               })
               .map(rly => [rly.dn])
