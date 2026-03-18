@@ -1679,7 +1679,8 @@ Promise.all([
            ##        ##     ## ######## ##         #######   ######  ####    ##    ####  #######  ##    ## 
           */
           function getMarkListForPreposition(text, mark) {
-            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`, `g`)
+            let reFilter = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`)
+            let reTarget = new RegExp(`${esc(mark[0])}.*?${esc(mark[1])}`, `g`)
             let markList = marksPreposition.reduce((a, c) => a.concat(c), [])
             let reRemoveMark = new RegExp(Array.from(new Set(markList)).map(rly => esc(rly)).join(`|`), `g`)
             let reRemoveMarkTogether = new RegExp(markList, `g`)
@@ -1694,12 +1695,12 @@ Promise.all([
             .map(rly => {
               return [
                 rly
-                .match(reFilter)
+                .match(reTarget)
                 .map(rly => rly.replace(reRemoveMark, ``)),
                 rly
-                .replace(reFilter, ``)
+                .replace(reTarget, ``)
                 .replace(reRemoveMarkTogether, ``)
-                .replace(/^　/, ``)
+                .replace(/^　+/, ``)
               ]
             })
             for (let i of preTextArray) {
@@ -1722,7 +1723,7 @@ Promise.all([
                       await brackettool(
                         textArray
                         .filter(rly1 => rly1[0] === rly0)
-                        .map(rly2 => rly2[1].replace(/^　*/, ``))
+                        .map(rly2 => rly2[1].replace(/^　+/, ``))
                         .join(`\n`),
                         marksPreposition,
                         `delete-together`
@@ -1730,7 +1731,7 @@ Promise.all([
                       marksEnclosure,
                       `delete`
                     ),
-                    "newLineMode": `few`,
+                    "newLineMode": `normal`,
                     "rubyMode": `parse`,
                     "parenthesis": `normal`,
                     "comment": `delete-together`
