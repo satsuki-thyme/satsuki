@@ -1747,7 +1747,7 @@ Promise.all([
                       marksEnclosure,
                       `delete`
                     ),
-                    "newLineMode": `normal`,
+                    "newLineMode": `few`,
                     "rubyMode": `parse`,
                     "parenthesis": `normal`,
                     "comment": `delete-together`
