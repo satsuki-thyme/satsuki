@@ -27,7 +27,7 @@ let characterCountLogInitializeSwitch = false
 let githubRawFront = `//raw.githubusercontent.com/satsuki-thyme`
 let githubRawBack = `master`
 let internetSiteRepo = `satsuki`
-let localTextDir = `my-drive/scribe/novel`
+let localTextDir = `0/scribe/novel`
 let basePage = `index.html`
 let indexFile = `index.json`
 let indvIndexFile = `README.md`
@@ -2321,7 +2321,7 @@ Promise.all([
                   if (e) {
 
                     // 個別ファイルの処理
-                    return fetch(!/^\//.test(e) ? `${textDir}/${dn}/${e}` : `my-drive/${e}`)
+                    return fetch(!/^\//.test(e) ? `${textDir}/${dn}/${e}` : `0/${e}`)
                     .then(async rly => {
                       if (rly.ok) {
                         if (isText) {
