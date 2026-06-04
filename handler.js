@@ -86,36 +86,30 @@ let reTextPage = new RegExp(`^${dn}/(?!.*${listDir}).*`)
 let markup = []
 let reListURLs = null
 let reDnExists = new RegExp(`^${dn}`)
-let marksPOK = null
-let marksEOK = null
 makeReListURLs()
 function makeReListURLs() {
   if (q && reDnExists.test(q)) {
     reListURLs = loadMarkupFile(indivMarkupFileDir + `/` + markupFile)
     .then(rly => {
-      return rly
-    })
-    .then(rly => {
-      return makeRegExp(rly)
+      let re =makeRegExp(rly)
+      return re[0]
     })
     .catch(() => {
-      return ``
-    })
-    reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
-    .then(rly => {
-      return rly
-    })
-    .then(rly => {
-      return makeRegExp(rly)
-    })
-    .catch(() => {
-      return ``
+      return loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+      .then(rly => {
+        let re =makeRegExp(rly)
+        return re[0]
+      })
+      .catch(() => {
+        return ``
+      })
     })
   }
   if (!q) {
     reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
     .then(rly => {
-      return makeRegExp(rly)
+      let re =makeRegExp(rly)
+      return re[0]
     })
     .catch(() => {
       return ``
@@ -136,8 +130,14 @@ function makeReListURLs() {
   }
   function makeRegExp(src) {
     markup = src
-    marksE(src)
-    marksP(src)
+    let marksPreposition = marksPrepositionFn(src)
+    let marksEnclosure = marksEnclosureFn(src)
+    Promise.all(
+      CSSPromiseArray
+      .concat(scriptPromiseArray)
+      .concat([marksPreposition, marksEnclosure])
+    )
+    .then(async() => procMain(await marksPreposition, await marksEnclosure))
     return new RegExp(`^.+?/(${
       src
       .map(rly => listDir + `/` + rly.path)
@@ -246,24 +246,29 @@ let spcFileExtArray = {
   括弧処理
 
 */
-let marksPreposition = []
-let marksEnclosure = []
-function marksP(src) {
-  marksPOK = new Promise(resolve => {
-    marksPreposition = src
-    .filter(rly => rly.markupType === `preposition`)
+async function marksPrepositionFn() {
+  return new Promise(async resolve => {
+    markup
+    .filter(rly => rly.markupType === `preposition` && rly.active)
     .map(rly => rly.mark)
-    .reduce((a, c) => a.concat([c]), [])
-    resolve(marksPreposition)
+    .reduce((t, c, i, a) => {
+      if (i === a.length - 1) {
+        t.concat([c])
+        resolve(t)
+      }
+      else {
+        return t.concat([c])
+      }
+    }, [])
   })
 }
-function marksE(src) {
-  marksEOK = new Promise(resolve => {
-    marksEnclosure = src
+
+async function marksEnclosureFn() {
+  return new Promise(async resolve => {
+    let w = markup
     .filter(rly => rly.markupType === `enclosure` && rly.delete)
     .map(rly => rly.mark.map(rly => rly[0]))
-    .reduce((a, c) => a.concat(c.map(rly => rly)), [])
-    resolve(marksEnclosure)
+    resolve(w)
   })
 }
 
@@ -318,11 +323,13 @@ if (server === internetServer) {
  ##          ##     ##    ##     ##    ##     ##       ##           ##     ##          ##          ##    ##
  ########     #######     ##     ##    ########        ##          ####    ########    ########     ######
 */
-let loadFilesOK = null
 let min = {
   "https://satsuki.c": ``,
   "https://satsuki.me": `.min`
 }[server]
+let CSSPromiseArray = []
+let scriptPromiseArray = []
+loadFiles()
 function loadFiles() {
   let CSSFiles = [
     {
@@ -364,8 +371,6 @@ function loadFiles() {
       "repo": `yamlparse.js`
     }
   ]
-  let CSSPromiseArray = []
-  let scriptPromiseArray = []
   for (let i of CSSFiles) {
     CSSPromiseArray
     .push(
@@ -375,7 +380,7 @@ function loadFiles() {
         e.rel = `stylesheet`
         document.head.appendChild(e)
         e.onload = () => {
-          resolve()
+          resolve(true)
         }
       })
     )
@@ -389,24 +394,13 @@ function loadFiles() {
         e.async = true
         document.head.appendChild(e)
         e.onload = () => {
-          resolve()
+          resolve(true)
         }
       })
     )
   }
-  loadFilesOK = Promise.all([
-    Promise.all(CSSPromiseArray),
-    Promise.all(scriptPromiseArray)
-  ])
 }
-
-loadFiles()
-Promise.all([
-  loadFilesOK,
-  marksPOK,
-  marksEOK
-])
-.then(() => {
+function procMain(marksPreposition, marksEnclosure){
   /*
     要素の取得
   */
@@ -1742,7 +1736,7 @@ Promise.all([
                         .map(rly2 => rly2[1].replace(/^　+/, ``))
                         .join(`\n`),
                         marksPreposition,
-                        `delete-together`
+                      
                       ),
                       marksEnclosure,
                       `delete`
@@ -1956,21 +1950,15 @@ Promise.all([
 
 
 
-/*
-  ######  ##     ##    ###    ########     ##    ## ##     ## ##     ## 
- ##    ## ##     ##   ## ##   ##     ##    ###   ## ##     ## ###   ### 
- ##       ##     ##  ##   ##  ##     ##    ####  ## ##     ## #### #### 
- ##       ######### ##     ## ########     ## ## ## ##     ## ## ### ## 
- ##       ##     ## ######### ##   ##      ##  #### ##     ## ##     ## 
- ##    ## ##     ## ##     ## ##    ##     ##   ### ##     ## ##     ## 
-  ######  ##     ## ##     ## ##     ##    ##    ##  #######  ##     ## 
-*/
-Promise.all([
-  loadFilesOK,
-  marksPOK,
-  marksEOK
-])
-.then(() => {
+  /*
+    ######  ##     ##    ###    ########     ##    ## ##     ## ##     ## 
+  ##    ## ##     ##   ## ##   ##     ##    ###   ## ##     ## ###   ### 
+  ##       ##     ##  ##   ##  ##     ##    ####  ## ##     ## #### #### 
+  ##       ######### ##     ## ########     ## ## ## ##     ## ## ### ## 
+  ##       ##     ## ######### ##   ##      ##  #### ##     ## ##     ## 
+  ##    ## ##     ## ##     ## ##    ##     ##   ### ##     ## ##     ## 
+    ######  ##     ## ##     ## ##     ##    ##    ##  #######  ##     ## 
+  */
   if (server === localSever && !q) {
     let array = null
     characterCountLog()
@@ -2490,55 +2478,51 @@ Promise.all([
       }
     }
   }
+}
+
+
+
+
+
+/*
+    ###        ######     ########    ####     #######     ##    ##
+   ## ##      ##    ##       ##        ##     ##     ##    ###   ##
+  ##   ##     ##             ##        ##     ##     ##    ####  ##
+ ##     ##    ##             ##        ##     ##     ##    ## ## ##
+ #########    ##             ##        ##     ##     ##    ##  ####
+ ##     ##    ##    ##       ##        ##     ##     ##    ##   ###
+ ##     ##     ######        ##       ####     #######     ##    ##
+*/
+/*
+  スクロール
+*/
+let windowHeight = window.innerHeight
+window.onscroll = () => {
+  getScrollValue()
+}
+document.onscroll = () => {
+  getScrollValue()
+}
+window.addEventListener(`pagehide`, () => {
+  localStorage.setItem(`scrollValueY`, scrollValueY)
+  localStorage.setItem(`scrollValueX`, scrollValueX)
 })
 
 
 
 
 
-  /*
-      ###        ######     ########    ####     #######     ##    ##
-     ## ##      ##    ##       ##        ##     ##     ##    ###   ##
-    ##   ##     ##             ##        ##     ##     ##    ####  ##
-   ##     ##    ##             ##        ##     ##     ##    ## ## ##
-   #########    ##             ##        ##     ##     ##    ##  ####
-   ##     ##    ##    ##       ##        ##     ##     ##    ##   ###
-   ##     ##     ######        ##       ####     #######     ##    ##
-  */
-  /*
-
-    スクロール
-
-  */
-  let windowHeight = window.innerHeight
-  window.onscroll = () => {
-    getScrollValue()
-  }
-  document.onscroll = () => {
-    getScrollValue()
-  }
-  window.addEventListener(`pagehide`, () => {
-    localStorage.setItem(`scrollValueY`, scrollValueY)
-    localStorage.setItem(`scrollValueX`, scrollValueX)
+/*
+  トップ
+*/
+document.querySelector(`#return-to-top`).onclick = () => {
+  document.scrollingElement.scroll({
+    top: 0,
+    left: 0,
+    behavior: `smooth`
   })
+}
 
-
-
-
-
-  /*
-
-    トップ
-
-  */
-  document.querySelector(`#return-to-top`).onclick = () => {
-    document.scrollingElement.scroll({
-      top: 0,
-      left: 0,
-      behavior: `smooth`
-    })
-  }
-})
 
 
 
