@@ -1951,13 +1951,13 @@ function procMain(marksPreposition, marksEnclosure){
 
 
   /*
-    ######  ##     ##    ###    ########     ##    ## ##     ## ##     ## 
+   ######  ##     ##    ###    ########     ##    ## ##     ## ##     ## 
   ##    ## ##     ##   ## ##   ##     ##    ###   ## ##     ## ###   ### 
   ##       ##     ##  ##   ##  ##     ##    ####  ## ##     ## #### #### 
   ##       ######### ##     ## ########     ## ## ## ##     ## ## ### ## 
   ##       ##     ## ######### ##   ##      ##  #### ##     ## ##     ## 
   ##    ## ##     ## ##     ## ##    ##     ##   ### ##     ## ##     ## 
-    ######  ##     ## ##     ## ##     ##    ##    ##  #######  ##     ## 
+   ######  ##     ## ##     ## ##     ##    ##    ##  #######  ##     ## 
   */
   if (server === localSever && !q) {
     let array = null
@@ -2448,10 +2448,7 @@ function procMain(marksPreposition, marksEnclosure){
         function toX() {
           let now = new Date(Date.now())
           let date = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${now.getHours()}時${now.getMinutes()}分`
-          toXField.innerHTML = `<p>小説制作 今日の進捗<br>
-          日時：${date}<br>
-          本文：${data[0][1]}<br>
-          その他：${data[0][2]}<p>`
+          toXField.innerHTML = `<p>小説制作 今日の進捗<br>日時：${date}<br>本文：${data[0][1]}<br>その他：${data[0][2]}<p>`
         }
       }
     }
