@@ -1418,7 +1418,7 @@ function procMain(marksPreposition, marksEnclosure){
             else {
               nextEps = false
             }
-            return [[tocArray[currNum][0] ,`第${currNum + 1}話 ${tocArray[currNum][1]}`], prevEps, nextEps, title]
+            return [[tocArray[currNum][0] ,`${tocArray[currNum][1]}`], prevEps, nextEps, title]
           }
           else {
             console.error(message.failedToFetchingFile)
@@ -1759,194 +1759,6 @@ function procMain(marksPreposition, marksEnclosure){
   }
 
 
-
-
-  /*
-   ########    ##     ##    ##    ##     ######     ########    ####     #######     ##    ##
-   ##          ##     ##    ###   ##    ##    ##       ##        ##     ##     ##    ###   ##
-   ##          ##     ##    ####  ##    ##             ##        ##     ##     ##    ####  ##
-   ######      ##     ##    ## ## ##    ##             ##        ##     ##     ##    ## ## ##
-   ##          ##     ##    ##  ####    ##             ##        ##     ##     ##    ##  ####
-   ##          ##     ##    ##   ###    ##    ##       ##        ##     ##     ##    ##   ###
-   ##           #######     ##    ##     ######        ##       ####     #######     ##    ##
-  */
-  /*
-
-    テキストページの文字数カウント
-
-  */
-  async function wordcountWrapper(src) {
-    let kanjiRatio = `-`
-    let kanaRatio = `-`
-    let letterRatio = `-`
-    let linesRatio = `-`
-    return await wordcount(await novelparse({
-      "src": await brackettool(await brackettool(src, marksPreposition, `delete-together`), marksEnclosure, `delete`),
-      "newLineMode": `raw`,
-      "rubyMode": `delete`,
-      "parenthesis": `normal`,
-      "comment": `delete-together`
-    }))
-    .then(rly => {
-      if (rly.total > 0) {
-        kanjiRatio = Math.round(rly.kanji / rly.total * 10)
-        kanaRatio = 10 - kanjiRatio
-        linesRatio = Math.round(rly.parenthesis / rly.total * 10)
-        letterRatio = 10 - linesRatio
-      }
-      return [rly.total, `${kanaRatio} : ${kanjiRatio}`, `${letterRatio} : ${linesRatio}`, Math.round(rly.letterLength)]
-    })
-  }
-
-
-
-  /*
-
-    コンテンツサイズの調整
-
-  */
-  // 計測
-  function getContentsSize() {
-    htmlHeight = html.getBoundingClientRect().height
-    scrollRange = Math.floor(htmlHeight - windowHeight)
-  }
-  function getScrollValue() {
-    scrollValueY = document.scrollingElement.scrollTop
-    scrollValueX = -(activeContainer.getBoundingClientRect().left - activeContainer.getBoundingClientRect().right + activeContainer.getBoundingClientRect().width)
-  }
-
-  // 設定
-  function setContentsHeight(s) {
-    if (s === `vertical`) {
-      let padding = (htmlHeight - 600) / 2
-      activeContainer.style.paddingTop = `${padding}px`
-      activeContainer.style.paddingBottom = `${padding}px`
-    }
-    else {
-      activeContainer.style.paddingTop = ``
-      activeContainer.style.paddingBottom = ``
-    }
-  }
-
-
-
-  /*
-
-    メイクテーブル
-
-  */
-  function maketable(tbodyArray, theadArray, clss, id) {
-    let insId = id ? ` id="${id}"` : ``
-    let insClss = clss ? ` class="${clss}"` : ``
-    let multiLines = (tbodyArray[0] instanceof Array || typeof tbodyArray[0] === `array`) ? true : false
-    let theadExist = theadArray ? true : false
-    let tbody = ``
-    let thead = ``
-    if (multiLines) {
-      let tr = ``
-      for (let tbItem of tbodyArray) {
-        tr += `<tr><td>${tbItem.join(`</td><td>`)}</td></tr>`
-      }
-      tbody = `<tbody>${tr}</tbody>`
-    }
-    else {
-      tbody = `<tbody><tr><td>${tbodyArray.join(`</td><td>`)}</td></tr></tbody>`
-    }
-    if (theadExist) {
-      thead = `<thead><tr><th>${theadArray.join(`</th><th>`)}</th></tr></thead>`
-    }
-    return `<table${insId + insClss}>${thead + tbody}</table>`
-  }
-
-
-
-  /*
-
-    エスケープ
-
-  */
-  function esc(r) {
-    if (typeof r === "string" || r instanceof String) return p(r)
-    else if (Array.isArray(r)) return r.map(r => p(r))
-    else return r
-    function p(r) {
-      return r.replace(/(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "\\$1")
-    }
-  }
-  function unEsc(r) {
-    if (typeof r === "string" || r instanceof String) return p(r)
-    else if (Array.isArray(r)) return r.map(r => p(r))
-    else return r
-    function p(r) {
-      return r.replace(/\\(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "$1")
-    }
-  }
-
-
-
-  /*
-
-    ゼロフィル
-
-  */
-  function zeroFill(src, zeroDigits) {
-    return (`0`.repeat(zeroDigits) + src).slice(-zeroDigits)
-  }
-
-
-
-  /*
-
-    JSONを読めるように整形する
-
-  */
-  async function readableJSON(src) {
-    let JSONArray = src.match(/(("(?=.*([^\\](\\\\)*\\),).*"|"[^,]*"|([\d-. \t]*))[ \t]*:)?[ \t]*(("(?=.*([^\\](\\\\)*\\),).*"|"[^,]*"|([\d-. \t]*))[ \t]*,)|{|},?|\[|],?/g)
-    let readableArray = []
-    let indent = 0
-    let indentValue = 4
-    let i = 0
-    return new Promise(resolve => {
-      fn()
-      function fn() {
-        if (/\{|\[/.test(JSONArray[i])) {
-          readableArray.push(` `.repeat(indent) + JSONArray[i])
-          indent += indentValue
-          if (i < JSONArray.length - 1) {
-            i++
-            fn()
-          }
-          else {
-            resolve(readableArray.join(`\n`))
-          }
-        }
-        if (/}|]/.test(JSONArray[i])) {
-          indent -= indentValue
-          readableArray.push(` `.repeat(indent) + JSONArray[i])
-          if (i < JSONArray.length - 1) {
-            i++
-            fn()
-          }
-          else {
-            resolve(readableArray.join(`\n`))
-          }
-        }
-        if (!/\{|\[|}|]/.test(JSONArray[i])) {
-          if (/}|]/.test(JSONArray[i + 1])) {
-            JSONArray[i] = JSONArray[i].replace(/,$/, ``)
-          }
-          readableArray.push(` `.repeat(indent) + JSONArray[i])
-          if (i < JSONArray.length - 1) {
-            i++
-            fn()
-          }
-          else {
-            resolve(readableArray.join(`\n`))
-          }
-        }
-      }
-    })
-  }
 
 
 
@@ -2475,7 +2287,169 @@ function procMain(marksPreposition, marksEnclosure){
       }
     }
   }
-}
+
+
+
+
+
+
+
+/*
+ ########    ##     ##    ##    ##     ######     ########    ####     #######     ##    ##
+ ##          ##     ##    ###   ##    ##    ##       ##        ##     ##     ##    ###   ##
+ ##          ##     ##    ####  ##    ##             ##        ##     ##     ##    ####  ##
+ ######      ##     ##    ## ## ##    ##             ##        ##     ##     ##    ## ## ##
+ ##          ##     ##    ##  ####    ##             ##        ##     ##     ##    ##  ####
+ ##          ##     ##    ##   ###    ##    ##       ##        ##     ##     ##    ##   ###
+ ##           #######     ##    ##     ######        ##       ####     #######     ##    ##
+*/
+
+
+
+  /*
+
+    メイクテーブル
+
+  */
+  function maketable(tbodyArray, theadArray, clss, id) {
+    let insId = id ? ` id="${id}"` : ``
+    let insClss = clss ? ` class="${clss}"` : ``
+    let multiLines = (tbodyArray[0] instanceof Array || typeof tbodyArray[0] === `array`) ? true : false
+    let theadExist = theadArray ? true : false
+    let tbody = ``
+    let thead = ``
+    if (multiLines) {
+      let tr = ``
+      for (let tbItem of tbodyArray) {
+        tr += `<tr><td>${tbItem.join(`</td><td>`)}</td></tr>`
+      }
+      tbody = `<tbody>${tr}</tbody>`
+    }
+    else {
+      tbody = `<tbody><tr><td>${tbodyArray.join(`</td><td>`)}</td></tr></tbody>`
+    }
+    if (theadExist) {
+      thead = `<thead><tr><th>${theadArray.join(`</th><th>`)}</th></tr></thead>`
+    }
+    return `<table${insId + insClss}>${thead + tbody}</table>`
+  }
+
+
+
+  /*
+
+    エスケープ
+
+  */
+  function esc(r) {
+    if (typeof r === "string" || r instanceof String) return p(r)
+    else if (Array.isArray(r)) return r.map(r => p(r))
+    else return r
+    function p(r) {
+      return r.replace(/(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "\\$1")
+    }
+  }
+  function unEsc(r) {
+    if (typeof r === "string" || r instanceof String) return p(r)
+    else if (Array.isArray(r)) return r.map(r => p(r))
+    else return r
+    function p(r) {
+      return r.replace(/\\(\/|\\|\^|\$|\*|\+|\?|\.|\(|\)|\[|\]|\{|\})/g, "$1")
+    }
+  }
+
+
+
+  /*
+
+    ゼロフィル
+
+  */
+  function zeroFill(src, zeroDigits) {
+    return (`0`.repeat(zeroDigits) + src).slice(-zeroDigits)
+  }
+
+
+
+  /*
+
+    JSONを読めるように整形する
+
+  */
+  async function readableJSON(src) {
+    let JSONArray = src.match(/(("(?=.*([^\\](\\\\)*\\),).*"|"[^,]*"|([\d-. \t]*))[ \t]*:)?[ \t]*(("(?=.*([^\\](\\\\)*\\),).*"|"[^,]*"|([\d-. \t]*))[ \t]*,)|{|},?|\[|],?/g)
+    let readableArray = []
+    let indent = 0
+    let indentValue = 4
+    let i = 0
+    return new Promise(resolve => {
+      fn()
+      function fn() {
+        if (/\{|\[/.test(JSONArray[i])) {
+          readableArray.push(` `.repeat(indent) + JSONArray[i])
+          indent += indentValue
+          if (i < JSONArray.length - 1) {
+            i++
+            fn()
+          }
+          else {
+            resolve(readableArray.join(`\n`))
+          }
+        }
+        if (/}|]/.test(JSONArray[i])) {
+          indent -= indentValue
+          readableArray.push(` `.repeat(indent) + JSONArray[i])
+          if (i < JSONArray.length - 1) {
+            i++
+            fn()
+          }
+          else {
+            resolve(readableArray.join(`\n`))
+          }
+        }
+        if (!/\{|\[|}|]/.test(JSONArray[i])) {
+          if (/}|]/.test(JSONArray[i + 1])) {
+            JSONArray[i] = JSONArray[i].replace(/,$/, ``)
+          }
+          readableArray.push(` `.repeat(indent) + JSONArray[i])
+          if (i < JSONArray.length - 1) {
+            i++
+            fn()
+          }
+          else {
+            resolve(readableArray.join(`\n`))
+          }
+        }
+      }
+    })
+  }
+  /*
+
+    テキストページの文字数カウント
+
+  */
+  async function wordcountWrapper(src) {
+    let kanjiRatio = `-`
+    let kanaRatio = `-`
+    let letterRatio = `-`
+    let linesRatio = `-`
+    return await wordcount(await novelparse({
+      "src": await brackettool(await brackettool(src, marksPreposition, `delete-together`), marksEnclosure, `delete`),
+      "newLineMode": `raw`,
+      "rubyMode": `delete`,
+      "parenthesis": `normal`,
+      "comment": `delete-together`
+    }))
+    .then(rly => {
+      if (rly.total > 0) {
+        kanjiRatio = Math.round(rly.kanji / rly.total * 10)
+        kanaRatio = 10 - kanjiRatio
+        linesRatio = Math.round(rly.parenthesis / rly.total * 10)
+        letterRatio = 10 - linesRatio
+      }
+      return [rly.total, `${kanaRatio} : ${kanjiRatio}`, `${letterRatio} : ${linesRatio}`, Math.round(rly.letterLength)]
+    })
+  }
 
 
 
@@ -2490,87 +2464,120 @@ function procMain(marksPreposition, marksEnclosure){
  ##     ##    ##    ##       ##        ##     ##     ##    ##   ###
  ##     ##     ######        ##       ####     #######     ##    ##
 */
-/*
-  スクロール
-*/
-let windowHeight = window.innerHeight
-window.onscroll = () => {
-  getScrollValue()
-}
-document.onscroll = () => {
-  getScrollValue()
-}
-window.addEventListener(`pagehide`, () => {
-  localStorage.setItem(`scrollValueY`, scrollValueY)
-  localStorage.setItem(`scrollValueX`, scrollValueX)
-})
-
-
-
-
-
-/*
-  トップ
-*/
-document.querySelector(`#return-to-top`).onclick = () => {
-  document.scrollingElement.scroll({
-    top: 0,
-    left: 0,
-    behavior: `smooth`
-  })
-}
-
-
-
-
-
-
-/*
-
-  マウス操作
-
-*/
-window.addEventListener(`mousedown`, function(e0) {
-  if (e0.button === 0) {
-    let t = Date.now()
-    window.addEventListener(`mousedown`, function(e1) {
-      if (e1.button === 0 && Date.now() - t < 300) {
-        location.reload()
-      }
-      else {
-        return true
-      }
-    })
-    return setTimeout(() => {
-      return true
-    }, 200)
+  /*
+    スクロール
+  */
+  let windowHeight = window.innerHeight
+  window.onscroll = () => {
+    getScrollValue()
   }
-})
+  document.onscroll = () => {
+    getScrollValue()
+  }
+  window.addEventListener(`pagehide`, () => {
+    localStorage.setItem(`scrollValueY`, scrollValueY)
+    localStorage.setItem(`scrollValueX`, scrollValueX)
+  })
 
 
 
 
 
-/*
-
-  キー操作
-
-*/
-window.onkeydown = e => {
-  if (e.code === `Enter`) {
-    let bodyHeight = document.querySelector(`body`).getBoundingClientRect().height
-    let scrollHeight = Math.ceil(bodyHeight - window.innerHeight)
-    let scrollPos = document.scrollingElement.scrollTop
-    let scrollTrg = 0
-    scrollTrg =
-    scrollPos === 0 ? scrollHeight + 100 :
-    scrollPos < scrollHeight / 2 ? 0 :
-    scrollPos >= scrollHeight / 2 && scrollPos !== scrollHeight ? scrollHeight + 1 :
-    0
+  /*
+    トップ
+  */
+  document.querySelector(`#return-to-top`).onclick = () => {
     document.scrollingElement.scroll({
-      top: scrollTrg,
+      top: 0,
       left: 0,
       behavior: `smooth`
     })
+  }
+
+
+
+
+
+
+  /*
+
+    マウス操作
+
+  */
+  window.addEventListener(`mousedown`, function(e0) {
+    if (e0.button === 0) {
+      let t = Date.now()
+      window.addEventListener(`mousedown`, function(e1) {
+        if (e1.button === 0 && Date.now() - t < 300) {
+          location.reload()
+        }
+        else {
+          return true
+        }
+      })
+      return setTimeout(() => {
+        return true
+      }, 200)
+    }
+  })
+
+
+
+
+
+  /*
+
+    キー操作
+
+  */
+  window.onkeydown = e => {
+    if (e.code === `Enter`) {
+      let bodyHeight = document.querySelector(`body`).getBoundingClientRect().height
+      let scrollHeight = Math.ceil(bodyHeight - window.innerHeight)
+      let scrollPos = document.scrollingElement.scrollTop
+      let scrollTrg = 0
+      scrollTrg =
+      scrollPos === 0 ? scrollHeight + 100 :
+      scrollPos < scrollHeight / 2 ? 0 :
+      scrollPos >= scrollHeight / 2 && scrollPos !== scrollHeight ? scrollHeight + 1 :
+      0
+      document.scrollingElement.scroll({
+        top: scrollTrg,
+        left: 0,
+        behavior: `smooth`
+      })
+    }
+  }
+
+
+
+
+  /*
+
+    コンテンツサイズの調整
+
+  */
+
+  // 計測
+  function getContentsSize() {
+    htmlHeight = html.getBoundingClientRect().height
+    scrollRange = Math.floor(htmlHeight - windowHeight)
+  }
+  function getScrollValue() {
+    scrollValueY = document.scrollingElement.scrollTop
+    scrollValueX = -(activeContainer.getBoundingClientRect().left - activeContainer.getBoundingClientRect().right + activeContainer.getBoundingClientRect().width)
+  }
+
+  // 設定
+  function setContentsHeight(s) {
+    if (s === `vertical`) {
+      let padding = (htmlHeight - 600) / 2
+      activeContainer.style.paddingTop = `${padding}px`
+      activeContainer.style.paddingBottom = `${padding}px`
+    }
+    else {
+      activeContainer.style.paddingTop = ``
+      activeContainer.style.paddingBottom = ``
+    }
   }
 }
