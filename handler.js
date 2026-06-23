@@ -91,14 +91,14 @@ function makeReListURLs() {
   if (q && reDnExists.test(q)) {
     reListURLs = loadMarkupFile(indivMarkupFileDir + `/` + markupFile)
     .then(rly => {
-      let re =makeRegExp(rly)
-      return re[0]
+      let re = makeRegExp(rly)
+      return re
     })
     .catch(() => {
       return loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
       .then(rly => {
-        let re =makeRegExp(rly)
-        return re[0]
+        let re = makeRegExp(rly)
+        return re
       })
       .catch(() => {
         return ``
@@ -137,7 +137,7 @@ function makeReListURLs() {
       .concat(scriptPromiseArray)
       .concat([marksPreposition, marksEnclosure])
     )
-    .then(async() => procMain(await marksPreposition, await marksEnclosure))
+    .then(async () => procMain(await marksPreposition, await marksEnclosure))
     return new RegExp(`^.+?/(${
       src
       .map(rly => listDir + `/` + rly.path)
@@ -1451,7 +1451,7 @@ function procMain(marksPreposition, marksEnclosure){
         .filter(e => e.active)
         .filter(e => e.path === q.match(/([^/]*)$/)[0])[0]
         displayList(targetPage)
-        document.querySelector(`title`).innerText = targetPage.contents
+        document.querySelector(`title`).innerText = targetPage.name
         async function displayList(arg) {
           let mark = arg.mark || []
           let type = arg.markupType || ``
