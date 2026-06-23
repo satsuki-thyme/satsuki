@@ -78,7 +78,10 @@ let publish = {
 }[server]
 
 // 変数 dn の算出後に決定
-let defaultMarkupFileDir = `${githubRawFront}/${etcDir}/${githubRawBack}`
+let defaultMarkupFileDir = {
+  "https://satsuki.c": `${textDir}/${etcDir}`,
+  "https://satsuki.me": `${githubRawFront}/${etcDir}/${githubRawBack}`
+}[server]
 let indivMarkupFileDir = baseURL
 let reTextPage = new RegExp(`^${dn}/(?!.*${listDir}).*`)
 
@@ -252,7 +255,7 @@ async function marksPrepositionFn() {
     .filter(rly => rly.markupType === `preposition` && rly.active)
     .map(rly => rly.mark)
     .reduce((t, c, i, a) => {
-      if (i === a.length - 1) {
+      if (i >= a.length - 1) {
         t.concat([c])
         resolve(t)
       }
@@ -1464,7 +1467,6 @@ function procMain(marksPreposition, marksEnclosure){
           let postfix = Number(arg.var[5]) || 0
           let pagination = arg.pagination || false
           let listPath = arg.path || ``
-
           html.classList.add(htmlClass)
           let indexContents = await fetch(`${baseURL}/${indvIndexFile}`)
           .then(async rly => {
