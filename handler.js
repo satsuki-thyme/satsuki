@@ -861,7 +861,7 @@ function procMain(marksPreposition, marksEnclosure){
                   // 目次のリストアイテム
                   if (w.fieldType === `toc` && w.elemType === `listItem`) {
                     w.path = e.match(/^(?:[\-+*] )(.*?)(?=[ \t]*[:：])/)[1]
-                    w.contents = e.match(/^(?:.*?:[ \t]*)(.*)/)[1]
+                    w.contents = e.match(/^(?:.*?:[ \t.]*)(.*)/)[1]
                     w.headingLv = prevHeadingLv
                   }
                   // 目次以外のコンテンツ
