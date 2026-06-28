@@ -27,18 +27,18 @@ let characterCountLogInitializeSwitch = false
 let githubRawFront = `//raw.githubusercontent.com/satsuki-thyme`
 let githubRawBack = `master`
 let internetSiteRepo = `satsuki`
-let localTextDir = `0/scribe/novel`
+let localTextDir = `scribe/novel`
 let basePage = `index.html`
 let indexFile = `index.json`
 let indvIndexFile = `README.md`
 let libDir = `lib`
 let listDir = `list`
 let etcDir = `novel-etc`
-let descriptionDir = `description`
-let defaultDescriptionFile = `default.txt`
+let sentenceDataFile = `sentence.json`
 let markupFile = `markup.json`
 let localSever = `https://satsuki.c`
 let internetServer = `https://satsuki.me`
+let templateFile = `template.json`
 
 
 
@@ -76,9 +76,7 @@ let publish = {
   "https://satsuki.c": true,
   "https://satsuki.me": false
 }[server]
-
-// 変数 dn の算出後に決定
-let defaultMarkupFileDir = {
+let defaultExternalFileDir = {
   "https://satsuki.c": `${textDir}/${etcDir}`,
   "https://satsuki.me": `${githubRawFront}/${etcDir}/${githubRawBack}`
 }[server]
@@ -98,7 +96,7 @@ function makeReListURLs() {
       return re
     })
     .catch(() => {
-      return loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+      return loadMarkupFile(defaultExternalFileDir + `/` + markupFile)
       .then(rly => {
         let re = makeRegExp(rly)
         return re
@@ -109,7 +107,7 @@ function makeReListURLs() {
     })
   }
   if (!q) {
-    reListURLs = loadMarkupFile(defaultMarkupFileDir + `/` + markupFile)
+    reListURLs = loadMarkupFile(defaultExternalFileDir + `/` + markupFile)
     .then(rly => {
       let re =makeRegExp(rly)
       return re[0]
@@ -217,24 +215,6 @@ let docTableClass = `doc-table`
 
 /*
 
-  データ書き出し設定
-
-*/
-let infoContentsDir = {
-  "template": `share/template`,
-  "description": `${dn}/description`
-}
-let infoContentsFile = {
-  "normal": `normal.txt`,
-  "x": `x.txt`,
-  "line-tori": `line-tori.txt`,
-  "line-saejima": `line-saejima.txt`
-}
-
-
-
-/*
-
   文字数換算
 
 */
@@ -300,15 +280,22 @@ let notFoundField = null
 let uploadDownloadField = null
 let downloadButton = null
 let uploadButton = ``
-
-
+let bracketModeSelector = ``
+let rubyModeSwitch = ``
+let newLineModeSwitch = ``
+let orientationModeSwitch = ``
+let textSelectButton = ``
+let infoContentsSwitch = ``
+let dirAndFile = ``
+let preArea = null
+let sentenceData = null
+let html = document.querySelector(`html`)
 
 /*
 
   その他
 
-*/
-let html = document.querySelector(`html`)
+*textnt.querySelector(`html`)
 
 if (server === internetServer) {
   html.classList.add(`internet`)
@@ -403,7 +390,7 @@ function loadFiles() {
     )
   }
 }
-function procMain(marksPreposition, marksEnclosure){
+async function procMain(marksPreposition, marksEnclosure){
   /*
     要素の取得
   */
@@ -504,10 +491,10 @@ function procMain(marksPreposition, marksEnclosure){
                   }
                 }
               })
-              .map(rly => [rly.dn])
+              .map(rly => rly.dn)
             )
           )
-          let tItems = await Promise.all(
+          return Promise.all(
             filteredIndex.map(rly0 => {
               let baseURLArrayNoIncludeDn = {
                 "https://satsuki.c": `${textDir}/${rly0}`,
@@ -519,16 +506,18 @@ function procMain(marksPreposition, marksEnclosure){
                   let tocBlob = await rly1.text()
                   let dn = rly0
                   let title = `<a href="${basePage}?q=${dn}">${(tocBlob.match(/^# .*/))[0].replace(/^# /, ``)}</a>`
-                  let description = await fetch(`${baseURLArrayNoIncludeDn}/${descriptionDir}/${defaultDescriptionFile}`)
+                  return await fetch(`${baseURLArrayNoIncludeDn}/${sentenceDataFile}`)
                   .then(async rly2 => {
                     if (rly2.ok) {
-                      return await rly2.text()
+                      return await rly2.json()
                     }
                     else {
                       return false
                     }
                   })
-                  return [dn, title, description]
+                  .then(rly => {
+                    return [dn, title, rly[`description`][infoContents]]
+                  })
                 }
                 else {
                   return false
@@ -536,7 +525,9 @@ function procMain(marksPreposition, marksEnclosure){
               })
             })
           )
-          return maketable(tItems, localizationArray)
+          .then(rly => {
+            return maketable(rly, localizationArray)
+          })
         }
         else {
           console.error(message.failedToFetchingIndex)
@@ -573,7 +564,7 @@ function procMain(marksPreposition, marksEnclosure){
         "failedToFetchingReadme": "${indvIndexFile} の読み込みに失敗しました。",
         "failedToFetchingFile": "本文ファイルの取得に失敗しました。"
       }
-      //work location エピソードを結合するリンクの設置
+      //🟧🟧🟧 work location 🟧🟧🟧 エピソードを結合するリンクの設置
       // return
       //
       // indvIndexFile: opごとのインデックスファイル
@@ -1064,7 +1055,7 @@ function procMain(marksPreposition, marksEnclosure){
   if (q && reTextPage.test(q)) {
     html.classList.add(`doc`)
     // change page mode to `text`
-    let dirAndFile = q.match(/(?:^.*?\/)(.+)$/)[1]
+    dirAndFile = q.match(/(?:^.*?\/)(.+)$/)[1]
     let fileType = ``
     if (/\.md$/.test(dirAndFile)) {
       fileType = `markdown`
@@ -1078,6 +1069,9 @@ function procMain(marksPreposition, marksEnclosure){
       fileType = `text`
       html.classList.add(`text`)
     }
+    let sentenceData = await getExternalData(`${textDir}/${dn}/${sentenceDataFile}`, `json`)
+    let additionalHeader = sentenceData[`additional`][`header`][infoContents]
+    let additionalFooter = sentenceData[`additional`][`footer`][infoContents]
     // display text page
     let outputText = ``
     genTextPage(dirAndFile)
@@ -1096,12 +1090,12 @@ function procMain(marksPreposition, marksEnclosure){
           take charge of page operations
         */
         // get element
-        let bracketModeSelector = document.querySelectorAll(`[name="bracket-mode"]`)
-        let rubyModeSwitch = document.querySelectorAll(`[name="ruby-mode"]`)
-        let newLineModeSwitch = document.querySelectorAll(`[name="new-line-mode"]`)
-        let orientationModeSwitch = document.querySelector(`[name="orientation-mode"]`)
-        let textSelectButton = document.querySelector(`[name="text-select"]`)
-        let infoContentsSwitch = document.querySelectorAll(`[name="info-contents"]`)
+        bracketModeSelector = document.querySelectorAll(`[name="bracket-mode"]`)
+        rubyModeSwitch = document.querySelectorAll(`[name="ruby-mode"]`)
+        newLineModeSwitch = document.querySelectorAll(`[name="new-line-mode"]`)
+        orientationModeSwitch = document.querySelector(`[name="orientation-mode"]`)
+        textSelectButton = document.querySelector(`[name="text-select"]`)
+        infoContentsSwitch = document.querySelectorAll(`[name="info-contents"]`)
         /*
 
           apply variable to optional value at UI
@@ -1131,48 +1125,7 @@ function procMain(marksPreposition, marksEnclosure){
           apply optional value at UI to variable, and display results
 
         */
-        bracketModeSelector.forEach(rly => {
-          rly.onchange = async () => {
-            bracketMode = rly.checked === true ? rly.value : false
-            textArea.innerHTML = textForCopy = await novelparse({
-              "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
-              "newLineMode": newLineMode,
-              "rubyMode": rubyMode,
-              "parenthesis": `normal`,
-              "comment": `delete-together`
-            })
-            getContentsSize()
-            getScrollValue()
-          }
-        })
-        rubyModeSwitch.forEach(rly => {
-          rly.onchange = async () => {
-            rubyMode = rly.checked === true ? rly.value : false
-            textArea.innerHTML = textForCopy = await novelparse({
-              "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
-              "newLineMode": newLineMode,
-              "rubyMode": rubyMode,
-              "parenthesis": `normal`,
-              "comment": `delete-together`
-            })
-            getContentsSize()
-            getScrollValue()
-          }
-        })
-        newLineModeSwitch.forEach(rly => {
-          rly.onchange = async () => {
-            newLineMode = rly.checked === true ? rly.value : false
-            textArea.innerHTML = textForCopy = await novelparse({
-              "src": await brackettool(await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
-              "newLineMode": newLineMode,
-              "rubyMode": rubyMode,
-              "parenthesis": `normal`,
-              "comment": `delete-together`
-            })
-            getContentsSize()
-            getScrollValue()
-          }
-        })
+        procText(additionalHeader, additionalFooter)
         orientationModeSwitch.onchange = async () => {
           orientationMode = orientationModeSwitch.checked === false ? `horizontal` : `vertical`
           if (orientationModeSwitch.checked === false) {
@@ -1191,86 +1144,9 @@ function procMain(marksPreposition, marksEnclosure){
             infoContents = rly.checked === true ? rly.value : false
           }
         })
-        let preArea = document.querySelector(`#pre-area`)
-        textSelectButton.onclick = async () => {
-          preArea.innerHTML = await getCopyContents()
-          preArea.classList.add(`display`)
-          let selectRange = document.createRange()
-          selectRange.setStart(preArea, 0)
-          selectRange.setEnd(preArea, preArea.childNodes.length)
-          document.getSelection().removeAllRanges()
-          document.getSelection().addRange(selectRange)
-          preArea.onclick = () => {
-            preArea.classList.remove(`display`)
-          }
-          preArea.oncopy = () => {
-            setTimeout(() => {
-              preArea.classList.remove(`display`)
-            }, 1)
-          }
-          async function getCopyContents() {
-            return await fetch(`${textDir}/${infoContentsDir.template}/${infoContentsFile[infoContents]}`)
-            .then(async rly => {
-              let w = await rly.text()
-              let dnFront = dn.replace(/\d+$/, ``)
-              let fileNamePrefix = ``
-              let conversionTable = {
-                "title": title,
-                "episode_num": currNum + 1,
-                "subtitle": subtitle,
-                "description": await description(),
-                "link_url": `https://satsuki.me/index.html?q=${dn}/${dirAndFile}`,
-                "text_follow_option": textFollowOption(),
-                "text_no_ruby": await textNoRuby(),
-                "text_length": (await textLength()).total
-              }
-              conversionTable[dnFront] = dn
-              async function description() {
-                if (/\$description/.test(w)) {
-                  return await fetch(`${textDir}/${infoContentsDir.description}/${fileNamePrefix}${infoContentsFile[infoContents]}`).then(async rly => await rly.text())
-                }
-                else {
-                  return false
-                }
-              }
-              function textFollowOption() {
-                if (/\$text_follow_option/.test(w)) {
-                  return textForCopy
-                  .replace(/(<\/p>[\s\S]*?<p>)/g, `\n`)
-                  .replace(/<br>/g, ``)
-                  .replace(/<.*?>/g, ``)
-                }
-                else {
-                  return false
-                }
-              }
-              async function textNoRuby() {
-                if (/\$text_no_ruby/.test(w)) {
-                  return (await novelparse({"src": await brackettool(await brackettool(text, marksPreposition, `delete-together`), marksEnclosure, `delete`, `normal`, `delete-together`)}))
-                  .replace(/(<\/p>[\s\S]*?<p>)/g, `\n`).replace(/<br>/g, ``).replace(/<.*?>/g, ``)
-                }
-                else {
-                  return false
-                }
-              }
-              async function textLength() {
-                if (/\$text_length/.test(w)) {
-                  return await wordcount(await brackettool(await brackettool(text, marksPreposition, `delete-together`), marksEnclosure, `delete`))
-                }
-                else {
-                  return false
-                }
-              }
-              for (let i in Object.keys(conversionTable)) {
-                let re = new RegExp(`\\$${Object.keys(conversionTable)[i]}(?=\\r|\\n|$|[^\\d\\w_])`, `g`)
-                w = w.replace(re, `${conversionTable[Object.keys(conversionTable)[i]]}`)
-              }
-              return w
-            })
-          }
-        }
+        preArea = document.querySelector(`#pre-area`)
+        textSelectButton.onclick = () => procPreArea(infoContents)
       }
-      //
       /*
         manipulate scroll matter
 
@@ -1327,8 +1203,6 @@ function procMain(marksPreposition, marksEnclosure){
               <input type="button" name="text-select" value="本文選択">
               <label><input type="radio" name="info-contents" value="normal"><span class="label">通常</span></label>
               <label><input type="radio" name="info-contents" value="x"><span class="label">X</span></label>
-              <label><input type="radio" name="info-contents" value="line-tori"><span class="label">とり</span></label>
-              <label><input type="radio" name="info-contents" value="line-saejima"><span class="label">さえ</span></label>
             </div>
           </aside>`,
         "markdown": ``,
@@ -1351,13 +1225,14 @@ function procMain(marksPreposition, marksEnclosure){
           else {
             let w0 = await brackettool(text, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum)
             let w1 = await brackettool(w0, marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum)
-            outputText = textForCopy = await novelparse({
+            let w = await novelparse({
               "src": w1,
               "newLineMode": newLineMode,
               "rubyMode": rubyMode,
               "parenthesis": `normal`,
               "commnet": `delete-together`
             })
+            outputText = textForCopy = additionalHeader + w + additionalFooter
           }
           return getAdditionalInformation()
           .then(rly => {
@@ -2305,6 +2180,171 @@ function procMain(marksPreposition, marksEnclosure){
  ##          ##     ##    ##   ###    ##    ##       ##        ##     ##     ##    ##   ###
  ##           #######     ##    ##     ######        ##       ####     #######     ##    ##
 */
+
+
+
+  /*
+
+    外部データ取得
+
+  */
+  async function getExternalData(extFile, type) {
+    return fetch(extFile)
+    .then(async rly => {
+      if (rly.ok) {
+        if (type === `text`) {
+          return await rly.text()
+        }
+        if (type === `json`) {
+          return await rly.json()
+        }
+      }
+      else {
+        return ``
+      }
+    })
+  }
+
+
+
+  /*
+
+    preArea処理
+
+  */
+  async function procPreArea(infoContents) {
+    preArea.innerHTML =  await getCopyContents()
+    preArea.classList.add(`display`)
+    let selectRange = document.createRange()
+    selectRange.setStart(preArea, 0)
+    selectRange.setEnd(preArea, preArea.childNodes.length)
+    document.getSelection().removeAllRanges()
+    document.getSelection().addRange(selectRange)
+    preArea.onclick = () => {
+      preArea.classList.remove(`display`)
+    }
+    preArea.oncopy = () => {
+      setTimeout(() => {
+        preArea.classList.remove(`display`)
+      }, 1)
+    }
+    async function getCopyContents() {
+      let sentenceData = await getExternalData(`${textDir}/${dn}/${sentenceDataFile}`, `json`)
+      let additionalHeader = sentenceData[`additional`][`header`][infoContents]
+      let additionalFooter = sentenceData[`additional`][`footer`][infoContents]
+      return await fetch(`${defaultExternalFileDir}/${templateFile}`)
+      .then(async rly => {
+        let w = (await rly.json())[infoContents]
+        let dnFront = dn.replace(/\d+$/, ``)
+        let conversionTable = {
+          "title": title,
+          "episode_num": currNum + 1,
+          "subtitle": subtitle,
+          "description": await description(),
+          "link_url": `https://satsuki.me/index.html?q=${dn}/${dirAndFile}`,
+          "text_follow_option": textFollowOption(),
+          "text_no_ruby": await textNoRuby(),
+          "text_length": (await textLength()).total
+        }
+        async function description() {
+          if (/\$description/.test(w)) {
+            return (await getExternalData(`${textDir}/${dn}/${sentenceData}`, `json`))[`description`][infoContents]
+          }
+          else {
+            return false
+          }
+        }
+        function textFollowOption() {
+          if (/\$text_follow_option/.test(w)) {
+            return textForCopy
+            .replace(/(<\/p>[\s\S]*?<p>)/g, `\n`)
+            .replace(/<br>/g, ``)
+            .replace(/<.*?>/g, ``)
+          }
+          else {
+            return false
+          }
+        }
+        async function textNoRuby() {
+          if (/\$text_no_ruby/.test(w)) {
+            return (await novelparse({"src": await brackettool(await brackettool(additionalHeader + text + additionalFooter, marksPreposition, `delete-together`), marksEnclosure, `delete`, `normal`, `delete-together`)}))
+            .replace(/(<\/p>[\s\S]*?<p>)/g, `\n`).replace(/<br>/g, ``).replace(/<.*?>/g, ``)
+          }
+          else {
+            return false
+          }
+        }
+        async function textLength() {
+          if (/\$text_length/.test(w)) {
+            return await wordcount(await brackettool(await brackettool(additionalHeader + text + additionalFooter, marksPreposition, `delete-together`), marksEnclosure, `delete`))
+          }
+          else {
+            return false
+          }
+        }
+        for (let i in Object.keys(conversionTable)) {
+          let re = new RegExp(`\\$${Object.keys(conversionTable)[i]}(?=\\r|\\n|$|[^\\d\\w_])`, `g`)
+          w = w.replace(re, `${conversionTable[Object.keys(conversionTable)[i]]}`)
+        }
+        return w
+      })
+    }
+  }
+
+
+
+  /*
+
+    本文処理
+
+  */
+  function procText(additionalHeader, additionalFooter) {
+    bracketModeSelector.forEach(rly => {
+      rly.onchange = async () => {
+        bracketMode = rly.checked === true ? rly.value : false
+        let w = await novelparse({
+          "src": await brackettool(await brackettool(additionalHeader + text + additionalFooter, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+          "newLineMode": newLineMode,
+          "rubyMode": rubyMode,
+          "parenthesis": `normal`,
+          "comment": `delete-together`
+        })
+        textArea.innerHTML = textForCopy = additionalHeader + w + additionalFooter
+        getContentsSize()
+        getScrollValue()
+      }
+    })
+    rubyModeSwitch.forEach(rly => {
+      rly.onchange = async () => {
+        rubyMode = rly.checked === true ? rly.value : false
+        let w = await novelparse({
+          "src": await brackettool(await brackettool(additionalHeader + text + additionalFooter, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+          "newLineMode": newLineMode,
+          "rubyMode": rubyMode,
+          "parenthesis": `normal`,
+          "comment": `delete-together`
+        })
+        textArea.innerHTML = textForCopy = additionalHeader + w + additionalFooter
+        getContentsSize()
+        getScrollValue()
+      }
+    })
+    newLineModeSwitch.forEach(rly => {
+      rly.onchange = async () => {
+        newLineMode = rly.checked === true ? rly.value : false
+        let w = await novelparse({
+          "src": await brackettool(await brackettool(additionalHeader + text + additionalFooter, marksPreposition, `delete-together`, `hole`, ``, beforeNum, afterNum), marksEnclosure, bracketMode, `hole`, ``, beforeNum, afterNum),
+          "newLineMode": newLineMode,
+          "rubyMode": rubyMode,
+          "parenthesis": `normal`,
+          "comment": `delete-together`
+        })
+        textArea.innerHTML = textForCopy = w
+        getContentsSize()
+        getScrollValue()
+      }
+    })
+  }
 
 
 
